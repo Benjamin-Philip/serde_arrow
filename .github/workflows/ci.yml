@@ -1,0 +1,41 @@
+name: CI
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  format:
+    name: Check Formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Erlang/OTP
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: 25.1.0
+          rebar3: '3.18.0'
+
+      - name: Check Formatting with erlfmt
+        run: rebar3 fmt --check
+
+  ct:
+    name: Common Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Erlang/OTP
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: 25.1.0
+          rebar3: '3.18.0'
+
+      - name: Run tests
+        run: rebar3 ct
