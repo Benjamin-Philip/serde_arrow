@@ -41,7 +41,7 @@ jobs:
             ${{ runner.os }}-hex-
 
       - name: Generate docs
-        run: rebar3 edoc
+        run: rebar3 ex_doc
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
