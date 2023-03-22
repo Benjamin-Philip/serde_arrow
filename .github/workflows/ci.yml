@@ -1,0 +1,60 @@
+name: CI
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  format:
+    name: Check Formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Erlang/OTP
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: 25.1.0
+          rebar3-version: '3.18.0'
+
+      - name: Cache Hex packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/rebar3/hex/hexpm/packages
+          key: ${{ runner.os }}-hex-${{ hashFiles(format('{0}{1}', github.workspace, '/rebar.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-hex-
+
+      - name: Check Formatting with erlfmt
+        run: rebar3 fmt --check
+
+  ct:
+    name: Common Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Erlang/OTP
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: 25.1.0
+          rebar3-version: '3.18.0'
+
+      - name: Cache Hex packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/rebar3/hex/hexpm/packages
+          key: ${{ runner.os }}-hex-${{ hashFiles(format('{0}{1}', github.workspace, '/rebar.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-hex-
+
+      - name: Compile
+        run: rebar3 compile
+
+      - name: Run tests
+        run: rebar3 ct
