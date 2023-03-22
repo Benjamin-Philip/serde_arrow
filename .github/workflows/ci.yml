@@ -19,7 +19,7 @@ jobs:
         uses: erlef/setup-beam@v1
         with:
           otp-version: 25.1.0
-          rebar3: '3.18.0'
+          rebar3-version: '3.18.0'
 
       - name: Check Formatting with erlfmt
         run: rebar3 fmt --check
@@ -35,7 +35,7 @@ jobs:
         uses: erlef/setup-beam@v1
         with:
           otp-version: 25.1.0
-          rebar3: '3.18.0'
+          rebar3-version: '3.18.0'
 
       - name: Run tests
         run: rebar3 ct
