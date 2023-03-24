@@ -1,0 +1,129 @@
+#+title: ~serde_arrow~ Roadmap
+#+author: Benjamin Philip <benjamin.philip495@gmail.com>
+
+The following is a Roadmap (with notes of implementation details) of the
+~serde_arrow~ project.
+
+* ~v0.1.0~ [0/13]
+
+In ~v0.1.0~ we aim to achieve full support for [[https://arrow.apache.org/docs/format/Columnar.html#encapsulated-message-format][Arrow's Encapsulated Message
+Format]]. Here the Roadmap is linear. Initially, we will be working on
+primitives of the format and will gradually work our way up to consumable output
+and input.
+
+** TODO Primitive Logical Types [0/18]
+
+An Arrow Array can store values of a number of types, called [[https://arrow.apache.org/docs/format/Columnar.html#logical-types][logical types]]. A
+clear list can be found [[https://arrow.apache.org/docs/status.html#data-types][here]]. Before we work with Arrays we need to be able to
+serialize Erlang native data types into (and deserialize from) their Arrow
+supported counterparts. We don't need implement *all* the types at once - things
+like timestamps can wait! We will however need to able represent Ints and Floats
+immediately.
+
+These need to be immediately supported for development work:
+
+- [ ] Null (this would mean supporting the [[https://arrow.apache.org/docs/format/Columnar.html#null-layout][Null Layout]])
+- [ ] Boolean
+- [ ] Int 8/16/32/64
+- [ ] UInt 8/16/32/64
+- [ ] Float 32/64
+
+These can have support gradually added:
+
+- [ ] Float16
+- [ ] Decimal128
+- [ ] Decimal256
+- [ ] Date 32/64
+- [ ] Time 32/64
+- [ ] Timestamp
+- [ ] Duration
+- [ ] Interval
+- [ ] Fixed Sized Binary
+- [ ] Binary
+- [ ] Large Binary
+- [ ] UTF 8
+- [ ] Large UTF 8
+
+** TODO Physical Memory Layout aides [0/3]
+
+Apart from the actual data, the memory layout includes things like a null count,
+a validity bitmaps, and offsets. We need to have ways to represent and work with
+these before we can work with physical layouts themselves
+
+- [ ] [[https://arrow.apache.org/docs/format/Columnar.html#null-count][Null count]]
+- [ ] [[https://arrow.apache.org/docs/format/Columnar.html#validity-bitmaps][Validity bitmaps]]
+- [ ] [[https://arrow.apache.org/docs/format/Columnar.html#array-lengths][Array length]]
+
+** TODO Physical Memory Layout [0/9]
+
+These are the actual Memory Layouts we need to support. Not all of them need to
+be supported immediately. The Layouts from Primitive Layout to Struct Layout
+(inclusive) need immediate support for development. The rest can have support
+added gradually.
+
+*** TODO Fixed-Size Primitive Layout
+
+Next we need to support the [[https://arrow.apache.org/docs/format/Columnar.html#fixed-size-primitive-layout][Fixed-Size Primitive Layout]], the simplest (other
+than the Null Layout) of the Physical Memory Layouts (which technically are
+nested logical types).
+
+*** TODO Variable Binary Layout
+
+We now need to support the [[https://arrow.apache.org/docs/format/Columnar.html#variable-size-binary-layout][Variable Binary Layout]]. This may require supporting
+the Binary dtype.
+
+*** TODO Fixed-Size List Layout
+
+We need to support the [[https://arrow.apache.org/docs/format/Columnar.html#fixed-size-list-layout][Fixed-Size List Layout]] which is the simpler List Layout.
+Since this is layout supports nesting, we need to also add support for
+representing and validating the internal list length.
+
+*** TODO Variable-Size List Layout
+
+We need to support the [[https://arrow.apache.org/docs/format/Columnar.html#variable-size-list-layout][Variable-size List Layout]]. We will also need to add
+support for representing offsets as the list size is variable.
+
+*** TODO Struct Layout
+
+We need to support the [[https://arrow.apache.org/docs/format/Columnar.html#struct-layout][Struct Layout]]. We will also need to add support for
+representing and validating multiple types for Layout in order to represent the
+different fields with varying types.
+
+*** TODO Dense Union Layout
+
+We need to support the [[https://arrow.apache.org/docs/format/Columnar.html#dense-union][Dense Union Layout]].
+
+*** TODO Sparse Union Layout
+
+We need to support the [[https://arrow.apache.org/docs/format/Columnar.html#sparse-union][Sparse Union Layout]].
+
+*** TODO Dictionary-encoded Layout
+
+We need to support the [[https://arrow.apache.org/docs/format/Columnar.html#dictionary-encoded-layout][Dictionary-encoded Layout]].
+
+*** TODO Run-End Encoded Layout
+
+We need to support the [[https://arrow.apache.org/docs/format/Columnar.html#run-end-encoded-layout][Run-End Encoded Layout]].
+
+** TODO Encapsulated Message Format [0/4]
+
+We now have all the prerequisites to support the Encapsulated Message Format. In
+the actual format itself, we need to add support for the message body, which can
+be one of [[https://arrow.apache.org/docs/format/Columnar.html#schema-message][Schema]], [[https://arrow.apache.org/docs/format/Columnar.html#recordbatch-message][RecordBatch]] and [[https://arrow.apache.org/docs/format/Columnar.html#dictionary-messages][DictionaryBatch]].
+
+Implementation details are yet to decided due to Arrow's dependency on
+Flatbuffers. The details for all these Message Body types and the actual
+format's implementation will be added later.
+
+*** TODO Schema
+
+*** TODO RecordBatch
+
+*** TODO DictionaryBatch
+
+*** TODO Actual Encapsulated Message Format itself
+
+* ~v0.2.0~ [0/1]
+** TODO Write Roadmap
+Write a Roadmap for ~v0.2.0~. By ~v0.2.0~, we need to support Arrow IPC and
+Apache Flight.
