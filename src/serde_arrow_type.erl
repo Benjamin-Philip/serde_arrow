@@ -16,11 +16,11 @@
 ]).
 
 -type arrow_type() ::
-        arrow_bool()
-        | arrow_null()
-        | arrow_int()
-        | arrow_uint()
-        | arrow_float().
+    arrow_bool()
+    | arrow_null()
+    | arrow_int()
+    | arrow_uint()
+    | arrow_float().
 %% Any primitive logical type in Apache Arrow that is supported by `serde_arrow'.
 
 -type arrow_bool() ::
@@ -55,9 +55,9 @@
 %% and `Float 64'.
 
 -type erlang_type() ::
-        boolean()
-        | nil
-        | integer()
-        | float().
+    boolean()
+    | nil
+    | integer()
+    | float().
 %% Any Erlang datatype which `serde_arrow' supports serializing from and
 %% deserializing into.
