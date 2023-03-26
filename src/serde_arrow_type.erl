@@ -27,25 +27,25 @@
 %% Apache Arrow Boolean. One of `True' or `False'
 
 -type arrow_int() ::
-    {int, 8}
-    | {int, 16}
-    | {int, 32}
-    | {int, 64}.
+    {s, 8}
+    | {s, 16}
+    | {s, 32}
+    | {s, 64}.
 %% Any signed integer in Apache Arrow. Includes `Int 8', `Int 16', `Int 32' and
 %% `Int 64'.
 
 -type arrow_uint() ::
-    {uint, 8}
-    | {uint, 16}
-    | {uint, 32}
-    | {uint, 64}.
+    {u, 8}
+    | {u, 16}
+    | {u, 32}
+    | {u, 64}.
 %% Any unsigned integer in Apache Arrow. Includes `UInt 8', `UInt 16', `UInt 32'
 %% and `UInt 64'.
 
 -type arrow_float() ::
-    {float, 16}
-    | {float, 32}
-    | {float, 64}.
+    {f, 16}
+    | {f, 32}
+    | {f, 64}.
 %% Any floating point number in Apache Arrow. Includes `Float 16', `Float 32'
 %% and `Float 64'.
 
