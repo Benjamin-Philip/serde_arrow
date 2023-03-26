@@ -8,7 +8,6 @@
 -export_type([
     arrow_type/0,
     arrow_bool/0,
-    arrow_null/0,
     arrow_int/0,
     arrow_uint/0,
     arrow_float/0,
@@ -17,7 +16,6 @@
 
 -type arrow_type() ::
     arrow_bool()
-    | arrow_null()
     | arrow_int()
     | arrow_uint()
     | arrow_float().
@@ -27,9 +25,6 @@
     arrow_true
     | arrow_false.
 %% Apache Arrow Boolean. One of `True' or `False'
-
--type arrow_null() :: arrow_null.
-%% Apache Arrow Null type.
 
 -type arrow_int() ::
     {int, 8}
