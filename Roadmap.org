@@ -11,7 +11,7 @@ Format]]. Here the Roadmap is linear. Initially, we will be working on
 primitives of the format and will gradually work our way up to consumable output
 and input.
 
-** TODO Primitive Logical Types [0/18]
+** TODO Primitive Logical Types [5/17]
 
 An Arrow Array can store values of a number of types, called [[https://arrow.apache.org/docs/format/Columnar.html#logical-types][logical types]]. A
 clear list can be found [[https://arrow.apache.org/docs/status.html#data-types][here]]. Before we work with Arrays we need to be able to
@@ -22,15 +22,14 @@ immediately.
 
 These need to be immediately supported for development work:
 
-- [ ] Null (this would mean supporting the [[https://arrow.apache.org/docs/format/Columnar.html#null-layout][Null Layout]])
-- [ ] Boolean
-- [ ] Int 8/16/32/64
-- [ ] UInt 8/16/32/64
-- [ ] Float 32/64
+- [X] Boolean
+- [X] Int 8/16/32/64
+- [X] UInt 8/16/32/64
+- [X] Float 32/64
 
 These can have support gradually added:
 
-- [ ] Float16
+- [X] Float16
 - [ ] Decimal128
 - [ ] Decimal256
 - [ ] Date 32/64
