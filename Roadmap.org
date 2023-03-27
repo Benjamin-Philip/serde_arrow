@@ -4,14 +4,14 @@
 The following is a Roadmap (with notes of implementation details) of the
 ~serde_arrow~ project.
 
-* ~v0.1.0~ [0/13]
+* ~v0.1.0~ [0/4]
 
 In ~v0.1.0~ we aim to achieve full support for [[https://arrow.apache.org/docs/format/Columnar.html#encapsulated-message-format][Arrow's Encapsulated Message
 Format]]. Here the Roadmap is linear. Initially, we will be working on
 primitives of the format and will gradually work our way up to consumable output
 and input.
 
-** TODO Primitive Logical Types [5/17]
+** HOLD Primitive Logical Types [5/17]
 
 An Arrow Array can store values of a number of types, called [[https://arrow.apache.org/docs/format/Columnar.html#logical-types][logical types]]. A
 clear list can be found [[https://arrow.apache.org/docs/status.html#data-types][here]]. Before we work with Arrays we need to be able to
