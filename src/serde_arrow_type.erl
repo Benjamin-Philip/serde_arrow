@@ -51,7 +51,7 @@
 
 -type erlang_type() ::
     boolean()
-    | nil
+    | undefined
     | integer()
     | float().
 %% Any Erlang datatype which `serde_arrow' supports serializing from and

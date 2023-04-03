@@ -7,7 +7,9 @@ validity(Value, Len) ->
     ValidityList = lists:map(
         fun(X) ->
             case X of
-                nil ->
+                %% Erlang follows `undefined', while Elixir follows `nil'.
+                %% We need to support both.
+                Y when (Y =:= undefined) or (Y =:= nil) ->
                     0;
                 _ ->
                     1
@@ -18,7 +20,7 @@ validity(Value, Len) ->
     NullCount = Len - lists:sum(ValidityList),
     case NullCount of
         0 ->
-            {0, nil};
+            {0, undefined};
         _ ->
             {NullCount, bitmap(ValidityList, Len)}
     end.

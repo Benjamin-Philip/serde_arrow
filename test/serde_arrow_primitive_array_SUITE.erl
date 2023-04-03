@@ -29,16 +29,32 @@ valid_null_count_on_new(_Config) ->
     Array1 = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
     ?assertEqual(Array1#primitive_array.null_count, 0),
 
-    Array2 = serde_arrow_primitive_array:new([1, nil, 2, 3], {s, 8}),
-    ?assertEqual(Array2#primitive_array.null_count, 1).
+    Array2 = serde_arrow_primitive_array:new([1, undefined, 2, 3], {s, 8}),
+    ?assertEqual(Array2#primitive_array.null_count, 1),
+
+    Array3 = serde_arrow_primitive_array:new([1, nil, 2, 3], {s, 8}),
+    ?assertEqual(Array3#primitive_array.null_count, 1),
+
+    Array4 = serde_arrow_primitive_array:new([1, undefined, nil, 2, 3], {s, 8}),
+    ?assertEqual(Array4#primitive_array.null_count, 2).
 
 valid_validity_bitmap_on_new(_Config) ->
     Array1 = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
-    ?assertEqual(Array1#primitive_array.validity_bitmap, nil),
+    ?assertEqual(Array1#primitive_array.validity_bitmap, undefined),
 
-    Array2 = serde_arrow_primitive_array:new([1, nil, 2, 3], {s, 8}),
+    Array2 = serde_arrow_primitive_array:new([1, undefined, 2, 3], {s, 8}),
     ?assertEqual(Array2#primitive_array.validity_bitmap, [
         <<0:1, 0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 1:1>>
+    ]),
+
+    Array3 = serde_arrow_primitive_array:new([1, nil, 2, 3], {s, 8}),
+    ?assertEqual(Array3#primitive_array.validity_bitmap, [
+        <<0:1, 0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 1:1>>
+    ]),
+
+    Array4 = serde_arrow_primitive_array:new([1, nil, undefined, 3], {s, 8}),
+    ?assertEqual(Array4#primitive_array.validity_bitmap, [
+        <<0:1, 0:1, 0:1, 0:1, 1:1, 0:1, 0:1, 1:1>>
     ]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,4 +71,4 @@ valid_null_count_on_access(_Config) ->
 
 valid_validity_bitmap_on_access(_Config) ->
     Array = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
-    ?assertEqual(serde_arrow_primitive_array:validity_bitmap(Array), nil).
+    ?assertEqual(serde_arrow_primitive_array:validity_bitmap(Array), undefined).

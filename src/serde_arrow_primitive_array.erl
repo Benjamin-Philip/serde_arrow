@@ -14,7 +14,7 @@
 %%  <li>`len', of type `//Erlang//pos_integer()', which represents the Array's Length.</li>
 %%  <li>
 %%      `null_count', of type  `pos_integer()', which represents the Array's
-%%      Null Count, or the number of nil values in the Array.
+%%      Null Count, or the number of undefined values in the Array.
 %%  </li>
 %%  <li>
 %%      `validity_bitmap', of type  `binary()', which represents the Array's
@@ -74,6 +74,6 @@ len(Array) ->
 null_count(Array) ->
     Array#primitive_array.null_count.
 
--spec validity_bitmap(Array :: #primitive_array{}) -> ValidityBitmap :: binary() | nil.
+-spec validity_bitmap(Array :: #primitive_array{}) -> ValidityBitmap :: binary() | undefined.
 validity_bitmap(Array) ->
     Array#primitive_array.validity_bitmap.

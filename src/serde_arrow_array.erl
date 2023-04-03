@@ -30,12 +30,12 @@
 -callback null_count(Array :: array()) -> NullCount :: pos_integer().
 %% Returns the null count of an array.
 
--callback validity_bitmap(Array :: array()) -> ValidityBitmap :: binary() | nil.
+-callback validity_bitmap(Array :: array()) -> ValidityBitmap :: binary() | undefined.
 %% Returns the validity bitmap of an array.
 
--callback offsets(Array :: array()) -> Offsets :: [pos_integer()] | nil.
+-callback offsets(Array :: array()) -> Offsets :: [pos_integer()] | undefined.
 %% Returns the offsets of an array.
 
--spec offsets(_Array :: array()) -> Offsets :: nil.
+-spec offsets(_Array :: array()) -> Offsets :: undefined.
 offsets(_Array) ->
-    nil.
+    undefined.
