@@ -39,9 +39,11 @@ valid_null_count_on_new(_Config) ->
     ?assertEqual(Array4#primitive_array.null_count, 2).
 
 valid_validity_bitmap_on_new(_Config) ->
+    %% Does not allocate bitmap on no nulls
     Array1 = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
     ?assertEqual(Array1#primitive_array.validity_bitmap, undefined),
 
+    %% Respects both Erlang's and Elixir's conventions
     Array2 = serde_arrow_primitive_array:new([1, undefined, 2, 3], {s, 8}),
     ?assertEqual(Array2#primitive_array.validity_bitmap, [
         <<0:1, 0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 1:1>>
@@ -55,6 +57,12 @@ valid_validity_bitmap_on_new(_Config) ->
     Array4 = serde_arrow_primitive_array:new([1, nil, undefined, 3], {s, 8}),
     ?assertEqual(Array4#primitive_array.validity_bitmap, [
         <<0:1, 0:1, 0:1, 0:1, 1:1, 0:1, 0:1, 1:1>>
+    ]),
+
+    %% Correctly validates on input greater than 8 elements
+    Array5 = serde_arrow_primitive_array:new([1, 2, nil, 4, 5, 6, 7, 8, nil, 10], {s, 8}),
+    ?assertEqual(Array5#primitive_array.validity_bitmap, [
+        <<1:1, 1:1, 1:1, 1:1, 1:1, 0:1, 1:1, 1:1>>, <<0:1, 0:1, 0:1, 0:1, 0:1, 0:1, 1:1, 0:1>>
     ]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

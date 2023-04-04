@@ -52,7 +52,7 @@
 %% @end
 new(Value, Type) ->
     Len = length(Value),
-    {NullCount, Bitmap} = serde_arrow_array_utils:validity(Value, Len),
+    {Bitmap, NullCount} = serde_arrow_array_utils:validity_bitmap(Value),
     Bin = serde_arrow_array_utils:buffer(Value, Type),
     #primitive_array{
         type = Type, len = Len, null_count = NullCount, validity_bitmap = Bitmap, value = Bin
