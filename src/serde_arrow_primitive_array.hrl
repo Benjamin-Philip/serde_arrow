@@ -3,5 +3,5 @@
     len :: pos_integer(),
     null_count :: pos_integer(),
     validity_bitmap :: binary() | nil,
-    value :: binary()
+    data :: binary()
 }).

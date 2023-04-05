@@ -1,7 +1,7 @@
 %% @private
 %% Utilitary functions for Array Implementations.
 -module(serde_arrow_array_utils).
--export([validity_bitmap/1, buffer/2]).
+-export([validity_bitmap/1]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Validity Bitmap & Null Count %%
@@ -37,7 +37,8 @@
 validity_bitmap(Value) ->
     case (lists:member(undefined, Value)) or (lists:member(nil, Value)) of
         true ->
-            buffer(bitmap(Value, [], 0), byte);
+            {Bitmap, NullCount} = bitmap(Value, [], 0),
+            {serde_arrow_buffer:new(Bitmap, byte), NullCount};
         false ->
             {undefined, 0}
     end.
@@ -67,7 +68,7 @@ bitmap(LeftOver, Acc, NullCount) ->
 
     %% Here we both pad as well as LSB number at one pass.
     PadLen = 8 - Len rem 8,
-    Padded = lists:duplicate(PadLen, 0) ++ lists:reverse(lists:flatten([Validities])),
+    Padded = lists:duplicate(PadLen, 0) ++ lists:reverse(Validities),
 
     [B1, B2, B3, B4, B5, B6, B7, B8] = Padded,
     bitmap([], Acc ++ [<<B1:1, B2:1, B3:1, B4:1, B5:1, B6:1, B7:1, B8:1>>], NullCount + Nulls).
@@ -79,8 +80,3 @@ validity(X) ->
         true ->
             1
     end.
-
-%% TODO: Write a buffer implementation.
-
-buffer(Value, _Type) ->
-    Value.

@@ -35,7 +35,8 @@
     type/1,
     len/1,
     null_count/1,
-    validity_bitmap/1
+    validity_bitmap/1,
+    data/1
 ]).
 
 -include("serde_arrow_primitive_array.hrl").
@@ -53,9 +54,9 @@
 new(Value, Type) ->
     Len = length(Value),
     {Bitmap, NullCount} = serde_arrow_array_utils:validity_bitmap(Value),
-    Bin = serde_arrow_array_utils:buffer(Value, Type),
+    Bin = serde_arrow_buffer:new(Value, Type),
     #primitive_array{
-        type = Type, len = Len, null_count = NullCount, validity_bitmap = Bitmap, value = Bin
+        type = Type, len = Len, null_count = NullCount, validity_bitmap = Bitmap, data = Bin
     }.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,3 +78,7 @@ null_count(Array) ->
 -spec validity_bitmap(Array :: #primitive_array{}) -> ValidityBitmap :: binary() | undefined.
 validity_bitmap(Array) ->
     Array#primitive_array.validity_bitmap.
+
+-spec data(Array :: #primitive_array{}) -> Data :: binary() | undefined.
+data(Array) ->
+    Array#primitive_array.data.
