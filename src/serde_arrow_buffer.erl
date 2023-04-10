@@ -47,7 +47,7 @@ binary(Values, byte, Len, _ElementLen) ->
 binary(Values, Type, Len, ElementLen) ->
     pad(<<(slot(X, Type, ElementLen)) || X <- Values>>, pad_len(Len)).
 
-slot(Value, _Type, ElementLen) when (Value =:= undefined) or (Value =:= nil) ->
+slot(Value, _Type, ElementLen) when (Value =:= undefined) orelse (Value =:= nil) ->
     pad(<<>>, ElementLen);
 slot(Value, Type, _ElementLen) ->
     serde_arrow_type:serialize(Value, Type).

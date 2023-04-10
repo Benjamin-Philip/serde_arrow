@@ -58,7 +58,7 @@
 
 -spec bit_length(Type :: arrow_type()) -> Length :: pos_integer().
 %% doc Returns the size of the type in bits.
-bit_length({Type, Size}) when (Type =:= s) or (Type =:= u) or (Type =:= f) ->
+bit_length({Type, Size}) when (Type =:= s) orelse (Type =:= u) orelse (Type =:= f) ->
     Size;
 bit_length(arrow_boolean) ->
     1.

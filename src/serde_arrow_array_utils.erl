@@ -35,7 +35,7 @@
 %% [2]: https://arrow.apache.org/docs/format/Columnar.html#null-count
 
 validity_bitmap(Value) ->
-    case (lists:member(undefined, Value)) or (lists:member(nil, Value)) of
+    case (lists:member(undefined, Value)) orelse (lists:member(nil, Value)) of
         true ->
             {Bitmap, NullCount} = bitmap(Value, [], 0),
             {serde_arrow_buffer:new(Bitmap, byte), NullCount};
@@ -75,7 +75,7 @@ bitmap(LeftOver, Acc, NullCount) ->
 
 validity(X) ->
     if
-        (X =:= nil) or (X =:= undefined) ->
+        (X =:= nil) orelse (X =:= undefined) ->
             0;
         true ->
             1
