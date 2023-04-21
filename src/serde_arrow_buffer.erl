@@ -1,6 +1,6 @@
 %% Buffer implementation for `serde_arrow'.
 -module(serde_arrow_buffer).
--export([new/2, new/3]).
+-export([new/2, new/3, from_binary/4]).
 
 -include("serde_arrow_buffer.hrl").
 
@@ -28,24 +28,27 @@
 %% [2]: https://arrow.apache.org/docs/format/Glossary.html#term-slot
 
 new(Values, Type) -> new(Values, Type, length(Values)).
-
 new(Values, Type, Len) ->
-    ElementLen =
-        case Type of
-            byte ->
-                1;
-            _ ->
-                serde_arrow_type:byte_length(Type)
-        end,
-    Bin = binary(Values, Type, Len, ElementLen),
-    #buffer{type = Type, length = Len, element_length = ElementLen, data = Bin}.
+    ElementLen = serde_arrow_type:byte_length(Type),
+    Bin = <<(slot(X, Type, ElementLen)) || X <- Values>>,
+    from_binary(Bin, Type, Len, ElementLen).
 
-binary(Values, byte, Len, _ElementLen) ->
-    %% Since binary with byte will only be called to make the validity bitmap,
-    %% we do not need to account for nil values.
-    pad(<<X || X <- Values>>, pad_len(Len));
-binary(Values, Type, Len, ElementLen) ->
-    pad(<<(slot(X, Type, ElementLen)) || X <- Values>>, pad_len(Len)).
+%% TODO Rethink what all is needed for a buffer.
+%%
+%% This function returns a new buffer, given, in this order:
+%%
+%% 1. A padded or unpadded binary
+%%
+%% 2. The type of the value stored by the buffer
+%%
+%% 3. Length of the binary in bytes
+%%
+%% 4. The length of each element of the buffer in bytes
+
+from_binary(Values, Type, Len, ElementLen) ->
+    PadLen = 64 - Len rem 64,
+    Bin = pad(Values, PadLen),
+    #buffer{type = Type, length = Len, element_length = ElementLen, data = Bin}.
 
 slot(Value, _Type, ElementLen) when (Value =:= undefined) orelse (Value =:= nil) ->
     pad(<<>>, ElementLen);
@@ -54,6 +57,3 @@ slot(Value, Type, _ElementLen) ->
 
 pad(Binary, PadLen) ->
     <<Binary/bitstring, <<0:(PadLen * 8)>>/bitstring>>.
-
-pad_len(Len) ->
-    64 - Len rem 64.

@@ -50,34 +50,26 @@ valid_validity_bitmap_on_new(_Config) ->
     Array2 = serde_arrow_primitive_array:new([1, undefined, 2, 3], {s, 8}),
     ?assertEqual(
         Array2#primitive_array.validity_bitmap,
-        buffer([
-            <<0:1, 0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 1:1>>
-        ])
+        buffer(<<0:1, 0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 1:1>>)
     ),
 
     Array3 = serde_arrow_primitive_array:new([1, nil, 2, 3], {s, 8}),
     ?assertEqual(
         Array3#primitive_array.validity_bitmap,
-        buffer([
-            <<0:1, 0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 1:1>>
-        ])
+        buffer(<<0:1, 0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 1:1>>)
     ),
 
     Array4 = serde_arrow_primitive_array:new([1, nil, undefined, 3], {s, 8}),
     ?assertEqual(
         Array4#primitive_array.validity_bitmap,
-        buffer([
-            <<0:1, 0:1, 0:1, 0:1, 1:1, 0:1, 0:1, 1:1>>
-        ])
+        buffer(<<0:1, 0:1, 0:1, 0:1, 1:1, 0:1, 0:1, 1:1>>)
     ),
 
     %% Correctly validates on input greater than 8 elements
     Array5 = serde_arrow_primitive_array:new([1, 2, nil, 4, 5, 6, 7, 8, nil, 10], {s, 8}),
     ?assertEqual(
         Array5#primitive_array.validity_bitmap,
-        buffer([
-            <<1:1, 1:1, 1:1, 1:1, 1:1, 0:1, 1:1, 1:1>>, <<0:1, 0:1, 0:1, 0:1, 0:1, 0:1, 1:1, 0:1>>
-        ])
+        buffer(<<1:1, 1:1, 1:1, 1:1, 1:1, 0:1, 1:1, 1:1, 0:1, 0:1, 0:1, 0:1, 0:1, 0:1, 1:1, 0:1>>)
     ).
 
 valid_data_on_new(_Config) ->
@@ -130,4 +122,4 @@ valid_data_on_access(_Config) ->
 %%%%%%%%%%%
 
 buffer(Bitmap) ->
-    serde_arrow_buffer:new(Bitmap, byte).
+    serde_arrow_buffer:from_binary(Bitmap, byte, byte_size(Bitmap), 1).

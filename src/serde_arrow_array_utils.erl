@@ -25,8 +25,9 @@
 %% 3. If a "batch" consists of less than 8 elements, its validity needs to be
 %%    padded by 0 bits so that it can make a byte.
 %%
-%% 4. Each byte is stored in a slot of a Buffer. This buffer with the validities
-%%    of each batch of 8 elements make up what is called the Validity Bitmap.
+%% 4. Each byte is stored in a slot of a Buffer (see docs for
+%%    `serde_arrow_buffer'). This buffer with the validities of each batch of 8
+%%    elements make up what is called the Validity Bitmap.
 %%
 %% 5. If the Null Count is 0, we can allocate the Validity Bitmap as a NULL
 %%    pointer (which in Erlang's case is `undefined').
@@ -37,13 +38,12 @@
 validity_bitmap(Value) ->
     case (lists:member(undefined, Value)) orelse (lists:member(nil, Value)) of
         true ->
-            {Bitmap, NullCount} = bitmap(Value, [], 0),
-            {serde_arrow_buffer:new(Bitmap, byte), NullCount};
+            bitmap(Value, <<>>, 0, 0);
         false ->
             {undefined, 0}
     end.
 
-bitmap([X1, X2, X3, X4, X5, X6, X7, X8 | Rest], Acc, NullCount) ->
+bitmap([X1, X2, X3, X4, X5, X6, X7, X8 | Rest], Acc, NullCount, ByteLen) ->
     %% By assigning B8 as X1's validity, we are following LSB numbering.
     B8 = validity(X1),
     B7 = validity(X2),
@@ -56,12 +56,13 @@ bitmap([X1, X2, X3, X4, X5, X6, X7, X8 | Rest], Acc, NullCount) ->
 
     bitmap(
         Rest,
-        Acc ++ [<<B1:1, B2:1, B3:1, B4:1, B5:1, B6:1, B7:1, B8:1>>],
-        NullCount + (8 - (B1 + B2 + B3 + B4 + B5 + B6 + B7 + B8))
+        <<Acc/binary, B1:1, B2:1, B3:1, B4:1, B5:1, B6:1, B7:1, B8:1>>,
+        NullCount + (8 - (B1 + B2 + B3 + B4 + B5 + B6 + B7 + B8)),
+        ByteLen + 1
     );
-bitmap([], Acc, NullCount) ->
-    {Acc, NullCount};
-bitmap(LeftOver, Acc, NullCount) ->
+bitmap([], Acc, NullCount, ByteLen) ->
+    {serde_arrow_buffer:from_binary(Acc, byte, ByteLen, 1), NullCount};
+bitmap(LeftOver, Acc, NullCount, ByteLen) ->
     Validities = lists:map(fun(X) -> validity(X) end, LeftOver),
     Len = length(Validities),
     Nulls = Len - lists:sum(Validities),
@@ -71,7 +72,12 @@ bitmap(LeftOver, Acc, NullCount) ->
     Padded = lists:duplicate(PadLen, 0) ++ lists:reverse(Validities),
 
     [B1, B2, B3, B4, B5, B6, B7, B8] = Padded,
-    bitmap([], Acc ++ [<<B1:1, B2:1, B3:1, B4:1, B5:1, B6:1, B7:1, B8:1>>], NullCount + Nulls).
+    bitmap(
+        [],
+        <<Acc/binary, B1:1, B2:1, B3:1, B4:1, B5:1, B6:1, B7:1, B8:1>>,
+        NullCount + Nulls,
+        ByteLen + 1
+    ).
 
 validity(X) ->
     if

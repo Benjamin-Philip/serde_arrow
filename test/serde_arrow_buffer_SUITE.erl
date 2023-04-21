@@ -9,11 +9,17 @@
 
 all() ->
     [
+        %% new/3 and new/2
         valid_length_on_new,
         valid_element_length_on_new,
         valid_type_on_new,
-        valid_byte_buffer_data_on_new,
-        valid_regular_buffer_data_on_new
+        valid_regular_buffer_data_on_new,
+
+        %% from_binary/4, from_binary/3, from_binary/2 and from_binary/1
+        valid_length_on_from_binary,
+        valid_element_length_on_from_binary,
+        valid_type_on_from_binary,
+        valid_buffer_data_on_from_binary
     ].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,36 +28,20 @@ all() ->
 
 valid_length_on_new(_Config) ->
     %% new/3
-    Buffer1 = serde_arrow_buffer:new([<<1>>, <<2>>, <<3>>], byte, 3),
+    Buffer1 = serde_arrow_buffer:new([1, 2, 3], {s, 8}, 3),
     ?assertEqual(Buffer1#buffer.length, 3),
 
     %% new/2
-    Buffer2 = serde_arrow_buffer:new([<<1>>, <<2>>, <<3>>], byte),
-    ?assertEqual(Buffer2#buffer.length, 3),
-
-    Buffer3 = serde_arrow_buffer:new([1, 2, 3], {s, 8}),
-    ?assertEqual(Buffer3#buffer.length, 3).
+    Buffer2 = serde_arrow_buffer:new([1, 2, 3], {s, 8}),
+    ?assertEqual(Buffer2#buffer.length, 3).
 
 valid_element_length_on_new(_Config) ->
-    %% Works with raw bytes
-    Buffer1 = serde_arrow_buffer:new([<<1>>, <<2>>, <<3>>], byte),
-    ?assertEqual(Buffer1#buffer.element_length, 1),
-
-    %% Works with any other dtype
-    Buffer2 = serde_arrow_buffer:new([1, 2, 3], {s, 32}),
-    ?assertEqual(Buffer2#buffer.element_length, 4).
+    Buffer = serde_arrow_buffer:new([1, 2, 3], {s, 32}),
+    ?assertEqual(Buffer#buffer.element_length, 4).
 
 valid_type_on_new(_Config) ->
-    Buffer1 = serde_arrow_buffer:new([<<1>>, <<2>>, <<3>>], byte),
-    ?assertEqual(Buffer1#buffer.type, byte),
-
-    Buffer2 = serde_arrow_buffer:new([1, 2, 3], {s, 32}),
-    ?assertEqual(Buffer2#buffer.type, {s, 32}).
-
-valid_byte_buffer_data_on_new(_Config) ->
-    Buffer = serde_arrow_buffer:new([<<1>>, <<2>>, <<3>>], byte),
-    Data = <<1, 2, 3, (alternate_pad(61))/bitstring>>,
-    ?assertEqual(Buffer#buffer.data, Data).
+    Buffer = serde_arrow_buffer:new([1, 2, 3], {s, 32}),
+    ?assertEqual(Buffer#buffer.type, {s, 32}).
 
 valid_regular_buffer_data_on_new(_Config) ->
     %% Works without any nulls
@@ -78,9 +68,35 @@ valid_regular_buffer_data_on_new(_Config) ->
             (alternate_pad(59))/bitstring>>,
     ?assertEqual(Buffer4#buffer.data, Data4).
 
+%%%%%%%%%%%%%%%%%
+%% from_binary %%
+%%%%%%%%%%%%%%%%%
+
+valid_length_on_from_binary(_Config) ->
+    Buffer = serde_arrow_buffer:from_binary(<<1, 2, 3>>, byte, 3, 1),
+    ?assertEqual(Buffer#buffer.length, 3).
+
+valid_element_length_on_from_binary(_Config) ->
+    Buffer = serde_arrow_buffer:from_binary(<<1, 2, 3>>, byte, 3, 1),
+    ?assertEqual(Buffer#buffer.length, 3).
+
+valid_type_on_from_binary(_Config) ->
+    Buffer1 = serde_arrow_buffer:from_binary(<<1, 2, 3>>, byte, 3, 1),
+    ?assertEqual(Buffer1#buffer.type, byte),
+
+    Buffer2 = serde_arrow_buffer:from_binary(<<1, 2, 3>>, {s, 8}, 3, 1),
+    ?assertEqual(Buffer2#buffer.type, {s, 8}).
+
+valid_buffer_data_on_from_binary(_Config) ->
+    Buffer = serde_arrow_buffer:from_binary(<<1, 2, 3>>, byte, 3, 1),
+    Data = <<1, 2, 3, (alternate_pad(61))/bitstring>>,
+    ?assertEqual(Buffer#buffer.data, Data).
+
 %%%%%%%%%%%
 %% Utils %%
 %%%%%%%%%%%
 
+%% We need to use a simpler alternate pad function to test the buffer's pad
+%% output.
 alternate_pad(ByteLen) ->
     <<<<0>> || _X <- lists:seq(1, ByteLen)>>.
