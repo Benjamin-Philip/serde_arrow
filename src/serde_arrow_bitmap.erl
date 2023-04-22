@@ -1,6 +1,5 @@
-%% @private
-%% Utilitary functions for Array Implementations.
--module(serde_arrow_array_utils).
+%% Bitmap implementation of `serde_arrow'
+-module(serde_arrow_bitmap).
 -export([validity_bitmap/1]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
