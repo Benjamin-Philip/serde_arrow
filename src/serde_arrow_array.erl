@@ -1,12 +1,18 @@
 -module(serde_arrow_array).
--export([offsets/1]).
+-export([
+    layout/1,
+    type/1,
+    len/1,
+    null_count/1,
+    validity_bitmap/1,
+    offsets/1,
+    data/1
+]).
 
--include("serde_arrow_primitive_array.hrl").
+-include("serde_arrow_array.hrl").
 
--export_type([array/0]).
--type array() :: #primitive_array{}.
-
--optional_callbacks([offsets/1]).
+-export_type([layout/0]).
+-type layout() :: primitive.
 
 %% TODO: Write better documentation.
 
@@ -15,27 +21,43 @@
 %%%%%%%%%%%%%%%%%%%%
 
 -callback new(Value :: [serde_arrow_type:erlang_type()], Type :: serde_arrow_type:arrow_type()) ->
-    Array :: array().
+    Array :: #array{}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Array Data and Metadata Access %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
--callback type(Array :: array()) -> Type :: serde_arrow_type:arrow_type().
+%% Returns the layout of an array.
+-spec layout(Array :: #array{}) -> Layout :: layout().
+layout(Array) ->
+    Array#array.layout.
+
 %% Returns the type of an array.
+-spec type(Array :: #array{}) -> Type :: serde_arrow_type:arrow_type().
+type(Array) ->
+    Array#array.type.
 
--callback len(Array :: array()) -> Length :: pos_integer().
 %% Returns the length of an array.
+-spec len(Array :: #array{}) -> Length :: pos_integer().
+len(Array) ->
+    Array#array.len.
 
--callback null_count(Array :: array()) -> NullCount :: pos_integer().
 %% Returns the null count of an array.
+-spec null_count(Array :: #array{}) -> NullCount :: pos_integer().
+null_count(Array) ->
+    Array#array.null_count.
 
--callback validity_bitmap(Array :: array()) -> ValidityBitmap :: binary() | undefined.
 %% Returns the validity bitmap of an array.
+-spec validity_bitmap(Array :: #array{}) -> ValidityBitmap :: #buffer{} | undefined.
+validity_bitmap(Array) ->
+    Array#array.validity_bitmap.
 
--callback offsets(Array :: array()) -> Offsets :: [pos_integer()] | undefined.
 %% Returns the offsets of an array.
+-spec offsets(Array :: #array{}) -> Offsets :: #buffer{} | undefined.
+offsets(Array) ->
+    Array#array.offsets.
 
--spec offsets(_Array :: array()) -> Offsets :: undefined.
-offsets(_Array) ->
-    undefined.
+%% Returns the data of an array.
+-spec data(Array :: #array{}) -> Data :: #buffer{} | undefined.
+data(Array) ->
+    Array#array.data.

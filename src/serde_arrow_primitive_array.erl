@@ -31,15 +31,15 @@
 -behaviour(serde_arrow_array).
 
 -export([
-    new/2,
-    type/1,
-    len/1,
-    null_count/1,
-    validity_bitmap/1,
-    data/1
+    new/2
+    %% type/1,
+    %% len/1,
+    %% null_count/1,
+    %% validity_bitmap/1,
+    %% data/1
 ]).
 
--include("serde_arrow_primitive_array.hrl").
+-include("serde_arrow_array.hrl").
 
 %%%%%%%%%%%%%%%%%%%%
 %% Array Creation %%
@@ -48,37 +48,18 @@
 %% TODO: Write better documentation.
 
 -spec new(Value :: [serde_arrow_type:erlang_type()], Type :: serde_arrow_type:arrow_type()) ->
-    Array :: #primitive_array{}.
+    Array :: #array{}.
 %% @doc Creates a new primitive array.
 %% @end
 new(Value, Type) ->
     Len = length(Value),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
     Bin = serde_arrow_buffer:new(Value, Type),
-    #primitive_array{
-        type = Type, len = Len, null_count = NullCount, validity_bitmap = Bitmap, data = Bin
+    #array{
+        layout = primitive,
+        type = Type,
+        len = Len,
+        null_count = NullCount,
+        validity_bitmap = Bitmap,
+        data = Bin
     }.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Primitive Array Data and Metadata Access %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
--spec type(Array :: #primitive_array{}) -> Type :: serde_arrow_type:arrow_type().
-type(Array) ->
-    Array#primitive_array.type.
-
--spec len(Array :: #primitive_array{}) -> Len :: pos_integer().
-len(Array) ->
-    Array#primitive_array.len.
-
--spec null_count(Array :: #primitive_array{}) -> NullCount :: pos_integer().
-null_count(Array) ->
-    Array#primitive_array.null_count.
-
--spec validity_bitmap(Array :: #primitive_array{}) -> ValidityBitmap :: binary() | undefined.
-validity_bitmap(Array) ->
-    Array#primitive_array.validity_bitmap.
-
--spec data(Array :: #primitive_array{}) -> Data :: binary() | undefined.
-data(Array) ->
-    Array#primitive_array.data.
