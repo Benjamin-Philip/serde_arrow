@@ -38,29 +38,22 @@ valid_validity_bitmap(_Config) ->
 
     %% Respects both Erlang's and Elixir's conventions
     {Bitmap2, _NullCount2} = serde_arrow_bitmap:validity_bitmap([1, undefined, 2, 3]),
-    Buffer2 = buffer(<<0:1, 0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 1:1>>),
+    Buffer2 = serde_arrow_test_utils:byte_buffer(<<0:1, 0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 1:1>>),
     ?assertEqual(Bitmap2, Buffer2),
 
     {Bitmap3, _NullCount3} = serde_arrow_bitmap:validity_bitmap([1, nil, 2, 3]),
-    Buffer3 = buffer(<<0:1, 0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 1:1>>),
+    Buffer3 = serde_arrow_test_utils:byte_buffer(<<0:1, 0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 1:1>>),
     ?assertEqual(Bitmap3, Buffer3),
 
     {Bitmap4, _NullCount4} = serde_arrow_bitmap:validity_bitmap([1, undefined, nil, 2, 3]),
-    Buffer4 = buffer(<<0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 0:1, 1:1>>),
+    Buffer4 = serde_arrow_test_utils:byte_buffer(<<0:1, 0:1, 0:1, 1:1, 1:1, 0:1, 0:1, 1:1>>),
     ?assertEqual(Bitmap4, Buffer4),
 
     %% Works with input greater than 8 elements
     {Bitmap5, _NullCount5} = serde_arrow_bitmap:validity_bitmap([
         1, 2, undefined, 4, 5, 6, 7, 8, nil, 10
     ]),
-    Buffer5 = buffer(
+    Buffer5 = serde_arrow_test_utils:byte_buffer(
         <<1:1, 1:1, 1:1, 1:1, 1:1, 0:1, 1:1, 1:1, 0:1, 0:1, 0:1, 0:1, 0:1, 0:1, 1:1, 0:1>>
     ),
     ?assertEqual(Bitmap5, Buffer5).
-
-%%%%%%%%%%%
-%% Utils %%
-%%%%%%%%%%%
-
-buffer(Bitmap) ->
-    serde_arrow_buffer:from_binary(Bitmap, byte, byte_size(Bitmap), 1).
