@@ -1,5 +1,6 @@
 -module(serde_arrow_array).
 -export([
+    new/3,
     layout/1,
     type/1,
     len/1,
@@ -22,6 +23,17 @@
 
 -callback new(Value :: [serde_arrow_type:erlang_type()], Type :: serde_arrow_type:arrow_type()) ->
     Array :: #array{}.
+%% Creates a new array, given its value and type.
+
+%% A common way to create a new array, given its layout, value, and type.
+-spec new(
+    Layout :: layout(),
+    Value :: [serde_arrow_type:erlang_type()],
+    Type :: serde_arrow_type:arrow_type()
+) ->
+    Array :: #array{}.
+new(primitive, Value, Type) ->
+    serde_arrow_primitive_array:new(Value, Type).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Array Data and Metadata Access %%

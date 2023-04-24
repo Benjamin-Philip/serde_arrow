@@ -9,6 +9,10 @@
 
 all() ->
     [
+        %% creation tests
+        valid_array_on_new,
+
+        %% data and metadata tests
         valid_layout_on_access,
         valid_type_on_access,
         valid_len_on_access,
@@ -18,34 +22,43 @@ all() ->
         valid_data_on_access
     ].
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Array Creation Tests %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+valid_array_on_new(_Config) ->
+    Given = serde_arrow_array:new(primitive, [1, 2, 3], {s, 8}),
+    Expected = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
+    ?assertEqual(Given, Expected).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Array Data and Metadata Access Tests %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 valid_layout_on_access(_Config) ->
-    Array = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
+    Array = serde_arrow_array:new(primitive, [1, 2, 3], {s, 8}),
     ?assertEqual(serde_arrow_array:layout(Array), primitive).
 
 valid_type_on_access(_Config) ->
-    Array = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
+    Array = serde_arrow_array:new(primitive, [1, 2, 3], {s, 8}),
     ?assertEqual(serde_arrow_array:type(Array), {s, 8}).
 
 valid_len_on_access(_Config) ->
-    Array = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
+    Array = serde_arrow_array:new(primitive, [1, 2, 3], {s, 8}),
     ?assertEqual(serde_arrow_array:len(Array), 3).
 
 valid_null_count_on_access(_Config) ->
-    Array = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
+    Array = serde_arrow_array:new(primitive, [1, 2, 3], {s, 8}),
     ?assertEqual(serde_arrow_array:null_count(Array), 0).
 
 valid_validity_bitmap_on_access(_Config) ->
-    Array = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
+    Array = serde_arrow_array:new(primitive, [1, 2, 3], {s, 8}),
     ?assertEqual(serde_arrow_array:validity_bitmap(Array), undefined).
 
 valid_offsets_on_access(_Config) ->
-    Array = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
+    Array = serde_arrow_array:new(primitive, [1, 2, 3], {s, 8}),
     ?assertEqual(serde_arrow_array:offsets(Array), undefined).
 
 valid_data_on_access(_Config) ->
-    Array = serde_arrow_primitive_array:new([1, 2, 3], {s, 8}),
+    Array = serde_arrow_array:new(primitive, [1, 2, 3], {s, 8}),
     ?assertEqual((serde_arrow_array:data(Array))#buffer.data, <<1, 2, 3, 0:(61 * 8)>>).
