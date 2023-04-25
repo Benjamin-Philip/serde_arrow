@@ -5,6 +5,7 @@
 %% @end
 %%%-----------------------------------------------------------------------------
 -module(serde_arrow_type).
+-export([bit_length/1, byte_length/1, serialize/2]).
 -export_type([
     arrow_type/0,
     arrow_bool/0,
@@ -21,9 +22,7 @@
     | arrow_float().
 %% Any primitive logical type in Apache Arrow that is supported by `serde_arrow'.
 
--type arrow_bool() ::
-    arrow_true
-    | arrow_false.
+-type arrow_bool() :: arrow_boolean.
 %% Apache Arrow Boolean. One of `True' or `False'
 
 -type arrow_int() ::
@@ -51,8 +50,31 @@
 
 -type erlang_type() ::
     boolean()
-    | nil
+    | undefined
     | integer()
     | float().
 %% Any Erlang datatype which `serde_arrow' supports serializing from and
 %% deserializing into.
+
+-spec bit_length(Type :: arrow_type()) -> Length :: pos_integer().
+%% doc Returns the size of the type in bits.
+bit_length({Type, Size}) when (Type =:= s) orelse (Type =:= u) orelse (Type =:= f) ->
+    Size;
+bit_length(arrow_boolean) ->
+    1.
+
+-spec byte_length(Type :: arrow_type()) -> Length :: pos_integer().
+%% doc Returns the size of the type in bytes.
+byte_length(arrow_boolean) ->
+    %% This is a stub function.
+    %% TODO Find out the Arrow convention for Boolean Buffers
+    1;
+byte_length(Type) ->
+    round(bit_length(Type) / 8).
+
+serialize(Value, {s, Size}) ->
+    <<Value:Size/little-signed-integer>>;
+serialize(Value, {u, Size}) ->
+    <<Value:Size/little-unsigned-integer>>;
+serialize(Value, {f, Size}) ->
+    <<Value:Size/little-float>>.

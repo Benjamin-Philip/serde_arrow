@@ -43,24 +43,24 @@ These can have support gradually added:
 - [ ] UTF 8
 - [ ] Large UTF 8
 
-** TODO Physical Memory Layout aides [0/3]
+** TODO Physical Memory Layout aides [3/3]
 
 Apart from the actual data, the memory layout includes things like a null count,
 a validity bitmaps, and offsets. We need to have ways to represent and work with
 these before we can work with physical layouts themselves
 
-- [ ] [[https://arrow.apache.org/docs/format/Columnar.html#null-count][Null count]]
-- [ ] [[https://arrow.apache.org/docs/format/Columnar.html#validity-bitmaps][Validity bitmaps]]
-- [ ] [[https://arrow.apache.org/docs/format/Columnar.html#array-lengths][Array length]]
+- [X] [[https://arrow.apache.org/docs/format/Columnar.html#null-count][Null count]]
+- [X] [[https://arrow.apache.org/docs/format/Columnar.html#validity-bitmaps][Validity bitmaps]]
+- [X] [[https://arrow.apache.org/docs/format/Columnar.html#array-lengths][Array length]]
 
-** TODO Physical Memory Layout [0/9]
+** TODO Physical Memory Layout [1/9]
 
 These are the actual Memory Layouts we need to support. Not all of them need to
 be supported immediately. The Layouts from Primitive Layout to Struct Layout
 (inclusive) need immediate support for development. The rest can have support
 added gradually.
 
-*** TODO Fixed-Size Primitive Layout
+*** DONE Fixed-Size Primitive Layout
 
 Next we need to support the [[https://arrow.apache.org/docs/format/Columnar.html#fixed-size-primitive-layout][Fixed-Size Primitive Layout]], the simplest (other
 than the Null Layout) of the Physical Memory Layouts (which technically are
