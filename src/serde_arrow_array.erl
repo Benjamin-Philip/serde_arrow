@@ -86,7 +86,7 @@
 -include("serde_arrow_array.hrl").
 
 -export_type([layout/0]).
--type layout() :: primitive | binary.
+-type layout() :: fixed_primitive | variable_binary.
 %% Represents the Layout of an Array.
 
 %%%%%%%%%%%%%%%%%%%%
@@ -104,8 +104,8 @@
     Type :: serde_arrow_type:arrow_type()
 ) ->
     Array :: #array{}.
-new(primitive, Value, Type) ->
-    serde_arrow_primitive_array:new(Value, Type).
+new(fixed_primitive, Value, Type) ->
+    serde_arrow_fixed_primitive_array:new(Value, Type).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Array Data and Metadata Access %%

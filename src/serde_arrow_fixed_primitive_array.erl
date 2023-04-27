@@ -4,7 +4,7 @@
 %%
 %% <ol>
 %%  <li>
-%%      `layout', of type {@link atom()}, and a constant value of `primitive'.
+%%      `layout', of type {@link atom()}, and a constant value of `fixed_primitive'.
 %%  </li>
 %%  <li>
 %%       `type', of type {@link serde_arrow_type:arrow_type()}, which represents
@@ -31,7 +31,7 @@
 %%
 %% [2]: [https://arrow.apache.org/docs/format/Columnar.html#validity-bitmaps]
 %% @end
--module(serde_arrow_primitive_array).
+-module(serde_arrow_fixed_primitive_array).
 -behaviour(serde_arrow_array).
 
 -export([new/2]).
@@ -51,7 +51,7 @@ new(Value, Type) ->
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
     Bin = serde_arrow_buffer:new(Value, Type),
     #array{
-        layout = primitive,
+        layout = fixed_primitive,
         type = Type,
         len = Len,
         null_count = NullCount,

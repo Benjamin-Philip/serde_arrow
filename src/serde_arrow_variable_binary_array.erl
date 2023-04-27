@@ -3,7 +3,7 @@
 %% The Variable-Sized Binary Layout[1] provides support for storing binaries of
 %% varying length in a way similar to the primitive layout, i.e. in a 1
 %% Dimensional Array.
--module(serde_arrow_binary_array).
+-module(serde_arrow_variable_binary_array).
 -export([new/1]).
 
 -include("serde_arrow_array.hrl").
@@ -15,7 +15,7 @@ new(Values) ->
     Bin = serde_arrow_buffer:new(Values, bin),
     Offsets = serde_arrow_offsets:new(Values, bin),
     #array{
-        layout = binary,
+        layout = variable_binary,
         type = bin,
         len = Len,
         null_count = NullCount,
