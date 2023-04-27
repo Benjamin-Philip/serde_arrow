@@ -12,7 +12,7 @@
     arrow_int/0,
     arrow_uint/0,
     arrow_float/0,
-    bin/0,
+    arrow_bin/0,
     erlang_type/0
 ]).
 
@@ -21,10 +21,10 @@
     | arrow_int()
     | arrow_uint()
     | arrow_float()
-    | bin().
+    | arrow_bin().
 %% Any primitive logical type in Apache Arrow that is supported by `serde_arrow'.
 
--type arrow_bool() :: arrow_boolean.
+-type arrow_bool() :: b.
 %% Apache Arrow Boolean. One of `True' or `False'
 
 -type arrow_int() ::
@@ -50,7 +50,7 @@
 %% Any floating point number in Apache Arrow. Includes `Float 16', `Float 32'
 %% and `Float 64'.
 
--type bin() :: bin.
+-type arrow_bin() :: bin.
 %% Any binary whose length in bits is a multiple of 8.
 
 -type erlang_type() ::
