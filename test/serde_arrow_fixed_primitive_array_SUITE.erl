@@ -72,7 +72,9 @@ valid_validity_bitmap_on_new(_Config) ->
     ),
 
     %% Correctly validates on input greater than 8 elements
-    Array5 = serde_arrow_fixed_primitive_array:new([1, 2, undefined, 4, 5, 6, 7, 8, nil, 10], {s, 8}),
+    Array5 = serde_arrow_fixed_primitive_array:new(
+        [1, 2, undefined, 4, 5, 6, 7, 8, nil, 10], {s, 8}
+    ),
     ?assertEqual(
         Array5#array.validity_bitmap,
         serde_arrow_test_utils:byte_buffer(
