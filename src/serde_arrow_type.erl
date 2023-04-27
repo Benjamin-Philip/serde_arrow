@@ -24,7 +24,7 @@
     | arrow_bin().
 %% Any primitive logical type in Apache Arrow that is supported by `serde_arrow'.
 
--type arrow_bool() :: b.
+-type arrow_bool() :: bool.
 %% Apache Arrow Boolean. One of `True' or `False'
 
 -type arrow_int() ::
@@ -67,7 +67,7 @@
 %% doc Returns the size of the type in bits.
 bit_length({Type, Size}) when (Type =:= s) orelse (Type =:= u) orelse (Type =:= f) ->
     Size;
-bit_length(arrow_boolean) ->
+bit_length(bool) ->
     1;
 bit_length(bin) ->
     %% This is a stub function.
@@ -75,7 +75,7 @@ bit_length(bin) ->
 
 -spec byte_length(Type :: arrow_type()) -> Length :: pos_integer() | undefined.
 %% doc Returns the size of the type in bytes.
-byte_length(arrow_boolean) ->
+byte_length(bool) ->
     %% This is a stub function.
     %% TODO Find out the Arrow convention for Boolean Buffers
     1;
