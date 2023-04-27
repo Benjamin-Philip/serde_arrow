@@ -11,6 +11,7 @@
 %%      Each slot's length (in bytes) is a positive integer. As a result when we
 %%      say that a slot has a length of 1, we mean that each slot has a length of
 %%      1 byte.
+%%  </li>
 %%  <li>
 %%      The buffer's length in the metadata refers to the unpadded binary's size in bytes.
 %%  </li>
@@ -75,7 +76,7 @@ from_binary(Values, Type, Len) ->
 -spec slot(
     Value :: [serde_arrow_type:erlang_type()],
     Type :: serde_arrow_type:arrow_type(),
-    pos_integer() | undefined
+    ElementLen :: pos_integer() | undefined
 ) -> binary().
 slot(Value, _Type, ElementLen) when (Value =:= undefined) orelse (Value =:= nil) ->
     pad(<<>>, ElementLen);
