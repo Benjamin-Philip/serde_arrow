@@ -86,7 +86,7 @@
 -include("serde_arrow_array.hrl").
 
 -export_type([layout/0]).
--type layout() :: primitive.
+-type layout() :: primitive | binary.
 %% Represents the Layout of an Array.
 
 %%%%%%%%%%%%%%%%%%%%
