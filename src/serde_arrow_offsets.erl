@@ -1,24 +1,23 @@
 -module(serde_arrow_offsets).
--export([new/3]).
+-export([new/2]).
 
 -include("serde_arrow_buffer.hrl").
 
 -spec new(
     Value :: [serde_arrow_type:erlang_type()],
-    Type :: serde_arrow_type:arrow_type(),
-    Length :: pos_integer()
+    Type :: serde_arrow_type:arrow_type()
 ) ->
     Buffer :: #buffer{}.
-new(Values, Type, Length) ->
+new(Values, Type) ->
     Offsets = offsets(Values, [0], 0, Type),
     serde_arrow_buffer:new(Offsets, {s, 32}).
 
 -spec offsets(
     Value :: [serde_arrow_type:erlang_type()],
-    Acc :: [pos_integer()],
+    Acc :: [non_neg_integer()],
     Offset :: non_neg_integer(),
     Type :: serde_arrow_type:arrow_type()
-) -> [pos_integer()].
+) -> Offsets :: [serde_arrow_type:erlang_type()].
 offsets([Value | Rest], Acc, Offset, Type) when (Value =:= undefined) orelse (Value =:= nil) ->
     offsets(Rest, [Offset | Acc], Offset, Type);
 offsets([Value | Rest], Acc, Offset, Type) ->

@@ -83,13 +83,13 @@ valid_validity_bitmap_on_new(_Config) ->
 
 valid_offsets_on_new(_Config) ->
     Array = serde_arrow_binary_array:new([<<1, 2>>, <<3>>, undefined, <<4>>, nil, <<5>>]),
-    %% ?assertEqual(Array#array.offsets, undefined).
-    undefined.
+    Buffer = serde_arrow_buffer:new([0, 2, 3, 3, 4, 4, 5], {s, 32}),
+    ?assertEqual(Array#array.offsets, Buffer).
 
 valid_data_on_new(_Config) ->
     Array1 = serde_arrow_binary_array:new([<<1, 2>>, <<3>>, <<4>>, <<5>>]),
     Buffer1 = serde_arrow_test_utils:byte_buffer(<<1, 2, 3, 4, 5>>),
-    %% ?assertEqual(Array1#array.data, Buffer1),
+    ?assertEqual(Array1#array.data, Buffer1),
 
     Array2 = serde_arrow_binary_array:new([
         <<1, 2>>, <<3, 4, 5>>, undefined, <<6, 7, 8>>, nil, <<9, 10>>

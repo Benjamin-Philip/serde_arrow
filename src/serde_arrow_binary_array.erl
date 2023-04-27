@@ -8,16 +8,18 @@
 
 -include("serde_arrow_array.hrl").
 
--spec new(Value :: [serde_arrow_type:erlang_type()]) -> Array :: #array{}.
-new(Value) ->
-    Len = length(Value),
-    {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
-    Bin = serde_arrow_buffer:new(Value, bin),
+-spec new(Values :: [serde_arrow_type:erlang_type()]) -> Array :: #array{}.
+new(Values) ->
+    Len = length(Values),
+    {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
+    Bin = serde_arrow_buffer:new(Values, bin),
+    Offsets = serde_arrow_offsets:new(Values, bin),
     #array{
         layout = binary,
         type = bin,
         len = Len,
         null_count = NullCount,
         validity_bitmap = Bitmap,
+        offsets = Offsets,
         data = Bin
     }.

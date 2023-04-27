@@ -35,10 +35,12 @@ valid_offset_on_undefined_and_nil(_Config) ->
     Buffer = buffer([0, 2, 3, 3, 6, 6]),
     ?assertEqual(Offsets, Buffer).
 
-%% Utils
+%%%%%%%%%%%
+%% Utils %%
+%%%%%%%%%%%
 
 offsets(Values) ->
-    serde_arrow_offsets:new(Values, bin, length(Values)).
+    serde_arrow_offsets:new(Values, bin).
 
 buffer(Values) ->
     serde_arrow_buffer:new(Values, {s, 32}).
