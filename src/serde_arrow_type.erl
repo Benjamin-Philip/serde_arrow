@@ -63,7 +63,7 @@
 %% Any Erlang datatype which `serde_arrow' supports serializing from and
 %% deserializing into.
 
--spec bit_length(Type :: arrow_type()) -> Length :: pos_integer() | undefined.
+-spec bit_length(Type :: arrow_type()) -> Length :: pos_integer().
 %% @doc Returns the size of the type in bits.
 bit_length({Type, Size}) when (Type =:= s) orelse (Type =:= u) orelse (Type =:= f) ->
     Size;
