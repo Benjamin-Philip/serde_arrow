@@ -74,7 +74,7 @@ from_binary(Values, Type, Len) ->
     #buffer{type = Type, length = Len, data = Bin}.
 
 -spec slot(
-    Value :: [serde_arrow_type:erlang_type()],
+    Value :: serde_arrow_type:erlang_type(),
     Type :: serde_arrow_type:arrow_type(),
     ElementLen :: pos_integer() | undefined
 ) -> binary().
