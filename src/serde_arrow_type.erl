@@ -70,8 +70,7 @@ bit_length({Type, Size}) when (Type =:= s) orelse (Type =:= u) orelse (Type =:= 
 bit_length(bool) ->
     1;
 bit_length(bin) ->
-    %% This is a stub function.
-    undefined.
+    erlang:error(badarg).
 
 -spec byte_length(Type :: arrow_type()) -> Length :: pos_integer() | undefined.
 %% @doc Returns the size of the type in bytes.
