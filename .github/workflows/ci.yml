@@ -33,7 +33,7 @@ jobs:
         run: rebar3 fmt --check
 
   ct:
-    name: Common Test
+    name: Run Common Test
     runs-on: ubuntu-latest
 
     steps:
@@ -60,7 +60,7 @@ jobs:
         run: rebar3 ct
 
   dialyzer:
-    name: Dialyzer
+    name: Run Dialyzer
     runs-on: ubuntu-latest
 
     steps:
@@ -85,3 +85,30 @@ jobs:
 
       - name: Run dialyzer
         run: rebar3 dialyzer
+
+  docbuild_test:
+    name: Test Generate the Docs
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Erlang/OTP
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: 25.1.0
+          rebar3-version: '3.18.0'
+
+      - name: Cache Hex packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/rebar3/hex/hexpm/packages
+          key: ${{ runner.os }}-hex-${{ hashFiles(format('{0}{1}', github.workspace, '/rebar.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-hex-
+
+      - name: Compile
+        run: rebar3 compile
+
+      - name: Generate Docs
+        run: rebar3 ex_doc
