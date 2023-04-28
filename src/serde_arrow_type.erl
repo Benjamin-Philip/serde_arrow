@@ -64,7 +64,7 @@
 %% deserializing into.
 
 -spec bit_length(Type :: arrow_type()) -> Length :: pos_integer() | undefined.
-%% doc Returns the size of the type in bits.
+%% @doc Returns the size of the type in bits.
 bit_length({Type, Size}) when (Type =:= s) orelse (Type =:= u) orelse (Type =:= f) ->
     Size;
 bit_length(bool) ->
@@ -74,7 +74,7 @@ bit_length(bin) ->
     undefined.
 
 -spec byte_length(Type :: arrow_type()) -> Length :: pos_integer() | undefined.
-%% doc Returns the size of the type in bytes.
+%% @doc Returns the size of the type in bytes.
 byte_length(bool) ->
     %% This is a stub function.
     %% TODO Find out the Arrow convention for Boolean Buffers
