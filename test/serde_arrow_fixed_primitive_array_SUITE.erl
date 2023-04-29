@@ -15,7 +15,10 @@ all() ->
         valid_null_count_on_new,
         valid_validity_bitmap_on_new,
         valid_offsets_on_new,
-        valid_data_on_new
+        valid_data_on_new,
+
+        %% Behaviour Adherence
+        new_callback
     ].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,3 +113,14 @@ valid_data_on_new(_Config) ->
         <<1/little-signed-integer, 2/little-signed-integer, 0, 0, 3/little-signed-integer,
             <<0:(59 * 8)>>/bitstring>>,
     ?assertEqual(Array4#array.data#buffer.data, Data4).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Array Behaviour Adherence Tests %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+new_callback(_Config) ->
+    Array = serde_arrow_fixed_primitive_array:new([1, 2], {s, 8}),
+    Callback = serde_arrow_fixed_primitive_array:new([1, 2], [{type, {s, 8}}]),
+    ?assertEqual(Callback, Array),
+
+    ?assertError(badarg, serde_arrow_fixed_primitive_array:new([1, 2], [])).

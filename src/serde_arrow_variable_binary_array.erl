@@ -4,9 +4,15 @@
 %% varying length in a way similar to the primitive layout, i.e. in a 1
 %% Dimensional Array.
 -module(serde_arrow_variable_binary_array).
--export([new/1]).
+-behaviour(serde_arrow_array).
+
+-export([new/1, new/2]).
 
 -include("serde_arrow_array.hrl").
+
+-spec new(Values :: [serde_arrow_type:erlang_type()], Opts :: list()) -> Array :: #array{}.
+new(Values, _Opts) ->
+    new(Values).
 
 -spec new(Values :: [serde_arrow_type:erlang_type()]) -> Array :: #array{}.
 new(Values) ->

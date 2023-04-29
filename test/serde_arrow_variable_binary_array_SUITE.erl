@@ -15,7 +15,10 @@ all() ->
         valid_null_count_on_new,
         valid_validity_bitmap_on_new,
         valid_offsets_on_new,
-        valid_data_on_new
+        valid_data_on_new,
+
+        %% Behaviour Adherence
+        new_callback
     ].
 
 valid_layout_on_new(_Config) ->
@@ -96,3 +99,12 @@ valid_data_on_new(_Config) ->
     ]),
     Buffer2 = serde_arrow_test_utils:byte_buffer(<<1, 2, 3, 4, 5, 6, 7, 8, 9, 10>>),
     ?assertEqual(Array2#array.data, Buffer2).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Array Behaviour Adherence Tests %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+new_callback(_Config) ->
+    Array = serde_arrow_variable_binary_array:new([<<1>>, <<2>>]),
+    Callback = serde_arrow_variable_binary_array:new([<<1>>, <<2>>], []),
+    ?assertEqual(Callback, Array).
