@@ -3,4 +3,4 @@
 
 %% This function returns a buffer of type byte, given a binary as input
 byte_buffer(Binary) ->
-    serde_arrow_buffer:from_binary(Binary, byte, byte_size(Binary), 1).
+    serde_arrow_buffer:from_binary(Binary, bin, byte_size(Binary)).

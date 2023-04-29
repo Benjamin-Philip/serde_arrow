@@ -4,7 +4,7 @@
 %%
 %% <ol>
 %%  <li>
-%%      `layout', of type {@link atom()}, and a constant value of `primitive'.
+%%      `layout', of type {@link atom()}, and a constant value of `fixed_primitive'.
 %%  </li>
 %%  <li>
 %%       `type', of type {@link serde_arrow_type:arrow_type()}, which represents
@@ -31,7 +31,7 @@
 %%
 %% [2]: [https://arrow.apache.org/docs/format/Columnar.html#validity-bitmaps]
 %% @end
--module(serde_arrow_primitive_array).
+-module(serde_arrow_fixed_primitive_array).
 -behaviour(serde_arrow_array).
 
 -export([new/2]).
@@ -43,15 +43,27 @@
 %%%%%%%%%%%%%%%%%%%%
 
 %% @doc Creates a new primitive array, given its value and type.
+%%
+%% Accepts a proplist with the type, or the type directly.
 %% @end
--spec new(Value :: [serde_arrow_type:erlang_type()], Type :: serde_arrow_type:arrow_type()) ->
+-spec new(
+    Value :: [serde_arrow_type:erlang_type()],
+    Type :: [proplist:property()] | serde_arrow_type:arrow_type()
+) ->
     Array :: #array{}.
-new(Value, Type) ->
+new(Value, Opts) when is_list(Opts) ->
+    case proplists:get_value(type, Opts) of
+        undefined ->
+            erlang:error(badarg);
+        Type when is_tuple(Type) orelse is_atom(Type) ->
+            new(Value, Type)
+    end;
+new(Value, Type) when is_tuple(Type) orelse is_atom(Type) ->
     Len = length(Value),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
     Bin = serde_arrow_buffer:new(Value, Type),
     #array{
-        layout = primitive,
+        layout = fixed_primitive,
         type = Type,
         len = Len,
         null_count = NullCount,

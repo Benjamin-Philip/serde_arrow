@@ -81,7 +81,7 @@ bitmap([X1, X2, X3, X4, X5, X6, X7, X8 | Rest], Acc, NullCount, ByteLen) ->
         ByteLen + 1
     );
 bitmap([], Acc, NullCount, ByteLen) ->
-    {serde_arrow_buffer:from_binary(Acc, byte, ByteLen, 1), NullCount};
+    {serde_arrow_buffer:from_binary(Acc, bin, ByteLen), NullCount};
 bitmap(LeftOver, Acc, NullCount, ByteLen) ->
     Validities = lists:map(fun(X) -> validity(X) end, LeftOver),
     Len = length(Validities),

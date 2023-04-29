@@ -12,6 +12,7 @@
     arrow_int/0,
     arrow_uint/0,
     arrow_float/0,
+    arrow_bin/0,
     erlang_type/0
 ]).
 
@@ -19,10 +20,11 @@
     arrow_bool()
     | arrow_int()
     | arrow_uint()
-    | arrow_float().
+    | arrow_float()
+    | arrow_bin().
 %% Any primitive logical type in Apache Arrow that is supported by `serde_arrow'.
 
--type arrow_bool() :: arrow_boolean.
+-type arrow_bool() :: bool.
 %% Apache Arrow Boolean. One of `True' or `False'
 
 -type arrow_int() ::
@@ -48,27 +50,36 @@
 %% Any floating point number in Apache Arrow. Includes `Float 16', `Float 32'
 %% and `Float 64'.
 
+-type arrow_bin() :: bin.
+%% Any binary whose length in bits is a multiple of 8.
+
 -type erlang_type() ::
     boolean()
     | undefined
+    | nil
     | integer()
-    | float().
+    | float()
+    | binary().
 %% Any Erlang datatype which `serde_arrow' supports serializing from and
 %% deserializing into.
 
 -spec bit_length(Type :: arrow_type()) -> Length :: pos_integer().
-%% doc Returns the size of the type in bits.
+%% @doc Returns the size of the type in bits.
 bit_length({Type, Size}) when (Type =:= s) orelse (Type =:= u) orelse (Type =:= f) ->
     Size;
-bit_length(arrow_boolean) ->
-    1.
+bit_length(bool) ->
+    1;
+bit_length(bin) ->
+    erlang:error(badarg).
 
--spec byte_length(Type :: arrow_type()) -> Length :: pos_integer().
-%% doc Returns the size of the type in bytes.
-byte_length(arrow_boolean) ->
+-spec byte_length(Type :: arrow_type()) -> Length :: pos_integer() | undefined.
+%% @doc Returns the size of the type in bytes.
+byte_length(bool) ->
     %% This is a stub function.
     %% TODO Find out the Arrow convention for Boolean Buffers
     1;
+byte_length(bin) ->
+    undefined;
 byte_length(Type) ->
     round(bit_length(Type) / 8).
 
@@ -77,4 +88,6 @@ serialize(Value, {s, Size}) ->
 serialize(Value, {u, Size}) ->
     <<Value:Size/little-unsigned-integer>>;
 serialize(Value, {f, Size}) ->
-    <<Value:Size/little-float>>.
+    <<Value:Size/little-float>>;
+serialize(Value, bin) ->
+    Value.

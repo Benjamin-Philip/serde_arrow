@@ -86,26 +86,29 @@
 -include("serde_arrow_array.hrl").
 
 -export_type([layout/0]).
--type layout() :: primitive.
+-type layout() :: fixed_primitive | variable_binary.
 %% Represents the Layout of an Array.
 
 %%%%%%%%%%%%%%%%%%%%
 %% Array Creation %%
 %%%%%%%%%%%%%%%%%%%%
 
--callback new(Value :: [serde_arrow_type:erlang_type()], Type :: serde_arrow_type:arrow_type()) ->
+-callback new(Value :: [serde_arrow_type:erlang_type()], Opts :: [proplists:property()]) ->
     Array :: #array{}.
-%% Creates a new array of a certain layout, given its value and type.
+%% Creates a new array of a certain layout, given its value and options.
 
-%% @doc A common way to create a new array, given its layout, value, and type.
+%% @doc A common way to create a new array, given its layout, value, and options.
 -spec new(
     Layout :: layout(),
     Value :: [serde_arrow_type:erlang_type()],
-    Type :: serde_arrow_type:arrow_type()
+    Opts :: [proplists:property()]
 ) ->
     Array :: #array{}.
-new(primitive, Value, Type) ->
-    serde_arrow_primitive_array:new(Value, Type).
+new(Layout, Value, Opts) ->
+    case Layout of
+        fixed_primitive -> serde_arrow_fixed_primitive_array:new(Value, Opts);
+        variable_binary -> serde_arrow_variable_binary_array:new(Value, Opts)
+    end.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Array Data and Metadata Access %%
