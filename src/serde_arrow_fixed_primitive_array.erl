@@ -48,11 +48,11 @@
 %% @end
 -spec new(
     Value :: [serde_arrow_type:erlang_type()],
-    Type :: [proplist:property()] | serde_arrow_type:arrow_type()
+    Type :: map() | serde_arrow_type:arrow_type()
 ) ->
     Array :: #array{}.
-new(Value, Opts) when is_list(Opts) ->
-    case proplists:get_value(type, Opts) of
+new(Value, Opts) when is_map(Opts) ->
+    case maps:get(type, Opts, undefined) of
         undefined ->
             erlang:error(badarg);
         Type when is_tuple(Type) orelse is_atom(Type) ->

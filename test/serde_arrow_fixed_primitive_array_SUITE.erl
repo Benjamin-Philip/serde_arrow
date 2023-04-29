@@ -120,7 +120,7 @@ valid_data_on_new(_Config) ->
 
 new_callback(_Config) ->
     Array = serde_arrow_fixed_primitive_array:new([1, 2], {s, 8}),
-    Callback = serde_arrow_fixed_primitive_array:new([1, 2], [{type, {s, 8}}]),
+    Callback = serde_arrow_fixed_primitive_array:new([1, 2], #{type => {s, 8}}),
     ?assertEqual(Callback, Array),
 
-    ?assertError(badarg, serde_arrow_fixed_primitive_array:new([1, 2], [])).
+    ?assertError(badarg, serde_arrow_fixed_primitive_array:new([1, 2], #{foo => bar})).

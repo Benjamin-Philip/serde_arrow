@@ -27,11 +27,11 @@ all() ->
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 valid_array_on_new(_Config) ->
-    Given1 = serde_arrow_array:new(fixed_primitive, [1, 2, 3], [{type, {s, 8}}]),
+    Given1 = serde_arrow_array:new(fixed_primitive, [1, 2, 3], #{type => {s, 8}}),
     Expected1 = serde_arrow_fixed_primitive_array:new([1, 2, 3], {s, 8}),
     ?assertEqual(Given1, Expected1),
 
-    Given2 = serde_arrow_array:new(variable_binary, [<<1>>, <<2>>], []),
+    Given2 = serde_arrow_array:new(variable_binary, [<<1>>, <<2>>], #{}),
     Expected2 = serde_arrow_variable_binary_array:new([<<1>>, <<2>>]),
     ?assertEqual(Given2, Expected2).
 
