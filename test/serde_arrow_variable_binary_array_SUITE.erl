@@ -106,5 +106,5 @@ valid_data_on_new(_Config) ->
 
 new_callback(_Config) ->
     Array = serde_arrow_variable_binary_array:new([<<1>>, <<2>>]),
-    Callback = serde_arrow_variable_binary_array:new([<<1>>, <<2>>], []),
+    Callback = serde_arrow_variable_binary_array:new([<<1>>, <<2>>], #{}),
     ?assertEqual(Callback, Array).
