@@ -53,7 +53,7 @@ these before we can work with physical layouts themselves
 - [X] [[https://arrow.apache.org/docs/format/Columnar.html#validity-bitmaps][Validity bitmaps]]
 - [X] [[https://arrow.apache.org/docs/format/Columnar.html#array-lengths][Array length]]
 
-** TODO Physical Memory Layout [1/9]
+** TODO Physical Memory Layout [2/9]
 
 These are the actual Memory Layouts we need to support. Not all of them need to
 be supported immediately. The Layouts from Primitive Layout to Struct Layout
@@ -66,7 +66,7 @@ Next we need to support the [[https://arrow.apache.org/docs/format/Columnar.html
 than the Null Layout) of the Physical Memory Layouts (which technically are
 nested logical types).
 
-*** TODO Variable Binary Layout
+*** DONE Variable Binary Layout
 
 We now need to support the [[https://arrow.apache.org/docs/format/Columnar.html#variable-size-binary-layout][Variable Binary Layout]]. This may require supporting
 the Binary dtype.
