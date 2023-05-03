@@ -147,10 +147,20 @@
     | arrow_bin().
 %% Any primitive logical type in Apache Arrow that is supported by `serde_arrow'.
 
--type arrow_longhand_type() :: arrow_long_bool() | arrow_long_int() | arrow_long_uint() | arrow_long_float() | arrow_long_bin().
+-type arrow_longhand_type() ::
+    arrow_long_bool()
+    | arrow_long_int()
+    | arrow_long_uint()
+    | arrow_long_float()
+    | arrow_long_bin().
 %% Longhand syntax of any type.
 
--type arrow_shorthand_type() :: arrow_short_bool() | arrow_short_int() | arrow_short_uint() | arrow_short_float() | arrow_short_bin().
+-type arrow_shorthand_type() ::
+    arrow_short_bool()
+    | arrow_short_int()
+    | arrow_short_uint()
+    | arrow_short_float()
+    | arrow_short_bin().
 %% Shorthand syntax of any primitive type.
 
 %%%%%%%%%%%%%%

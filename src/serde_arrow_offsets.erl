@@ -59,7 +59,7 @@ new(Values, Type) ->
     Acc :: [non_neg_integer()],
     Offset :: non_neg_integer(),
     Type :: serde_arrow_type:arrow_longhand_type()
-    ) -> Offsets :: [non_neg_integer()].
+) -> Offsets :: [non_neg_integer()].
 offsets([Value | Rest], Acc, Offset, Type) when (Value =:= undefined) orelse (Value =:= nil) ->
     offsets(Rest, [Offset | Acc], Offset, Type);
 offsets([Value | Rest], Acc, Offset, Type) ->
@@ -69,7 +69,8 @@ offsets([], Acc, _Offset, _Type) ->
     lists:reverse(Acc).
 
 -spec len(
-    Value :: serde_arrow_type:type() | undefined | nil, Type :: serde_arrow_type:arrow_longhand_type()
+    Value :: serde_arrow_type:type() | undefined | nil,
+    Type :: serde_arrow_type:arrow_longhand_type()
 ) -> non_neg_integer().
 len(Value, bin) ->
     byte_size(Value);
