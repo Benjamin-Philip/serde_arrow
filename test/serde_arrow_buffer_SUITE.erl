@@ -31,15 +31,15 @@ valid_length_on_new(_Config) ->
     ?assertEqual(Buffer1#buffer.length, 3),
 
     %% With binaries
-    Buffer2 = serde_arrow_buffer:new([<<1, 2>>, <<3>>], bin),
+    Buffer2 = serde_arrow_buffer:new([<<1, 2>>, <<3>>], {bin, undefined}),
     ?assertEqual(Buffer2#buffer.length, 3).
 
 valid_type_on_new(_Config) ->
     Buffer1 = serde_arrow_buffer:new([1, 2, 3], {s, 32}),
     ?assertEqual(Buffer1#buffer.type, {s, 32}),
 
-    Buffer2 = serde_arrow_buffer:new([<<1, 2>>, <<3>>], bin),
-    ?assertEqual(Buffer2#buffer.type, bin).
+    Buffer2 = serde_arrow_buffer:new([<<1, 2>>, <<3>>], {bin, undefined}),
+    ?assertEqual(Buffer2#buffer.type, {bin, undefined}).
 
 valid_regular_buffer_data_on_new(_Config) ->
     %% Works without any nulls
@@ -68,7 +68,7 @@ valid_regular_buffer_data_on_new(_Config) ->
 
 valid_binary_buffer_data_on_new(_Config) ->
     %% Works without any nulls
-    Buffer1 = serde_arrow_buffer:new([<<1>>, <<2>>, <<3>>], bin),
+    Buffer1 = serde_arrow_buffer:new([<<1>>, <<2>>, <<3>>], {bin, undefined}),
     Data1 = <<1, 2, 3, (alternate_pad(61))/bitstring>>,
     ?assertEqual(Buffer1#buffer.data, Data1),
 
@@ -93,22 +93,18 @@ valid_binary_buffer_data_on_new(_Config) ->
 %%%%%%%%%%%%%%%%%
 
 valid_length_on_from_binary(_Config) ->
-    Buffer = serde_arrow_buffer:from_binary(<<1, 2, 3>>, bin, 3),
+    Buffer = serde_arrow_buffer:from_binary(<<1, 2, 3>>, {bin, undefined}, 3),
     ?assertEqual(Buffer#buffer.length, 3).
 
-%% valid_element_length_on_from_binary(_Config) ->
-%%     Buffer = serde_arrow_buffer:from_binary(<<1, 2, 3>>, bin, 3),
-%%     ?assertEqual(Buffer#buffer.length, 3).
-
 valid_type_on_from_binary(_Config) ->
-    Buffer1 = serde_arrow_buffer:from_binary(<<1, 2, 3>>, bin, 3),
-    ?assertEqual(Buffer1#buffer.type, bin),
+    Buffer1 = serde_arrow_buffer:from_binary(<<1, 2, 3>>, {bin, undefined}, 3),
+    ?assertEqual(Buffer1#buffer.type, {bin, undefined}),
 
     Buffer2 = serde_arrow_buffer:from_binary(<<1, 2, 3>>, {s, 8}, 3),
     ?assertEqual(Buffer2#buffer.type, {s, 8}).
 
 valid_buffer_data_on_from_binary(_Config) ->
-    Buffer = serde_arrow_buffer:from_binary(<<1, 2, 3>>, bin, 3),
+    Buffer = serde_arrow_buffer:from_binary(<<1, 2, 3>>, {bin, undefined}, 3),
     Data = <<1, 2, 3, (alternate_pad(61))/bitstring>>,
     ?assertEqual(Buffer#buffer.data, Data).
 

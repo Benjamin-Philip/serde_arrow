@@ -27,7 +27,7 @@ valid_layout_on_new(_Config) ->
 
 valid_type_on_new(_Config) ->
     Array = serde_arrow_variable_binary_array:new([<<1>>, <<2>>, <<3>>]),
-    ?assertEqual(Array#array.type, bin).
+    ?assertEqual(Array#array.type, {bin, undefined}).
 
 valid_len_on_new(_Config) ->
     Array1 = serde_arrow_variable_binary_array:new([<<1, 2>>, <<3>>]),

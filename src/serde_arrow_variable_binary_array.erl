@@ -21,11 +21,11 @@ new(Values, _Opts) ->
 new(Values) ->
     Len = length(Values),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
-    Bin = serde_arrow_buffer:new(Values, bin),
-    Offsets = serde_arrow_offsets:new(Values, bin),
+    Bin = serde_arrow_buffer:new(Values, {bin, undefined}),
+    Offsets = serde_arrow_offsets:new(Values, {bin, undefined}),
     #array{
         layout = variable_binary,
-        type = bin,
+        type = {bin, undefined},
         len = Len,
         null_count = NullCount,
         validity_bitmap = Bitmap,
