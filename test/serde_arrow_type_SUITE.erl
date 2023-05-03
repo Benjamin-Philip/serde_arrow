@@ -5,8 +5,6 @@
 -include_lib("common_test/include/ct.hrl").
 -include_lib("stdlib/include/assert.hrl").
 
--include("serde_arrow_type.hrl").
-
 %%%%%%%%%%%%%%%%%
 %% Util Macros %%
 %%%%%%%%%%%%%%%%%
