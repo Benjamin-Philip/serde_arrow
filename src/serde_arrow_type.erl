@@ -75,12 +75,18 @@
 %%  </tr>
 %% </table>
 %%
+%% Types that are shorthand are under the `t:arrow_shorthand_type()' and
+%% `arrow_short_*()' types.
+%%
 %% === Longhand Syntax ===
 %%
 %% In longhand syntax, you use a 2 tuple to to refer to the type, such that the
 %% tuple is `{Name, Size}'. Thus, `Int 8' would be represented as `{s, 8}'. Do
 %% note that in the case or Booleans and Binaries their `Size' is `undefined', as
 %% the have variable or undefined size.
+%%
+%% Types that are longhand are under the `t:arrow_longhand_type()' and
+%% `arrow_long_*()' types.
 %%
 %% == Nested Type ==
 %%
@@ -90,9 +96,11 @@
 %%
 %% == Native Type ==
 %%
-%% TODO Elaborate Native Type
-%%
-%% A Native Type is any Erlang Datatype that can be serialized by `serde_arrow'.
+%% A Native Type is any Erlang Datatype that can be serialized by `serde_arrow',
+%% and is represented by the type `t:native_type()'. It currently only includes
+%% values that are primitive in nature such as booleans, integers, floats,
+%% binaries, and additionally the atoms `undefined' and `nil' to represent a
+%% `NULL' value.
 %%
 %% @end
 %%%-----------------------------------------------------------------------------
@@ -128,7 +136,7 @@
     arrow_long_bin/0,
     arrow_short_bin/0,
 
-    erlang_type/0
+    native_type/0
 ]).
 
 -type arrow_type() ::
@@ -223,7 +231,7 @@
 %% Native Type %%
 %%%%%%%%%%%%%%%%%
 
--type erlang_type() ::
+-type native_type() ::
     boolean()
     | undefined
     | nil
@@ -300,7 +308,7 @@ byte_length({bin, undefined}) ->
 byte_length(Type) ->
     round(bit_length(Type) / 8).
 
--spec serialize(Value :: erlang_type(), Type :: arrow_longhand_type()) -> binary().
+-spec serialize(Value :: native_type(), Type :: arrow_longhand_type()) -> binary().
 serialize(Value, {s, Size}) ->
     <<Value:Size/little-signed-integer>>;
 serialize(Value, {u, Size}) ->

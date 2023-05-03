@@ -47,7 +47,7 @@
 %% Accepts a proplist with the type, or the type directly.
 %% @end
 -spec new(
-    Value :: [serde_arrow_type:erlang_type()],
+    Value :: [serde_arrow_type:native_type()],
     Type :: map() | serde_arrow_type:arrow_type()
 ) ->
     Array :: #array{}.

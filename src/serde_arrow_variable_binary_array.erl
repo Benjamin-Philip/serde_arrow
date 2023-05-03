@@ -12,12 +12,12 @@
 
 %% @doc Creates a Variable-Sized Binary Array given the values and options in the form of
 %% a proplist
--spec new(Values :: [serde_arrow_type:erlang_type()], Opts :: map()) -> Array :: #array{}.
+-spec new(Values :: [serde_arrow_type:native_type()], Opts :: map()) -> Array :: #array{}.
 new(Values, _Opts) ->
     new(Values).
 
 %% @doc Creates a Variable-Sized Binary Array given the values
--spec new(Values :: [serde_arrow_type:erlang_type()]) -> Array :: #array{}.
+-spec new(Values :: [serde_arrow_type:native_type()]) -> Array :: #array{}.
 new(Values) ->
     Len = length(Values),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),

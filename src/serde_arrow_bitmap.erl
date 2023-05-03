@@ -47,7 +47,7 @@
 
 %% @doc Returns the Validity Bitmap along with the Null Count, of
 %% an Array.
--spec validity_bitmap(Value :: [serde_arrow_type:erlang_type()]) ->
+-spec validity_bitmap(Value :: [serde_arrow_type:native_type()]) ->
     {Bitmap :: #buffer{}, non_neg_integer()}.
 validity_bitmap(Value) ->
     case (lists:member(undefined, Value)) orelse (lists:member(nil, Value)) of
@@ -58,7 +58,7 @@ validity_bitmap(Value) ->
     end.
 
 -spec bitmap(
-    Value :: [serde_arrow_type:erlang_type()],
+    Value :: [serde_arrow_type:native_type()],
     Acc :: binary(),
     NullCount :: non_neg_integer(),
     ByteLen :: non_neg_integer()
@@ -99,7 +99,7 @@ bitmap(LeftOver, Acc, NullCount, ByteLen) ->
         ByteLen + 1
     ).
 
--spec validity(X :: serde_arrow_type:erlang_type()) -> Validity :: 0 | 1.
+-spec validity(X :: serde_arrow_type:native_type()) -> Validity :: 0 | 1.
 validity(X) ->
     if
         (X =:= nil) orelse (X =:= undefined) ->

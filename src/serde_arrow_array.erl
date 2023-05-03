@@ -93,14 +93,14 @@
 %% Array Creation %%
 %%%%%%%%%%%%%%%%%%%%
 
--callback new(Value :: [serde_arrow_type:erlang_type()], Opts :: map()) ->
+-callback new(Value :: [serde_arrow_type:native_type()], Opts :: map()) ->
     Array :: #array{}.
 %% Creates a new array of a certain layout, given its value and options.
 
 %% @doc A common way to create a new array, given its layout, value, and options.
 -spec new(
     Layout :: layout(),
-    Value :: [serde_arrow_type:erlang_type()],
+    Value :: [serde_arrow_type:native_type()],
     Opts :: map()
 ) ->
     Array :: #array{}.

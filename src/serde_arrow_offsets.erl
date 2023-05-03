@@ -46,7 +46,7 @@
 
 %% @doc Returns the offsets array given some values And their type.
 -spec new(
-    Value :: [serde_arrow_type:erlang_type()],
+    Value :: [serde_arrow_type:native_type()],
     Type :: serde_arrow_type:arrow_longhand_type()
 ) ->
     Buffer :: #buffer{}.
@@ -55,7 +55,7 @@ new(Values, Type) ->
     serde_arrow_buffer:new(Offsets, {s, 32}).
 
 -spec offsets(
-    Value :: [serde_arrow_type:erlang_type()],
+    Value :: [serde_arrow_type:native_type()],
     Acc :: [non_neg_integer()],
     Offset :: non_neg_integer(),
     Type :: serde_arrow_type:arrow_longhand_type()
