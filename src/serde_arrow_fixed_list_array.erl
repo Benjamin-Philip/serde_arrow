@@ -10,7 +10,7 @@
 %%
 %% Accepts a map with the type, or the type directly.
 %% @end
--spec new(Values :: list(), Opts :: map()) -> Array :: #array{}.
+-spec new(Values :: list(), Type :: map() | serde_arrow_type:arrow_type()) -> Array :: #array{}.
 new(Values, Opts) when is_map(Opts) ->
     case maps:get(type, Opts, undefined) of
         undefined ->
