@@ -137,7 +137,9 @@ valid_nested_data_on_new(_Config) ->
     ?assertEqual(Array3#array.data, Data3),
 
     Array4 = array([[[1, 2], [3, 4]], undefined, [[5, 6], [7, 8]], nil], {fixed_list, s8, 2}),
-    Data4 = array([[1, 2], [3, 4], [undefined, undefined], [5, 6], [7, 8], [undefined, undefined]], s8),
+    Data4 = array(
+        [[1, 2], [3, 4], [undefined, undefined], [5, 6], [7, 8], [undefined, undefined]], s8
+    ),
     ?assertEqual(Array4#array.data, Data4),
 
     %% Level 2 Nesting

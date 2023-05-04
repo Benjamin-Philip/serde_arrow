@@ -21,7 +21,7 @@ flatten(List) ->
     flatten(List, fun() -> [] end).
 
 -spec flatten(List :: list(), Fun :: fun(() -> list())) -> list().
-flatten([H | T], Fun) when is_list(H)  ->
+flatten([H | T], Fun) when is_list(H) ->
     H ++ flatten(T, Fun);
 flatten([H | T], Fun) when (H =:= undefined) orelse (H =:= nil) ->
     Fun() ++ flatten(T, Fun);

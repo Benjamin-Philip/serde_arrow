@@ -7,8 +7,8 @@
 
 all() ->
     [
-     nesting,
-     flatten
+        nesting,
+        flatten
     ].
 
 nesting(_Config) ->
@@ -24,4 +24,8 @@ flatten(_Config) ->
     ?assertEqual(serde_arrow_utils:flatten([[1], [2], [3]]), [1, 2, 3]),
     ?assertEqual(serde_arrow_utils:flatten([[[[[1, 2], [3, 4]]]]]), [[[[1, 2], [3, 4]]]]),
     ?assertEqual(serde_arrow_utils:flatten([[1], undefined, [2], nil, [3]]), [1, 2, 3]),
-    ?assertEqual(serde_arrow_utils:flatten([[1], undefined, [2], nil, [3]], fun() -> [foobar] end), [1, foobar, 2, foobar, 3]).
+    ?assertEqual(
+        serde_arrow_utils:flatten([[1], undefined, [2], nil, [3]], fun() -> [foobar] end), [
+            1, foobar, 2, foobar, 3
+        ]
+    ).

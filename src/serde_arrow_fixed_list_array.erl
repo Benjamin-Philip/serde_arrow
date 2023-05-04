@@ -18,7 +18,9 @@ new(Values, Opts) when is_map(Opts) ->
         Type when is_tuple(Type) orelse is_atom(Type) ->
             new(Values, Type)
     end;
-new(Value, GivenType) when (is_tuple(GivenType) andalso tuple_size(GivenType) =:= 2) orelse is_atom(GivenType) ->
+new(Value, GivenType) when
+    (is_tuple(GivenType) andalso tuple_size(GivenType) =:= 2) orelse is_atom(GivenType)
+->
     Len = length(Value),
     ElementLen = element_len(Value),
     Type = serde_arrow_type:normalize(GivenType),
@@ -33,7 +35,7 @@ new(Value, GivenType) when (is_tuple(GivenType) andalso tuple_size(GivenType) =:
         null_count = NullCount,
         validity_bitmap = Bitmap,
         data = Array
-      };
+    };
 new(Value, {fixed_list, NestedType, Size} = Type) when tuple_size(Type) =:= 3 ->
     Len = length(Value),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
@@ -49,7 +51,7 @@ new(Value, {fixed_list, NestedType, Size} = Type) when tuple_size(Type) =:= 3 ->
         null_count = NullCount,
         validity_bitmap = Bitmap,
         data = Array
-      }.
+    }.
 
 %%%%%%%%%%%
 %% Utils %%
@@ -64,7 +66,7 @@ element_len([]) ->
     erlang:error(badarg).
 
 -spec shape(Values :: list(), Type :: serde_arrow_type:arrow_type()) -> [pos_integer()].
-shape(Values, {_, Type, Size})  ->
+shape(Values, {_, Type, Size}) ->
     [Size] ++ shape(serde_arrow_utils:flatten(Values), Type);
 shape(Values, Type) when is_atom(Type) orelse tuple_size(Type) =:= 2 ->
     [element_len(Values)].
