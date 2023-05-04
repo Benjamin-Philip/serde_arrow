@@ -23,16 +23,21 @@
 %% </li>
 %%  <li>`len', of type {@link pos_integer()}, which represents the Array's Length[4].</li>
 %%  <li>
+%%      `element_len', of type {@link pos_integer()} or `undefined', which
+%%      represents the Length of each element in an Array. Currently it only has
+%%      an integer value in the Fixed-Size List Layout[5]
+%%  </li>
+%%  <li>
 %%      `null_count', of type  {@link non_neg_integer()}, which represents the
 %%      Array's Null Count[4], or the number of undefined values in the Array.
 %%  </li>
 %%  <li>
 %%      `validity_bitmap', which is a buffer (`serde_arrow_buffer') or the atom
-%%       `undefined', which represents the Array's Validity Bitmap[5].
+%%       `undefined', which represents the Array's Validity Bitmap[6].
 %%  </li>
 %%  <li>
 %%      `offsets', which is a buffer (`serde_arrow_buffer') which represents the
-%%      Offsets[6], or the start position of each slot in the data buffer of an
+%%      Offsets[7], or the start position of each slot in the data buffer of an
 %%      Array.
 %%  </li>
 %%  <li>
@@ -67,9 +72,11 @@
 %%
 %% [4]: [https://arrow.apache.org/docs/format/Columnar.html#null-count]
 %%
-%% [5]: [https://arrow.apache.org/docs/format/Columnar.html#validity-bitmaps]
+%% [5]: [https://arrow.apache.org/docs/format/Columnar.html#fixed-size-list-layout]
 %%
-%% [6]: [https://arrow.apache.org/docs/format/Columnar.html#variable-size-binary-layout]
+%% [6]: [https://arrow.apache.org/docs/format/Columnar.html#validity-bitmaps]
+%%
+%% [7]: [https://arrow.apache.org/docs/format/Columnar.html#variable-size-binary-layout]
 %% @end
 -module(serde_arrow_array).
 -export([
@@ -77,6 +84,7 @@
     layout/1,
     type/1,
     len/1,
+    element_len/1,
     null_count/1,
     validity_bitmap/1,
     offsets/1,
@@ -128,6 +136,11 @@ type(Array) ->
 -spec len(Array :: #array{}) -> Length :: pos_integer().
 len(Array) ->
     Array#array.len.
+
+%% @doc Returns the length of an array.
+-spec element_len(Array :: #array{}) -> Length :: pos_integer() | undefined.
+element_len(Array) ->
+    Array#array.element_len.
 
 %% @doc Returns the null count of an array.
 -spec null_count(Array :: #array{}) -> NullCount :: non_neg_integer().

@@ -16,6 +16,7 @@ all() ->
         valid_layout_on_access,
         valid_type_on_access,
         valid_len_on_access,
+        valid_element_len_on_access,
         valid_null_count_on_access,
         valid_validity_bitmap_on_access,
         valid_offsets_on_access,
@@ -50,6 +51,10 @@ valid_type_on_access(_Config) ->
 valid_len_on_access(_Config) ->
     Array = serde_arrow_array:new(fixed_primitive, [1, 2, 3], {s, 8}),
     ?assertEqual(serde_arrow_array:len(Array), 3).
+
+valid_element_len_on_access(_Config) ->
+    Array = serde_arrow_array:new(fixed_primitive, [1, 2, 3], {s, 8}),
+    ?assertEqual(serde_arrow_array:element_len(Array), undefined).
 
 valid_null_count_on_access(_Config) ->
     Array = serde_arrow_array:new(fixed_primitive, [1, 2, 3], {s, 8}),

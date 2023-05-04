@@ -12,6 +12,7 @@ all() ->
         valid_layout_on_new,
         valid_type_on_new,
         valid_len_on_new,
+        valid_element_len_on_new,
         valid_null_count_on_new,
         valid_validity_bitmap_on_new,
         valid_offsets_on_new,
@@ -40,6 +41,10 @@ valid_type_on_new(_Config) ->
 valid_len_on_new(_Config) ->
     Array = serde_arrow_fixed_primitive_array:new([1, 2, 3], {s, 8}),
     ?assertEqual(Array#array.len, 3).
+
+valid_element_len_on_new(_Config) ->
+    Array = serde_arrow_fixed_primitive_array:new([1, 2, 3], {s, 8}),
+    ?assertEqual(Array#array.element_len, undefined).
 
 valid_null_count_on_new(_Config) ->
     Array1 = serde_arrow_fixed_primitive_array:new([1, 2, 3], {s, 8}),
