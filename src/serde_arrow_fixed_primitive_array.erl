@@ -7,8 +7,8 @@
 %%      `layout', of type {@link atom()}, and a constant value of `fixed_primitive'.
 %%  </li>
 %%  <li>
-%%       `type', of type {@link serde_arrow_type:arrow_type()}, which represents
-%%       the Logical Type of the Array.
+%%       `type', of type `t:serde_arrow_type:arrow_primitive_type()', which
+%%       represents the Logical Type of the Array.
 %% </li>
 %%  <li>`len', of type {@link pos_integer()}, which represents the Array's Length.</li>
 %%  <li>
@@ -44,11 +44,11 @@
 
 %% @doc Creates a new primitive array, given its value and type.
 %%
-%% Accepts a proplist with the type, or the type directly.
+%% Accepts a map with the type, or the type directly.
 %% @end
 -spec new(
     Value :: [serde_arrow_type:native_type()],
-    Type :: map() | serde_arrow_type:arrow_type()
+    Type :: map() | serde_arrow_type:arrow_primitive_type()
 ) ->
     Array :: #array{}.
 new(Value, Opts) when is_map(Opts) ->

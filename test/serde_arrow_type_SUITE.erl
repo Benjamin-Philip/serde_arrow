@@ -95,7 +95,20 @@ normalize_on_shorthand(_Config) ->
     ?NormErr(and_bar_is_foo),
     ?NormErr(u128),
     ?NormErr(s128),
-    ?NormErr(f8).
+    ?NormErr(f8),
+    %% Nested Types
+    ?assertEqual(serde_arrow_type:normalize({fixed_list, {s, 8}, 4}), {fixed_list, {s, 8}, 4}),
+    ?assertEqual(serde_arrow_type:normalize({fixed_list, s8, 4}), {fixed_list, {s, 8}, 4}),
+    ?assertEqual(
+        serde_arrow_type:normalize({fixed_list, {fixed_list, {s, 8}, 4}, 4}),
+        {fixed_list, {fixed_list, {s, 8}, 4}, 4}
+    ),
+    ?assertEqual(
+        serde_arrow_type:normalize({fixed_list, {fixed_list, s8, 4}, 4}),
+        {fixed_list, {fixed_list, {s, 8}, 4}, 4}
+    ),
+    ?assertError(badarg, serde_arrow_type:normalize({fixed_list, s8, undefined})),
+    ?assertError(badarg, serde_arrow_type:normalize({fixed_list, {fixed_list, s8, undefined}, 4})).
 
 bit_length(_Config) ->
     %% Normalizes
@@ -109,7 +122,9 @@ bit_length(_Config) ->
     ?assertEqual(serde_arrow_type:bit_length({bool, undefined}), 1),
 
     ?assertError(badarg, serde_arrow_type:bit_length(bin)),
-    ?assertError(badarg, serde_arrow_type:bit_length({bin, undefined})).
+    ?assertError(badarg, serde_arrow_type:bit_length({bin, undefined})),
+
+    ?assertError(badarg, serde_arrow_type:bit_length({fixed_list, s8, 4})).
 
 byte_length(_Config) ->
     %% Normalizes
@@ -124,7 +139,9 @@ byte_length(_Config) ->
     ?assertEqual(serde_arrow_type:byte_length({bool, undefined}), 1),
 
     ?assertEqual(serde_arrow_type:byte_length({bin, undefined}), undefined),
-    ?assertEqual(serde_arrow_type:byte_length({bin, undefined}), undefined).
+    ?assertEqual(serde_arrow_type:byte_length({bin, undefined}), undefined),
+
+    ?assertError(badarg, serde_arrow_type:byte_length({fixed_list, s8, 4})).
 
 serialize(_Config) ->
     ?assertEqual(serde_arrow_type:serialize(1, {s, 64}), <<1:64/little-signed-integer>>),

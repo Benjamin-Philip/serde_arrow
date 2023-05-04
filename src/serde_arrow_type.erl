@@ -90,9 +90,19 @@
 %%
 %% == Nested Type ==
 %%
-%% TODO Elaborate Nested Type
+%% A Nested Type is any data structure that supports nesting. This can include
+%% Lists, FixedLists, Maps, Structs and more, but is curently limited to
+%% FixedLists. Nested Types are represented using a 3 tuple: `{NestedType, Type,
+%% Length}'. `NestedType' refers to the data structure that is nesting your
+%% primitive type. `Type' refers to the type that is being nested in the data
+%% structure. Do note that `Type' can be a Primitive Type, or another Nested
+%% Type. Both the shorthand and the longhand syntax can be used or Primitive
+%% Types.`Length' refers to the length of each element, and will only be
+%% required to represent FixedLists.
 %%
-%% A Nested Type is any datastructure that supports nesting.
+%% It is important to remember while nesting that the type refers to the type of
+%% each element in an array. A list of `Int8' is 2 dimensional, and a list of
+%% `List<Int8>' is 3 dimensional.
 %%
 %% == Native Type ==
 %%
@@ -139,7 +149,10 @@
     native_type/0
 ]).
 
--type arrow_type() ::
+-type arrow_type() :: arrow_primitive_type() | arrow_nested_type().
+%% Any type that is native to Apache Arrow that is supported by `serde_arrow'
+
+-type arrow_primitive_type() ::
     arrow_bool()
     | arrow_int()
     | arrow_uint()
@@ -237,6 +250,14 @@
 -type arrow_short_bin() :: bin.
 %% Shorthand representation for booleans in Apache Arrow.
 
+%%%%%%%%%%%%%%%%%%
+%% Nested Types %%
+%%%%%%%%%%%%%%%%%%
+
+-type arrow_nested_type() ::
+    {fixed_list, arrow_nested_type() | arrow_primitive_type(), pos_integer()}.
+%% A Nested Type.
+
 %%%%%%%%%%%%%%%%%
 %% Native Type %%
 %%%%%%%%%%%%%%%%%
@@ -291,6 +312,8 @@ normalize({f, Size} = Type) ->
     end;
 normalize({Name, undefined} = Type) when (Name =:= bool) orelse (Name =:= bin) ->
     Type;
+normalize({fixed_list, Type, Length}) when is_integer(Length) ->
+    {fixed_list, normalize(Type), Length};
 normalize(_Type) ->
     erlang:error(badarg).
 
@@ -303,12 +326,16 @@ bit_length({Type, Size}) when (Type =:= s) orelse (Type =:= u) orelse (Type =:= 
 bit_length({bool, undefined}) ->
     1;
 bit_length({bin, undefined}) ->
+    erlang:error(badarg);
+bit_length(Type) when tuple_size(Type) =:= 3 ->
     erlang:error(badarg).
 
 -spec byte_length(Type :: arrow_type()) -> Length :: pos_integer() | undefined.
 %% @doc Returns the size of the type in bytes.
 byte_length(Type) when is_atom(Type) ->
     byte_length(normalize(Type));
+byte_length(Type) when tuple_size(Type) =:= 3 ->
+    erlang:error(badarg);
 byte_length({bool, undefined}) ->
     %% This is a stub function.
     %% TODO Find out the Arrow convention for Boolean Buffers
