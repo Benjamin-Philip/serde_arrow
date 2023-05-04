@@ -94,7 +94,7 @@
 -include("serde_arrow_array.hrl").
 
 -export_type([layout/0]).
--type layout() :: fixed_primitive | variable_binary.
+-type layout() :: fixed_primitive | variable_binary | fixed_list.
 %% Represents the Layout of an Array.
 
 %%%%%%%%%%%%%%%%%%%%

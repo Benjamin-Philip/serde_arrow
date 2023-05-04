@@ -11,7 +11,7 @@
 -include("serde_arrow_array.hrl").
 
 %% @doc Creates a Variable-Sized Binary Array given the values and options in the form of
-%% a proplist
+%% a map
 -spec new(Values :: [serde_arrow_type:native_type()], Opts :: map()) -> Array :: #array{}.
 new(Values, _Opts) ->
     new(Values).
