@@ -12,6 +12,7 @@ all() ->
         valid_layout_on_new,
         valid_type_on_new,
         valid_len_on_new,
+        valid_element_len_on_new,
         valid_null_count_on_new,
         valid_validity_bitmap_on_new,
         valid_offsets_on_new,
@@ -27,7 +28,7 @@ valid_layout_on_new(_Config) ->
 
 valid_type_on_new(_Config) ->
     Array = serde_arrow_variable_binary_array:new([<<1>>, <<2>>, <<3>>]),
-    ?assertEqual(Array#array.type, bin).
+    ?assertEqual(Array#array.type, {bin, undefined}).
 
 valid_len_on_new(_Config) ->
     Array1 = serde_arrow_variable_binary_array:new([<<1, 2>>, <<3>>]),
@@ -35,6 +36,10 @@ valid_len_on_new(_Config) ->
 
     Array2 = serde_arrow_variable_binary_array:new([<<1, 2>>, undefined, <<3>>]),
     ?assertEqual(Array2#array.len, 3).
+
+valid_element_len_on_new(_Config) ->
+    Array = serde_arrow_variable_binary_array:new([<<1>>, <<2>>, <<3>>]),
+    ?assertEqual(Array#array.element_len, undefined).
 
 valid_null_count_on_new(_Config) ->
     Array1 = serde_arrow_variable_binary_array:new([<<1, 2>>, <<3>>]),

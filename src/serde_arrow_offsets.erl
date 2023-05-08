@@ -46,8 +46,8 @@
 
 %% @doc Returns the offsets array given some values And their type.
 -spec new(
-    Value :: [serde_arrow_type:erlang_type()],
-    Type :: serde_arrow_type:arrow_type()
+    Value :: [serde_arrow_type:native_type()],
+    Type :: serde_arrow_type:arrow_longhand_type()
 ) ->
     Buffer :: #buffer{}.
 new(Values, Type) ->
@@ -55,11 +55,11 @@ new(Values, Type) ->
     serde_arrow_buffer:new(Offsets, {s, 32}).
 
 -spec offsets(
-    Value :: [serde_arrow_type:erlang_type()],
+    Value :: [serde_arrow_type:native_type()],
     Acc :: [non_neg_integer()],
     Offset :: non_neg_integer(),
-    Type :: serde_arrow_type:arrow_type()
-) -> Offsets :: [serde_arrow_type:erlang_type()].
+    Type :: serde_arrow_type:arrow_longhand_type()
+) -> Offsets :: [non_neg_integer()].
 offsets([Value | Rest], Acc, Offset, Type) when (Value =:= undefined) orelse (Value =:= nil) ->
     offsets(Rest, [Offset | Acc], Offset, Type);
 offsets([Value | Rest], Acc, Offset, Type) ->
@@ -69,7 +69,8 @@ offsets([], Acc, _Offset, _Type) ->
     lists:reverse(Acc).
 
 -spec len(
-    Value :: serde_arrow_type:type() | undefined | nil, Type :: serde_arrow_type:arrow_type()
+    Value :: serde_arrow_type:type() | undefined | nil,
+    Type :: serde_arrow_type:arrow_longhand_type()
 ) -> non_neg_integer().
 len(Value, bin) ->
     byte_size(Value);

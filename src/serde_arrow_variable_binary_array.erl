@@ -11,21 +11,21 @@
 -include("serde_arrow_array.hrl").
 
 %% @doc Creates a Variable-Sized Binary Array given the values and options in the form of
-%% a proplist
--spec new(Values :: [serde_arrow_type:erlang_type()], Opts :: map()) -> Array :: #array{}.
+%% a map
+-spec new(Values :: [serde_arrow_type:native_type()], Opts :: map()) -> Array :: #array{}.
 new(Values, _Opts) ->
     new(Values).
 
 %% @doc Creates a Variable-Sized Binary Array given the values
--spec new(Values :: [serde_arrow_type:erlang_type()]) -> Array :: #array{}.
+-spec new(Values :: [serde_arrow_type:native_type()]) -> Array :: #array{}.
 new(Values) ->
     Len = length(Values),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
-    Bin = serde_arrow_buffer:new(Values, bin),
-    Offsets = serde_arrow_offsets:new(Values, bin),
+    Bin = serde_arrow_buffer:new(Values, {bin, undefined}),
+    Offsets = serde_arrow_offsets:new(Values, {bin, undefined}),
     #array{
         layout = variable_binary,
-        type = bin,
+        type = {bin, undefined},
         len = Len,
         null_count = NullCount,
         validity_bitmap = Bitmap,

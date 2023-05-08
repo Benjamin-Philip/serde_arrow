@@ -43,8 +43,8 @@
 %% type
 %% @end
 -spec new(
-    Value :: [serde_arrow_type:erlang_type()],
-    Type :: serde_arrow_type:arrow_type()
+    Value :: [serde_arrow_type:native_type()],
+    Type :: serde_arrow_type:arrow_longhand_type()
 ) ->
     Buffer :: #buffer{}.
 new(Values, Type) ->
@@ -65,7 +65,7 @@ new(Values, Type) ->
 %% @end
 -spec from_binary(
     Values :: binary(),
-    Type :: serde_arrow_type:arrow_type(),
+    Type :: serde_arrow_type:arrow_longhand_type(),
     Len :: pos_integer()
 ) -> Buffer :: #buffer{}.
 from_binary(Values, Type, Len) ->
@@ -74,8 +74,8 @@ from_binary(Values, Type, Len) ->
     #buffer{type = Type, length = Len, data = Bin}.
 
 -spec slot(
-    Value :: serde_arrow_type:erlang_type(),
-    Type :: serde_arrow_type:arrow_type(),
+    Value :: serde_arrow_type:native_type(),
+    Type :: serde_arrow_type:arrow_longhand_type(),
     ElementLen :: pos_integer() | undefined
 ) -> binary().
 slot(Value, _Type, ElementLen) when (Value =:= undefined) orelse (Value =:= nil) ->

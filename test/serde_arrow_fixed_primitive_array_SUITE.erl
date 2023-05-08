@@ -12,6 +12,7 @@ all() ->
         valid_layout_on_new,
         valid_type_on_new,
         valid_len_on_new,
+        valid_element_len_on_new,
         valid_null_count_on_new,
         valid_validity_bitmap_on_new,
         valid_offsets_on_new,
@@ -30,12 +31,20 @@ valid_layout_on_new(_Config) ->
     ?assertEqual(Array#array.layout, fixed_primitive).
 
 valid_type_on_new(_Config) ->
-    Array = serde_arrow_fixed_primitive_array:new([1, 2, 3], {s, 8}),
-    ?assertEqual(Array#array.layout, fixed_primitive).
+    Array1 = serde_arrow_fixed_primitive_array:new([1, 2, 3], {s, 8}),
+    ?assertEqual(Array1#array.type, {s, 8}),
+
+    %% Normalizes the type
+    Array2 = serde_arrow_fixed_primitive_array:new([1, 2, 3], s8),
+    ?assertEqual(Array2#array.type, {s, 8}).
 
 valid_len_on_new(_Config) ->
     Array = serde_arrow_fixed_primitive_array:new([1, 2, 3], {s, 8}),
     ?assertEqual(Array#array.len, 3).
+
+valid_element_len_on_new(_Config) ->
+    Array = serde_arrow_fixed_primitive_array:new([1, 2, 3], {s, 8}),
+    ?assertEqual(Array#array.element_len, undefined).
 
 valid_null_count_on_new(_Config) ->
     Array1 = serde_arrow_fixed_primitive_array:new([1, 2, 3], {s, 8}),
