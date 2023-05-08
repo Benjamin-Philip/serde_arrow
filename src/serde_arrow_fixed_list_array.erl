@@ -52,11 +52,7 @@ new(Value, GivenType) when
     ElementLen = element_len(Value),
     Type = serde_arrow_type:normalize(GivenType),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
-    Validate = fun
-        (X) when length(X) =:= ElementLen -> X;
-        (_X) -> erlang:error(badarg)
-    end,
-    Flattened = serde_arrow_utils:flatten(Value, fun() -> [undefined] end, Validate),
+    Flattened = serde_arrow_utils:flatten(Value, fun() -> [undefined] end, ElementLen),
     Array = serde_arrow_fixed_primitive_array:new(Flattened, Type),
     #array{
         layout = fixed_list,
@@ -72,11 +68,7 @@ new(Value, {fixed_list, NestedType, Size} = Type) when tuple_size(Type) =:= 3 ->
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
     Shape = shape(Value, NestedType),
     Null = [list_from_shape(Shape)],
-    Validate = fun
-        (X) when length(X) =:= Size -> X;
-        (_X) -> erlang:error(badarg)
-    end,
-    Flattened = serde_arrow_utils:flatten(Value, fun() -> Null end, Validate),
+    Flattened = serde_arrow_utils:flatten(Value, fun() -> Null end, Size),
     Array = serde_arrow_fixed_list_array:new(Flattened, NestedType),
     #array{
         layout = fixed_list,
