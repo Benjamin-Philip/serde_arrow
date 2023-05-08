@@ -1,4 +1,6 @@
 %% @doc Provides support for Arrow's Fixed-Size List Layout.
+%%
+%% This module
 -module(serde_arrow_fixed_list_array).
 -behaviour(serde_arrow_array).
 
@@ -25,7 +27,11 @@ new(Value, GivenType) when
     ElementLen = element_len(Value),
     Type = serde_arrow_type:normalize(GivenType),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
-    Flattened = serde_arrow_utils:flatten(Value, fun() -> [undefined] end),
+    Validate = fun
+        (X) when length(X) =:= ElementLen -> X;
+        (_X) -> erlang:error(badarg)
+    end,
+    Flattened = serde_arrow_utils:flatten(Value, fun() -> [undefined] end, Validate),
     Array = serde_arrow_fixed_primitive_array:new(Flattened, Type),
     #array{
         layout = fixed_list,
@@ -41,7 +47,11 @@ new(Value, {fixed_list, NestedType, Size} = Type) when tuple_size(Type) =:= 3 ->
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
     Shape = shape(Value, NestedType),
     Null = [list_from_shape(Shape)],
-    Flattened = serde_arrow_utils:flatten(Value, fun() -> Null end),
+    Validate = fun
+        (X) when length(X) =:= Size -> X;
+        (_X) -> erlang:error(badarg)
+    end,
+    Flattened = serde_arrow_utils:flatten(Value, fun() -> Null end, Validate),
     Array = serde_arrow_fixed_list_array:new(Flattened, NestedType),
     #array{
         layout = fixed_list,

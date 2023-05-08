@@ -18,6 +18,7 @@ all() ->
         valid_offsets_on_new,
         valid_data_on_new,
         valid_nested_data_on_new,
+        crashes_on_invalid_data,
 
         %% Behaviour Adherence
         new_callback
@@ -147,6 +148,27 @@ valid_nested_data_on_new(_Config) ->
     Data5 = array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]], {fixed_list, s8, 2}),
     %% [[[1, 2], [3, 4], [5, 6], [7, 8]]]
     ?assertEqual(Array5#array.data, Data5).
+
+crashes_on_invalid_data(_Config) ->
+    %% No Nesting
+    ?assertError(function_clause, array([1, 2, 3], s8)),
+
+    %% Nesting in input and type do not match
+    ?assertError(badarg, array([[[1, 2, 3]]], s8)),
+    ?assertError(function_clause, array([[1, 2, 3]], {fixed_list, s8, 3})),
+    ?assertError(badarg, array([[[[1, 2, 3]]]], {fixed_list, s8, 1})),
+
+    %% Nesting between elements is inconsistent
+    ?assertError(badarg, array([[1], [[2]], [[[3]]]], s8)),
+    ?assertError(function_clause, array([[1], [[2]], [[[3]]]], {fixed_list, s8, 1})),
+
+    %% TODO Find a performant way to valididate element length
+
+    %% Element length in input and type do not match
+    ?assertError(badarg, array([[[1, 2]], [[3, 4]]], {fixed_list, s8, 3})),
+
+    %% Element length between elements is inconsistent
+    ?assertError(badarg, array([[1, 2], [3, 4, 5]], s8)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Array Behaviour Adherence Tests %%
