@@ -1,6 +1,6 @@
 %% @private Utils module
 -module(serde_arrow_utils).
--export([nesting/1, flatten/1, flatten/2, flatten/3]).
+-export([nesting/1, flatten/1, flatten/3]).
 
 %% Finds the nesting level of deep list
 %%
@@ -17,18 +17,21 @@ nesting(_H) ->
 %%
 %% Assumes each sublist has the same nesting
 -spec flatten(List :: list()) -> list().
-flatten(List) ->
-    flatten(List, fun() -> [] end).
+flatten([H | T]) when is_list(H) ->
+    H ++ flatten(T);
+flatten([H | T]) when (H =:= undefined) orelse (H =:= nil) ->
+    flatten(T);
+flatten(H) ->
+    H.
 
--spec flatten(List :: list(), Null :: fun(() -> list())) -> list().
-flatten(List, Null) ->
-    flatten(List, Null, fun(X) -> X end).
-
--spec flatten(List :: list(), Null :: fun(() -> list()), Apply :: fun((list()) -> list())) ->
+-spec flatten(List :: list(), Null :: fun(() -> list()), Length :: pos_integer()) ->
     list().
-flatten([H | T], Null, Apply) when is_list(H) ->
-    Apply(H) ++ flatten(T, Null, Apply);
-flatten([H | T], Null, Apply) when (H =:= undefined) orelse (H =:= nil) ->
-    Null() ++ flatten(T, Null, Apply);
-flatten(H, _Null, _Apply) ->
+flatten([H | T], Null, Length) when is_list(H) ->
+    if
+        length(H) =:= Length -> H ++ flatten(T, Null, Length);
+        true -> erlang:error(badarg)
+    end;
+flatten([H | T], Null, Length) when (H =:= undefined) orelse (H =:= nil) ->
+    Null() ++ flatten(T, Null, Length);
+flatten(H, _Null, _Length) ->
     H.
