@@ -69,7 +69,9 @@ offsets([], _Offset, _CurOffset) ->
 nested_offsets(List, Type) ->
     case serde_arrow_utils:nesting(List) of
         2 ->
-            [0 | FlatOffsets] = serde_arrow_offsets:new_list(serde_arrow_utils:flatten(List), serde_arrow_type:normalize(Type)),
+            [0 | FlatOffsets] = serde_arrow_offsets:new_list(
+                serde_arrow_utils:flatten(List), serde_arrow_type:normalize(Type)
+            ),
             [0 | offsets(List, FlatOffsets, 0)];
         _Nesting ->
             Flattened = serde_arrow_utils:flatten(List),
