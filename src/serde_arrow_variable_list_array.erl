@@ -55,11 +55,6 @@ init(Values, Type, Data, Offsets) ->
         offsets = Offsets,
         data = Data
     }.
-%% -spec init_with_offsets(
-%%     Values :: list(), Type :: serde_arrow_type:arrow_type(), Data :: #array{}, Offsets :: list()
-%% ) -> {#array{}, [non_neg_integer()]}.
-%% init_with_offsets(Values, Type, Data, Offsets) ->
-%%     {init(Values, Type, Data, Offsets), Offsets}.
 
 offsets([H | T], Offsets, CurOffset) when (H =:= undefined) orelse (H =:= nil) ->
     [CurOffset | offsets(T, Offsets, CurOffset)];
