@@ -16,35 +16,15 @@ new(Values, Opts) when is_map(Opts) ->
 new(Values, GivenType) when
     (is_tuple(GivenType) andalso tuple_size(GivenType) =:= 2) orelse is_atom(GivenType)
 ->
+    Len = length(Values),
+    {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
     Type = serde_arrow_type:normalize(GivenType),
     %% Data
     Flattened = serde_arrow_utils:flatten(Values),
     Array = serde_arrow_fixed_primitive_array:new(Flattened, Type),
     %% Offsets
     [0 | FlatOffsets] = serde_arrow_offsets:new_list(Flattened, Type),
-    Offset = serde_arrow_buffer:new([0 | offsets(Values, FlatOffsets, 0)], {s, 32}),
-    init(Values, Type, Array, Offset);
-new(Values, {variable_list, NestedType, undefined} = Type) ->
-    Flattened = serde_arrow_utils:flatten(Values),
-    Array = new(Flattened, NestedType),
-    Offset = serde_arrow_buffer:new(nested_offsets(Values, Type), {s, 32}),
-    init(Values, Type, Array, Offset);
-new(Values, {fixed_list, NestedType, _Size} = Type) ->
-    Flattened = serde_arrow_utils:flatten(Values),
-    Array = serde_arrow_fixed_list_array:new(Flattened, NestedType),
-    Offset = serde_arrow_buffer:new(nested_offsets(Values, Type), {s, 32}),
-    init(Values, Type, Array, Offset).
-
-%%%%%%%%%%%
-%% Utils %%
-%%%%%%%%%%%
-
--spec init(
-    Values :: list(), Type :: serde_arrow_type:arrow_type(), Data :: #array{}, Offsets :: list()
-) -> #array{}.
-init(Values, Type, Data, Offsets) ->
-    Len = length(Values),
-    {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
+    Offsets = serde_arrow_buffer:new([0 | offsets(Values, FlatOffsets, 0)], {s, 32}),
     #array{
         layout = variable_list,
         type = Type,
@@ -53,8 +33,31 @@ init(Values, Type, Data, Offsets) ->
         null_count = NullCount,
         validity_bitmap = Bitmap,
         offsets = Offsets,
-        data = Data
+        data = Array
+    };
+new(Values, {Layout, NestedType, Size} = Type) when
+    (Layout =:= variable_list andalso Size =:= undefined) orelse
+        (Layout =:= fixed_list andalso is_integer(Size))
+->
+    Len = length(Values),
+    {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
+    Flattened = serde_arrow_utils:flatten(Values),
+    Array = serde_arrow_array:new(Layout, Flattened, NestedType),
+    Offsets = serde_arrow_buffer:new(nested_offsets(Values, Type), {s, 32}),
+    #array{
+        layout = variable_list,
+        type = Type,
+        len = Len,
+        element_len = undefined,
+        null_count = NullCount,
+        validity_bitmap = Bitmap,
+        offsets = Offsets,
+        data = Array
     }.
+
+%%%%%%%%%%%
+%% Utils %%
+%%%%%%%%%%%
 
 offsets([H | T], Offsets, CurOffset) when (H =:= undefined) orelse (H =:= nil) ->
     [CurOffset | offsets(T, Offsets, CurOffset)];
