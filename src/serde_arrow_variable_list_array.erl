@@ -60,12 +60,13 @@ new(Values, {Layout, NestedType, Size} = Type) when
 %% Utils %%
 %%%%%%%%%%%
 
+-spec offsets(Values :: list(), Offsets :: [non_neg_integer()], CurOffset :: non_neg_integer()) ->
+    [non_neg_integer()].
 offsets([H | T], Offsets, CurOffset) when (H =:= undefined) orelse (H =:= nil) ->
     [CurOffset | offsets(T, Offsets, CurOffset)];
 offsets([H | T], Offsets, _CurOffset) ->
     Len = length(H),
-    {HOffsets, TOffsets} = lists:split(Len, Offsets),
-    CurOffset = lists:last(HOffsets),
+    {_HOffsets, [CurOffset | TOffsets]} = lists:split(Len - 1, Offsets),
     [CurOffset | offsets(T, TOffsets, CurOffset)];
 offsets([], _Offset, _CurOffset) ->
     [].
