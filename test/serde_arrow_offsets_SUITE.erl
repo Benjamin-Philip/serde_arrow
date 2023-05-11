@@ -12,7 +12,8 @@ all() ->
         valid_offset_on_no_nulls,
         valid_offset_on_undefined,
         valid_offset_on_nil,
-        valid_offset_on_undefined_and_nil
+        valid_offset_on_undefined_and_nil,
+        new_list
     ].
 
 valid_offset_on_no_nulls(_Config) ->
@@ -34,6 +35,11 @@ valid_offset_on_undefined_and_nil(_Config) ->
     Offsets = offsets([<<1, 2>>, <<3>>, undefined, <<4, 5, 6>>, nil]),
     Buffer = buffer([0, 2, 3, 3, 6, 6]),
     ?assertEqual(Offsets, Buffer).
+
+new_list(_Config) ->
+    Offsets = serde_arrow_offsets:new_list([<<1, 2>>, <<3>>, undefined, <<4, 5, 6>>, nil], bin),
+    List = [0, 2, 3, 3, 6, 6],
+    ?assertEqual(Offsets, List).
 
 %%%%%%%%%%%
 %% Utils %%

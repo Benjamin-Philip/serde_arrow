@@ -23,7 +23,8 @@
 %%  <li>The length of each element must be consistent with each other</li>
 %%  <li>The nesting of each element must be consistent with each other</li>
 %%  <li>
-%%      The nested type is a `fixed_list' (as only then fixed size be guaranteed)
+%%      The nested type is a `fixed_list' (as only then can fixed size be
+%%      guaranteed)
 %%  </li>
 %% </ol>
 -module(serde_arrow_fixed_list_array).
@@ -63,7 +64,7 @@ new(Value, GivenType) when
         validity_bitmap = Bitmap,
         data = Array
     };
-new(Value, {fixed_list, NestedType, Size} = Type) when tuple_size(Type) =:= 3 ->
+new(Value, {fixed_list, NestedType, Size} = Type) ->
     Len = length(Value),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
     Shape = shape(Value, NestedType),
@@ -78,7 +79,9 @@ new(Value, {fixed_list, NestedType, Size} = Type) when tuple_size(Type) =:= 3 ->
         null_count = NullCount,
         validity_bitmap = Bitmap,
         data = Array
-    }.
+    };
+new(_Value, {_Layout, _, _}) ->
+    erlang:error(badarg).
 
 %%%%%%%%%%%
 %% Utils %%
