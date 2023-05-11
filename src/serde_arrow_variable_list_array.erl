@@ -13,9 +13,9 @@ new(Values, Opts) when is_map(Opts) ->
         Type when is_tuple(Type) orelse is_atom(Type) ->
             new(Values, Type)
     end;
-new(Values, GivenType) when
-    (is_tuple(GivenType) andalso tuple_size(GivenType) =:= 2) orelse is_atom(GivenType)
-->
+new(Values, GivenType)
+    when is_tuple(GivenType), tuple_size(GivenType) =:= 2;
+         is_atom(GivenType) ->
     Len = length(Values),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
     Type = serde_arrow_type:normalize(GivenType),
@@ -35,10 +35,9 @@ new(Values, GivenType) when
         offsets = Offsets,
         data = Array
     };
-new(Values, {Layout, NestedType, Size} = Type) when
-    (Layout =:= variable_list andalso Size =:= undefined) orelse
-        (Layout =:= fixed_list andalso is_integer(Size))
-->
+new(Values, {Layout, NestedType, Size} = Type)
+    when Layout =:= variable_list, Size =:= undefined;
+         Layout =:= fixed_list, is_integer(Size) ->
     Len = length(Values),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
     Flattened = serde_arrow_utils:flatten(Values),
