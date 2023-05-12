@@ -94,7 +94,7 @@
 -include("serde_arrow_array.hrl").
 
 -export_type([layout/0]).
--type layout() :: fixed_primitive | variable_binary | fixed_list.
+-type layout() :: fixed_primitive | variable_binary | fixed_list | variable_list.
 %% Represents the Layout of an Array.
 
 %%%%%%%%%%%%%%%%%%%%
@@ -115,7 +115,9 @@
 new(Layout, Value, Opts) ->
     case Layout of
         fixed_primitive -> serde_arrow_fixed_primitive_array:new(Value, Opts);
-        variable_binary -> serde_arrow_variable_binary_array:new(Value, Opts)
+        variable_binary -> serde_arrow_variable_binary_array:new(Value, Opts);
+        fixed_list -> serde_arrow_fixed_list_array:new(Value, Opts);
+        variable_list -> serde_arrow_variable_list_array:new(Value, Opts)
     end.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
