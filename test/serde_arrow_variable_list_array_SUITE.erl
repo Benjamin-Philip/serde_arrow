@@ -18,7 +18,7 @@ all() ->
         valid_offsets_on_new,
         valid_data_on_new,
         valid_nested_data_on_new,
-        %% crashes_on_invalid_data,
+        crashes_on_invalid_data,
 
         %% Behaviour Adherence
         new_callback
@@ -170,6 +170,20 @@ valid_nested_data_on_new(_Config) ->
     Array6 = array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]], {fixed_list, s8, 2}),
     Data6 = serde_arrow_fixed_list_array:new([[1, 2], [3, 4], [5, 6], [7, 8]], s8),
     ?assertEqual(Array6#array.data, Data6).
+
+crashes_on_invalid_data(_Config) ->
+    %% No Nesting
+    ?assertError(badarg, array([1, 2, 3], s8)),
+
+    %% Nesting in input and type do not match
+    ?assertError(badarg, array([[[1, 2, 3]]], s8)),
+    ?assertError(badarg, array([[1, 2, 3, 4]], {variable_list, s8, undefined})),
+    ?assertError(badarg, array([[[[1, 2, 3]]]], {variable_list, s8, undefined})),
+
+    %% Nesting between elements is inconsistent
+    ?assertError(badarg, array([[1], [[2]], [[[3]]]], s8)),
+    ?assertError(function_clause, array([[1], [[2]], [[[3]]]], {fixed_list, s8, 1})).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Array Behaviour Adherence Tests %%
