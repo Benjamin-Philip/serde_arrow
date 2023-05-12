@@ -184,7 +184,6 @@ crashes_on_invalid_data(_Config) ->
     ?assertError(badarg, array([[1], [[2]], [[[3]]]], s8)),
     ?assertError(function_clause, array([[1], [[2]], [[[3]]]], {fixed_list, s8, 1})).
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Array Behaviour Adherence Tests %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
