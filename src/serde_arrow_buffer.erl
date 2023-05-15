@@ -80,7 +80,7 @@ from_erlang(Data, Type) ->
         end,
     #buffer{type = Type, length = Len, data = Data}.
 
-%% @doc God knows
+%% @doc Returns an Arrow buffer binary given a buffer.
 %% @end
 to_arrow(Buffer) when is_record(Buffer, buffer) ->
     Type = Buffer#buffer.type,
