@@ -17,6 +17,7 @@ all() ->
         valid_length_on_from_erlang,
         valid_type_on_from_erlang,
         valid_data_on_from_erlang,
+        crashes_on_list_of_binaries_on_from_erlang,
 
         valid_regular_buffer_data_on_to_arrow,
         valid_binary_buffer_data_on_to_arrow,
@@ -103,30 +104,31 @@ valid_binary_buffer_data_on_new(_Config) ->
 
 valid_length_on_from_erlang(_Config) ->
     %% With Fixed-Size data
-    Buffer1 = serde_arrow_buffer:from_erlang([1, 2, 3], {s, 8}),
-    ?assertEqual(Buffer1#buffer.length, 3),
+    Buffer1 = serde_arrow_buffer:from_erlang([1, 2, undefined, 3, nil], {s, 8}),
+    ?assertEqual(Buffer1#buffer.length, 5),
 
     %% With binaries
-    Buffer2 = serde_arrow_buffer:from_erlang([<<1, 2>>, <<3>>], {bin, undefined}),
-    ?assertEqual(Buffer2#buffer.length, 3),
-
-    %% With binaries and nulls
-    Buffer3 = serde_arrow_buffer:from_erlang([<<1, 2>>, undefined, <<3>>, nil], {bin, undefined}),
-    ?assertEqual(Buffer3#buffer.length, 5).
+    Buffer2 = serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined}),
+    ?assertEqual(Buffer2#buffer.length, 3).
 
 valid_type_on_from_erlang(_Config) ->
     Buffer1 = serde_arrow_buffer:from_erlang([1, 2, 3], {s, 32}),
     ?assertEqual(Buffer1#buffer.type, {s, 32}),
 
-    Buffer2 = serde_arrow_buffer:from_erlang([<<1, 2>>, <<3>>], {bin, undefined}),
+    Buffer2 = serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined}),
     ?assertEqual(Buffer2#buffer.type, {bin, undefined}).
 
 valid_data_on_from_erlang(_Config) ->
     Buffer1 = serde_arrow_buffer:from_erlang([1, 2, 3], {s, 32}),
     ?assertEqual(Buffer1#buffer.data, [1, 2, 3]),
 
-    Buffer2 = serde_arrow_buffer:from_erlang([<<1, 2>>, <<3>>], {bin, undefined}),
-    ?assertEqual(Buffer2#buffer.data, [<<1, 2>>, <<3>>]).
+    Buffer2 = serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined}),
+    ?assertEqual(Buffer2#buffer.data, <<1, 2, 3>>).
+
+crashes_on_list_of_binaries_on_from_erlang(_Config) ->
+    ?assertError(
+        badarg, serde_arrow_buffer:from_erlang([<<1, 2>>, undefined, <<3>>, nil], {bin, undefined})
+    ).
 
 %%%%%%%%%%%%%%%%
 %% to_arrow/1 %%
@@ -168,23 +170,23 @@ valid_binary_buffer_data_on_to_arrow(_Config) ->
 
     %% Works without any nulls
     Bin1 = serde_arrow_buffer:to_arrow(
-        serde_arrow_buffer:from_erlang([<<1>>, <<2>>, <<3>>], {bin, undefined})
+        serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined})
     ),
     ?assertEqual(Bin1, Data),
 
     %% Works with undefined and nil
     Bin2 = serde_arrow_buffer:to_arrow(
-        serde_arrow_buffer:from_erlang([<<1>>, <<2>>, undefined, <<3>>], {bin, undefined})
+        serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined})
     ),
     ?assertEqual(Bin2, Data),
 
     Bin3 = serde_arrow_buffer:to_arrow(
-        serde_arrow_buffer:from_erlang([<<1>>, <<2>>, nil, <<3>>], {bin, undefined})
+        serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined})
     ),
     ?assertEqual(Bin3, Data),
 
     Bin4 = serde_arrow_buffer:to_arrow(
-        serde_arrow_buffer:from_erlang([<<1>>, <<2>>, undefined, nil, <<3>>], {bin, undefined})
+        serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined})
     ),
     ?assertEqual(Bin4, Data).
 

@@ -64,17 +64,10 @@ new(Values, Type) ->
 from_erlang(Data, Type) ->
     Len =
         case Type of
+            {bin, undefined} when is_binary(Data) ->
+                byte_size(Data);
             {bin, undefined} ->
-                lists:foldl(
-                    fun
-                        (Bin, Len) when Bin =:= undefined; Bin =:= nil ->
-                            1 + Len;
-                        (Bin, Len) ->
-                            byte_size(Bin) + Len
-                    end,
-                    0,
-                    Data
-                );
+                erlang:error(badarg);
             _ ->
                 length(Data) * serde_arrow_type:byte_length(Type)
         end,
@@ -85,8 +78,14 @@ from_erlang(Data, Type) ->
 -spec to_arrow(Buffer :: #buffer{}) -> binary().
 to_arrow(Buffer) when is_record(Buffer, buffer) ->
     Type = Buffer#buffer.type,
-    ElementLen = serde_arrow_type:byte_length(Type),
-    Bin = <<(slot(X, Type, ElementLen)) || X <- Buffer#buffer.data>>,
+    Bin =
+        case Type of
+            {bin, undefined} ->
+                Buffer#buffer.data;
+            _ ->
+                ElementLen = serde_arrow_type:byte_length(Type),
+                <<(slot(X, Type, ElementLen)) || X <- Buffer#buffer.data>>
+        end,
     PadLen = 64 - byte_size(Bin) rem 64,
     pad(Bin, PadLen);
 to_arrow(_Buffer) ->
@@ -99,7 +98,6 @@ to_erlang(Buffer) when is_record(Buffer, buffer) ->
     Buffer#buffer.data;
 to_erlang(_Buffer) ->
     erlang:error(badarg).
-
 
 %% @doc Returns a new buffer given a raw binary
 %%
