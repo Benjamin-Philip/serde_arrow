@@ -22,6 +22,8 @@ all() ->
         valid_binary_buffer_data_on_to_arrow,
         crashes_on_non_buffer_input_on_to_arrow,
 
+        to_erlang,
+
         %% from_binary/4, from_binary/3, from_binary/2 and from_binary/1
         valid_length_on_from_binary,
         valid_type_on_from_binary,
@@ -188,6 +190,16 @@ valid_binary_buffer_data_on_to_arrow(_Config) ->
 
 crashes_on_non_buffer_input_on_to_arrow(_Config) ->
     ?assertError(badarg, serde_arrow_buffer:to_arrow(bar)).
+
+%%%%%%%%%%%%%%%%%
+%% to_erlang/1 %%
+%%%%%%%%%%%%%%%%%
+
+to_erlang(_Config) ->
+    Data = [1, 2, undefined, 3, nil],
+    ?assertEqual(serde_arrow_buffer:to_erlang(serde_arrow_buffer:from_erlang(Data, {s, 8})), Data),
+
+    ?assertError(badarg, serde_arrow_buffer:to_erlang([1, 2, 3])).
 
 %%%%%%%%%%%%%%%%%
 %% from_binary %%

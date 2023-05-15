@@ -35,7 +35,7 @@
 %% [2]: [https://arrow.apache.org/docs/format/Glossary.html#term-slot]
 %% @end
 -module(serde_arrow_buffer).
--export([new/2, from_erlang/2, to_arrow/1, from_binary/3]).
+-export([new/2, from_erlang/2, to_arrow/1, to_erlang/1, from_binary/3]).
 
 -include("serde_arrow_buffer.hrl").
 
@@ -82,6 +82,7 @@ from_erlang(Data, Type) ->
 
 %% @doc Returns an Arrow buffer binary given a buffer.
 %% @end
+-spec to_arrow(Buffer :: #buffer{}) -> binary().
 to_arrow(Buffer) when is_record(Buffer, buffer) ->
     Type = Buffer#buffer.type,
     ElementLen = serde_arrow_type:byte_length(Type),
@@ -90,6 +91,15 @@ to_arrow(Buffer) when is_record(Buffer, buffer) ->
     pad(Bin, PadLen);
 to_arrow(_Buffer) ->
     erlang:error(badarg).
+
+%% @doc Returns a list of Erlang values or binaries from a buffer.
+%% @end
+-spec to_erlang(Buffer :: #buffer{}) -> [serde_arrow_type:native_type()].
+to_erlang(Buffer) when is_record(Buffer, buffer) ->
+    Buffer#buffer.data;
+to_erlang(_Buffer) ->
+    erlang:error(badarg).
+
 
 %% @doc Returns a new buffer given a raw binary
 %%
