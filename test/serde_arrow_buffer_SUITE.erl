@@ -23,12 +23,7 @@ all() ->
         valid_binary_buffer_data_on_to_arrow,
         crashes_on_non_buffer_input_on_to_arrow,
 
-        to_erlang,
-
-        %% from_binary/4, from_binary/3, from_binary/2 and from_binary/1
-        valid_length_on_from_binary,
-        valid_type_on_from_binary,
-        valid_buffer_data_on_from_binary
+        to_erlang
     ].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,26 +197,6 @@ to_erlang(_Config) ->
     ?assertEqual(serde_arrow_buffer:to_erlang(serde_arrow_buffer:from_erlang(Data, {s, 8})), Data),
 
     ?assertError(badarg, serde_arrow_buffer:to_erlang([1, 2, 3])).
-
-%%%%%%%%%%%%%%%%%
-%% from_binary %%
-%%%%%%%%%%%%%%%%%
-
-valid_length_on_from_binary(_Config) ->
-    Buffer = serde_arrow_buffer:from_binary(<<1, 2, 3>>, {bin, undefined}, 3),
-    ?assertEqual(Buffer#buffer.length, 3).
-
-valid_type_on_from_binary(_Config) ->
-    Buffer1 = serde_arrow_buffer:from_binary(<<1, 2, 3>>, {bin, undefined}, 3),
-    ?assertEqual(Buffer1#buffer.type, {bin, undefined}),
-
-    Buffer2 = serde_arrow_buffer:from_binary(<<1, 2, 3>>, {s, 8}, 3),
-    ?assertEqual(Buffer2#buffer.type, {s, 8}).
-
-valid_buffer_data_on_from_binary(_Config) ->
-    Buffer = serde_arrow_buffer:from_binary(<<1, 2, 3>>, {bin, undefined}, 3),
-    Data = <<1, 2, 3, (alternate_pad(61))/bitstring>>,
-    ?assertEqual(Buffer#buffer.data, Data).
 
 %%%%%%%%%%%
 %% Utils %%

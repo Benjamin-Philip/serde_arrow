@@ -96,13 +96,13 @@ valid_offsets_on_new(_Config) ->
 
 valid_data_on_new(_Config) ->
     Array1 = serde_arrow_variable_binary_array:new([<<1, 2>>, <<3>>, <<4>>, <<5>>]),
-    Buffer1 = serde_arrow_test_utils:byte_buffer(<<1, 2, 3, 4, 5>>),
+    Buffer1 = binary_buffer(<<1, 2, 3, 4, 5>>),
     ?assertEqual(Array1#array.data, Buffer1),
 
     Array2 = serde_arrow_variable_binary_array:new([
         <<1, 2>>, <<3, 4, 5>>, undefined, <<6, 7, 8>>, nil, <<9, 10>>
     ]),
-    Buffer2 = serde_arrow_test_utils:byte_buffer(<<1, 2, 3, 4, 5, 6, 7, 8, 9, 10>>),
+    Buffer2 = binary_buffer(<<1, 2, 3, 4, 5, 6, 7, 8, 9, 10>>),
     ?assertEqual(Array2#array.data, Buffer2).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,3 +113,10 @@ new_callback(_Config) ->
     Array = serde_arrow_variable_binary_array:new([<<1>>, <<2>>]),
     Callback = serde_arrow_variable_binary_array:new([<<1>>, <<2>>], #{}),
     ?assertEqual(Callback, Array).
+
+%%%%%%%%%%%
+%% Utils %%
+%%%%%%%%%%%
+
+binary_buffer(Bin) ->
+    serde_arrow_buffer:new([Bin], {bin, undefined}).
