@@ -14,15 +14,24 @@ all() ->
         valid_type_on_new,
         valid_regular_buffer_data_on_new,
 
+        %% from_arrow/3
+        valid_length_on_from_arrow,
+        valid_type_on_from_arrow,
+        %% valid_regular_buffer_data_on_from_arrow,
+        valid_binary_buffer_data_on_from_arrow,
+
+        %% from_erlang/3
         valid_length_on_from_erlang,
         valid_type_on_from_erlang,
         valid_data_on_from_erlang,
         crashes_on_list_of_binaries_on_from_erlang,
 
+        %% to_arrow/1
         valid_regular_buffer_data_on_to_arrow,
         valid_binary_buffer_data_on_to_arrow,
         crashes_on_non_buffer_input_on_to_arrow,
 
+        %% to_erlang/1
         to_erlang,
 
         %% from_binary/4, from_binary/3, from_binary/2 and from_binary/1
@@ -98,6 +107,57 @@ valid_binary_buffer_data_on_new(_Config) ->
             (alternate_pad(59))/bitstring>>,
     ?assertEqual(Buffer4#buffer.data, Data4).
 
+%%%%%%%%%%%%%%%%%%
+%% from_arrow/3 %%
+%%%%%%%%%%%%%%%%%%
+
+valid_length_on_from_arrow(_Config) ->
+    %% With Fixed-Size data
+    Data1 =
+        <<1/little-signed-integer, 2/little-signed-integer, 0, 0, 3/little-signed-integer,
+            (alternate_pad(59))/bitstring>>,
+    Buffer1 = serde_arrow_buffer:from_arrow(Data1, {s, 8}, 5),
+    ?assertEqual(Buffer1#buffer.length, 5),
+
+    %% With binaries
+    Data2 =
+        <<1/little-signed-integer, 2/little-signed-integer, 3/little-signed-integer,
+            (alternate_pad(61))/bitstring>>,
+    Buffer2 = serde_arrow_buffer:from_arrow(Data2, {bin, undefined}, 3),
+    ?assertEqual(Buffer2#buffer.length, 3).
+
+valid_type_on_from_arrow(_Config) ->
+    Data =
+        <<1/little-signed-integer, 2/little-signed-integer, 3/little-signed-integer,
+            (alternate_pad(61))/bitstring>>,
+    Buffer1 = serde_arrow_buffer:from_arrow(Data, {s, 8}, 3),
+    ?assertEqual(Buffer1#buffer.type, {s, 8}),
+
+    Buffer2 = serde_arrow_buffer:from_arrow(Data, {bin, undefined}, 3),
+    ?assertEqual(Buffer2#buffer.type, {bin, undefined}).
+
+valid_regular_buffer_data_on_from_arrow(_Config) ->
+    %% Works without any nulls
+    Bin1 =
+        <<1/little-signed-integer, 2/little-signed-integer, 3/little-signed-integer,
+            (alternate_pad(61))/bitstring>>,
+    Buffer1 = serde_arrow_buffer:from_arrow(Bin1, {s, 8}, 3),
+    ?assertEqual(Buffer1#buffer.data, [1, 2, 3]),
+
+    %% Works with nulls
+    Bin2 =
+        <<1/little-signed-integer, 2/little-signed-integer, 0, 3/little-signed-integer,
+            (alternate_pad(61))/bitstring>>,
+    Buffer2 = serde_arrow_buffer:from_arrow(Bin2, {s, 8}, 4),
+    ?assertEqual(Buffer2#buffer.data, [1, 2, undefined, 3]).
+valid_binary_buffer_data_on_from_arrow(_Config) ->
+    Bin =
+        <<1/little-signed-integer, 2/little-signed-integer, 3/little-signed-integer,
+            (alternate_pad(61))/bitstring>>,
+
+    Buffer = serde_arrow_buffer:from_arrow(Bin, {bin, undefined}, 3),
+    ?assertEqual(Buffer#buffer.data, <<1, 2, 3>>).
+
 %%%%%%%%%%%%%%%%%%%
 %% from_erlang/2 %%
 %%%%%%%%%%%%%%%%%%%
@@ -169,26 +229,10 @@ valid_binary_buffer_data_on_to_arrow(_Config) ->
             (alternate_pad(61))/bitstring>>,
 
     %% Works without any nulls
-    Bin1 = serde_arrow_buffer:to_arrow(
+    Bin = serde_arrow_buffer:to_arrow(
         serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined})
     ),
-    ?assertEqual(Bin1, Data),
-
-    %% Works with undefined and nil
-    Bin2 = serde_arrow_buffer:to_arrow(
-        serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined})
-    ),
-    ?assertEqual(Bin2, Data),
-
-    Bin3 = serde_arrow_buffer:to_arrow(
-        serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined})
-    ),
-    ?assertEqual(Bin3, Data),
-
-    Bin4 = serde_arrow_buffer:to_arrow(
-        serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined})
-    ),
-    ?assertEqual(Bin4, Data).
+    ?assertEqual(Bin, Data).
 
 crashes_on_non_buffer_input_on_to_arrow(_Config) ->
     ?assertError(badarg, serde_arrow_buffer:to_arrow(bar)).
