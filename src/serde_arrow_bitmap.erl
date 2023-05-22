@@ -47,7 +47,7 @@
 
 %% @doc Returns the Validity Bitmap along with the Null Count, of
 %% an Array.
--spec validity_bitmap(Value :: [serde_arrow_type:native_type()]) ->
+-spec validity_bitmap(Value :: [serde_arrow_type:native_type()] | list()) ->
     {Bitmap :: #buffer{}, non_neg_integer()}.
 validity_bitmap(Value) ->
     case (lists:member(undefined, Value)) orelse (lists:member(nil, Value)) of

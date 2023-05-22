@@ -90,7 +90,7 @@ new(_Value, _Layout) ->
 %% Utils %%
 %%%%%%%%%%%
 
--spec element_len(List :: [serde_arrow_type:native_type()]) -> ElementLen :: pos_integer().
+-spec element_len(List :: list()) -> ElementLen :: pos_integer().
 element_len([H | _T]) when is_list(H) ->
     length(H);
 element_len([H | T]) when (H =:= undefined) orelse (H =:= nil) ->
