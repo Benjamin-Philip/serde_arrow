@@ -35,24 +35,9 @@
 %% [2]: [https://arrow.apache.org/docs/format/Glossary.html#term-slot]
 %% @end
 -module(serde_arrow_buffer).
--export([new/2, from_erlang/2, to_arrow/1, to_erlang/1]).
+-export([from_erlang/2, to_arrow/1, to_erlang/1]).
 
 -include("serde_arrow_buffer.hrl").
-
-%% @doc Creates a new buffer from a list of Erlang values or binaries, given its
-%% type
-%% @end
--spec new(
-    Value :: [serde_arrow_type:native_type()],
-    Type :: serde_arrow_type:arrow_longhand_type()
-) ->
-    Buffer :: #buffer{}.
-new(Values, Type) ->
-    ElementLen = serde_arrow_type:byte_length(Type),
-    Bin = <<(slot(X, Type, ElementLen)) || X <- Values>>,
-    Len = byte_size(Bin),
-    Data = pad(Bin, 64 - Len rem 64),
-    #buffer{type = Type, length = Len, data = Data}.
 
 %% @doc Creates a new buffer from a list of Erlang values or binaries, given its
 %% type

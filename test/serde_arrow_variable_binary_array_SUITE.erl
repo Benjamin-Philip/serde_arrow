@@ -91,7 +91,7 @@ valid_validity_bitmap_on_new(_Config) ->
 
 valid_offsets_on_new(_Config) ->
     Array = serde_arrow_variable_binary_array:new([<<1, 2>>, <<3>>, undefined, <<4>>, nil, <<5>>]),
-    Buffer = serde_arrow_buffer:new([0, 2, 3, 3, 4, 4, 5], {s, 32}),
+    Buffer = serde_arrow_buffer:from_erlang([0, 2, 3, 3, 4, 4, 5], {s, 32}),
     ?assertEqual(Array#array.offsets, Buffer).
 
 valid_data_on_new(_Config) ->
@@ -119,4 +119,4 @@ new_callback(_Config) ->
 %%%%%%%%%%%
 
 binary_buffer(Bin) ->
-    serde_arrow_buffer:new([Bin], {bin, undefined}).
+    serde_arrow_buffer:from_erlang(Bin, {bin, undefined}).
