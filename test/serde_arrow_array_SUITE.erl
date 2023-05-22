@@ -70,4 +70,4 @@ valid_offsets_on_access(_Config) ->
 
 valid_data_on_access(_Config) ->
     Array = serde_arrow_array:new(fixed_primitive, [1, 2, 3], {s, 8}),
-    ?assertEqual((serde_arrow_array:data(Array))#buffer.data, <<1, 2, 3, 0:(61 * 8)>>).
+    ?assertEqual(serde_arrow_array:data(Array), serde_arrow_buffer:from_erlang([1, 2, 3], {s, 8})).

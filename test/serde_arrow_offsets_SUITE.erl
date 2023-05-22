@@ -49,4 +49,4 @@ offsets(Values) ->
     serde_arrow_offsets:new(Values, bin).
 
 buffer(Values) ->
-    serde_arrow_buffer:new(Values, {s, 32}).
+    serde_arrow_buffer:from_erlang(Values, {s, 32}).

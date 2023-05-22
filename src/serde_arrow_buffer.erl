@@ -35,43 +35,55 @@
 %% [2]: [https://arrow.apache.org/docs/format/Glossary.html#term-slot]
 %% @end
 -module(serde_arrow_buffer).
--export([new/2, from_binary/3]).
+-export([from_erlang/2, to_arrow/1, to_erlang/1]).
 
 -include("serde_arrow_buffer.hrl").
 
 %% @doc Creates a new buffer from a list of Erlang values or binaries, given its
 %% type
 %% @end
--spec new(
-    Value :: [serde_arrow_type:native_type()],
+-spec from_erlang(
+    Value :: [serde_arrow_type:native_type()] | binary(),
     Type :: serde_arrow_type:arrow_longhand_type()
 ) ->
     Buffer :: #buffer{}.
-new(Values, Type) ->
-    ElementLen = serde_arrow_type:byte_length(Type),
-    Bin = <<(slot(X, Type, ElementLen)) || X <- Values>>,
-    Len = byte_size(Bin),
-    from_binary(Bin, Type, Len).
+from_erlang(Data, Type) ->
+    Len =
+        case Type of
+            {bin, undefined} when is_binary(Data) ->
+                byte_size(Data);
+            {bin, undefined} ->
+                erlang:error(badarg);
+            _ ->
+                length(Data) * serde_arrow_type:byte_length(Type)
+        end,
+    #buffer{type = Type, length = Len, data = Data}.
 
-%% @doc Returns a new buffer given a raw binary
-%%
-%% The following are its parameters in order:
-%%
-%% <ol>
-%%  <li>A padded or unpadded binary</li>
-%%  <li>The type of the value stored by the buffer</li>
-%%  <li>Length of the binary in bytes</li>
-%% </ol>
+%% @doc Returns an Arrow buffer binary given a buffer.
 %% @end
--spec from_binary(
-    Values :: binary(),
-    Type :: serde_arrow_type:arrow_longhand_type(),
-    Len :: pos_integer()
-) -> Buffer :: #buffer{}.
-from_binary(Values, Type, Len) ->
-    PadLen = 64 - Len rem 64,
-    Bin = pad(Values, PadLen),
-    #buffer{type = Type, length = Len, data = Bin}.
+-spec to_arrow(Buffer :: #buffer{}) -> binary().
+to_arrow(Buffer) when is_record(Buffer, buffer) ->
+    Type = Buffer#buffer.type,
+    Bin =
+        case Type of
+            {bin, undefined} ->
+                Buffer#buffer.data;
+            _ ->
+                ElementLen = serde_arrow_type:byte_length(Type),
+                <<(slot(X, Type, ElementLen)) || X <- Buffer#buffer.data>>
+        end,
+    PadLen = 64 - byte_size(Bin) rem 64,
+    pad(Bin, PadLen);
+to_arrow(_Buffer) ->
+    erlang:error(badarg).
+
+%% @doc Returns a list of Erlang values or binaries from a buffer.
+%% @end
+-spec to_erlang(Buffer :: #buffer{}) -> [serde_arrow_type:native_type()].
+to_erlang(Buffer) when is_record(Buffer, buffer) ->
+    Buffer#buffer.data;
+to_erlang(_Buffer) ->
+    erlang:error(badarg).
 
 -spec slot(
     Value :: serde_arrow_type:native_type(),

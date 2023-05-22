@@ -101,26 +101,20 @@ valid_offsets_on_new(_Config) ->
 valid_data_on_new(_Config) ->
     %% Works without any nulls
     Array1 = serde_arrow_fixed_primitive_array:new([1, 2, 3], {s, 8}),
-    Data1 =
-        <<1/little-signed-integer, 2/little-signed-integer, 3/little-signed-integer,
-            <<0:(61 * 8)>>/bitstring>>,
+    Data1 = [1, 2, 3],
     ?assertEqual(Array1#array.data#buffer.data, Data1),
 
     %% Works with undefined and nil
     Array2 = serde_arrow_fixed_primitive_array:new([1, 2, undefined, 3], {s, 8}),
-    Data2 =
-        <<1/little-signed-integer, 2/little-signed-integer, 0, 3/little-signed-integer,
-            <<0:(60 * 8)>>/bitstring>>,
+    Data2 = [1, 2, undefined, 3],
     ?assertEqual(Array2#array.data#buffer.data, Data2),
 
     Array3 = serde_arrow_fixed_primitive_array:new([1, 2, nil, 3], {s, 8}),
-    Data3 = Data2,
+    Data3 = [1, 2, nil, 3],
     ?assertEqual(Array3#array.data#buffer.data, Data3),
 
     Array4 = serde_arrow_fixed_primitive_array:new([1, 2, undefined, nil, 3], {s, 8}),
-    Data4 =
-        <<1/little-signed-integer, 2/little-signed-integer, 0, 0, 3/little-signed-integer,
-            <<0:(59 * 8)>>/bitstring>>,
+    Data4 = [1, 2, undefined, nil, 3],
     ?assertEqual(Array4#array.data#buffer.data, Data4).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

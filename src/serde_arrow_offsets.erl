@@ -52,7 +52,7 @@
     Buffer :: #buffer{}.
 new(Values, Type) ->
     Offsets = offsets(Values, [0], 0, Type),
-    serde_arrow_buffer:new(Offsets, {s, 32}).
+    serde_arrow_buffer:from_erlang(Offsets, {s, 32}).
 
 %% @doc Returns the offsets array given some values and their type as a list.
 -spec new_list(

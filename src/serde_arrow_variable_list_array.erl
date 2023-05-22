@@ -48,7 +48,7 @@ new(Values, GivenType) when
     Array = serde_arrow_fixed_primitive_array:new(Flattened, Type),
     %% Offsets
     [0 | FlatOffsets] = serde_arrow_offsets:new_list(Flattened, Type),
-    Offsets = serde_arrow_buffer:new([0 | offsets(Values, FlatOffsets, 0)], {s, 32}),
+    Offsets = serde_arrow_buffer:from_erlang([0 | offsets(Values, FlatOffsets, 0)], {s, 32}),
     #array{
         layout = variable_list,
         type = Type,
@@ -67,7 +67,7 @@ new(Values, {Layout, NestedType, Size} = Type) when
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
     Flattened = serde_arrow_utils:flatten(Values),
     Array = serde_arrow_array:new(Layout, Flattened, NestedType),
-    Offsets = serde_arrow_buffer:new(nested_offsets(Values, Type), {s, 32}),
+    Offsets = serde_arrow_buffer:from_erlang(nested_offsets(Values, Type), {s, 32}),
     #array{
         layout = variable_list,
         type = Type,

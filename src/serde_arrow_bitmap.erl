@@ -47,12 +47,12 @@
 
 %% @doc Returns the Validity Bitmap along with the Null Count, of
 %% an Array.
--spec validity_bitmap(Value :: [serde_arrow_type:native_type()]) ->
+-spec validity_bitmap(Value :: [serde_arrow_type:native_type()] | list()) ->
     {Bitmap :: #buffer{}, non_neg_integer()}.
 validity_bitmap(Value) ->
     case (lists:member(undefined, Value)) orelse (lists:member(nil, Value)) of
         true ->
-            bitmap(Value, <<>>, 0, 0);
+            bitmap(Value, <<>>, 0);
         false ->
             {undefined, 0}
     end.
@@ -60,10 +60,9 @@ validity_bitmap(Value) ->
 -spec bitmap(
     Value :: [serde_arrow_type:native_type()],
     Acc :: binary(),
-    NullCount :: non_neg_integer(),
-    ByteLen :: non_neg_integer()
+    NullCount :: non_neg_integer()
 ) -> {Bitmap :: #buffer{}, NullCount :: non_neg_integer()}.
-bitmap([X1, X2, X3, X4, X5, X6, X7, X8 | Rest], Acc, NullCount, ByteLen) ->
+bitmap([X1, X2, X3, X4, X5, X6, X7, X8 | Rest], Acc, NullCount) ->
     %% By assigning B8 as X1's validity, we are following LSB numbering.
     B8 = validity(X1),
     B7 = validity(X2),
@@ -77,12 +76,11 @@ bitmap([X1, X2, X3, X4, X5, X6, X7, X8 | Rest], Acc, NullCount, ByteLen) ->
     bitmap(
         Rest,
         <<Acc/binary, B1:1, B2:1, B3:1, B4:1, B5:1, B6:1, B7:1, B8:1>>,
-        NullCount + (8 - (B1 + B2 + B3 + B4 + B5 + B6 + B7 + B8)),
-        ByteLen + 1
+        NullCount + (8 - (B1 + B2 + B3 + B4 + B5 + B6 + B7 + B8))
     );
-bitmap([], Acc, NullCount, ByteLen) ->
-    {serde_arrow_buffer:from_binary(Acc, {bin, undefined}, ByteLen), NullCount};
-bitmap(LeftOver, Acc, NullCount, ByteLen) ->
+bitmap([], Acc, NullCount) ->
+    {serde_arrow_buffer:from_erlang(Acc, {bin, undefined}), NullCount};
+bitmap(LeftOver, Acc, NullCount) ->
     Validities = lists:map(fun(X) -> validity(X) end, LeftOver),
     Len = length(Validities),
     Nulls = Len - lists:sum(Validities),
@@ -95,8 +93,7 @@ bitmap(LeftOver, Acc, NullCount, ByteLen) ->
     bitmap(
         [],
         <<Acc/binary, B1:1, B2:1, B3:1, B4:1, B5:1, B6:1, B7:1, B8:1>>,
-        NullCount + Nulls,
-        ByteLen + 1
+        NullCount + Nulls
     ).
 
 -spec validity(X :: serde_arrow_type:native_type()) -> Validity :: 0 | 1.
