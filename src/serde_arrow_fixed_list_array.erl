@@ -49,8 +49,8 @@ new(Values, Opts) when is_map(Opts) ->
             new(Values, Type)
     end;
 new([[H | _] | _] = Values, GivenType) when
-      (is_tuple(GivenType) andalso tuple_size(GivenType) =:= 2) orelse is_atom(GivenType),
-      not is_list(H)
+    (is_tuple(GivenType) andalso tuple_size(GivenType) =:= 2) orelse is_atom(GivenType),
+    not is_list(H)
 ->
     Len = length(Values),
     ElementLen = element_len(Values),
