@@ -48,14 +48,15 @@ new(Values, Opts) when is_map(Opts) ->
         Type when is_tuple(Type) orelse is_atom(Type) ->
             new(Values, Type)
     end;
-new(Value, GivenType) when
-    (is_tuple(GivenType) andalso tuple_size(GivenType) =:= 2) orelse is_atom(GivenType)
+new([[H | _] | _] = Values, GivenType) when
+      (is_tuple(GivenType) andalso tuple_size(GivenType) =:= 2) orelse is_atom(GivenType),
+      not is_list(H)
 ->
-    Len = length(Value),
-    ElementLen = element_len(Value),
+    Len = length(Values),
+    ElementLen = element_len(Values),
     Type = serde_arrow_type:normalize(GivenType),
-    {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
-    Flattened = serde_arrow_utils:flatten(Value, fun() -> [undefined] end, ElementLen),
+    {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
+    Flattened = serde_arrow_utils:flatten(Values, fun() -> [undefined] end, ElementLen),
     Array = serde_arrow_fixed_primitive_array:new(Flattened, Type),
     #array{
         layout = fixed_list,
@@ -82,7 +83,7 @@ new(Value, {fixed_list, NestedType, Size} = Type) ->
         validity_bitmap = Bitmap,
         data = Array
     };
-new(_Value, {_Layout, _, _}) ->
+new(_Value, _Layout) ->
     erlang:error(badarg).
 
 %%%%%%%%%%%

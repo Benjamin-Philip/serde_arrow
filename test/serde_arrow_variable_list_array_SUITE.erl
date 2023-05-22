@@ -182,7 +182,7 @@ crashes_on_invalid_data(_Config) ->
 
     %% Nesting between elements is inconsistent
     ?assertError(badarg, array([[1], [[2]], [[[3]]]], s8)),
-    ?assertError(function_clause, array([[1], [[2]], [[[3]]]], {fixed_list, s8, 1})).
+    ?assertError(badarg, array([[1], [[2]], [[[3]]]], {fixed_list, s8, 1})).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Array Behaviour Adherence Tests %%
