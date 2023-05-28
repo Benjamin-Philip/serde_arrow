@@ -314,6 +314,8 @@ normalize({Name, undefined} = Type) when (Name =:= bool) orelse (Name =:= bin) -
     Type;
 normalize({fixed_list, Type, Length}) when is_integer(Length) ->
     {fixed_list, normalize(Type), Length};
+normalize({variable_list, Type, undefined}) ->
+    {variable_list, normalize(Type), undefined};
 normalize(_Type) ->
     erlang:error(badarg).
 
