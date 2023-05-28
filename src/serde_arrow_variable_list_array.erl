@@ -28,6 +28,7 @@
 -export([new/2]).
 
 -include("serde_arrow_array.hrl").
+
 -spec new(Values :: list(), Type :: map() | serde_arrow_type:arrow_type()) -> Array :: #array{}.
 new(Values, Opts) when is_map(Opts) ->
     case maps:get(type, Opts, undefined) of
@@ -36,19 +37,25 @@ new(Values, Opts) when is_map(Opts) ->
         Type when is_tuple(Type) orelse is_atom(Type) ->
             new(Values, Type)
     end;
-new(Values, GivenType) when
-    is_tuple(GivenType), tuple_size(GivenType) =:= 2;
-    is_atom(GivenType)
-->
+new(Values, GivenType) ->
     Len = length(Values),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
     Type = serde_arrow_type:normalize(GivenType),
-    %% Data
     Flattened = serde_arrow_utils:flatten(Values),
-    Array = serde_arrow_fixed_primitive_array:new(Flattened, Type),
-    %% Offsets
-    [0 | FlatOffsets] = serde_arrow_offsets:new_list(Flattened, Type),
-    Offsets = serde_arrow_buffer:from_erlang([0 | offsets(Values, FlatOffsets, 0)], {s, 32}),
+    {Data, Offsets} =
+        case Type of
+            {_, _} ->
+                Array = serde_arrow_fixed_primitive_array:new(Flattened, Type),
+                [0 | FlatOffsets] = serde_arrow_offsets:new_list(Flattened, Type),
+                Offset = serde_arrow_buffer:from_erlang(
+                    [0 | offsets(Values, FlatOffsets, 0)], {s, 32}
+                ),
+                {Array, Offset};
+            {Layout, NestedType, _Size} ->
+                Array = serde_arrow_array:new(Layout, Flattened, NestedType),
+                Offset = serde_arrow_buffer:from_erlang(nested_offsets(Values, Type), {s, 32}),
+                {Array, Offset}
+        end,
     #array{
         layout = variable_list,
         type = Type,
@@ -57,26 +64,7 @@ new(Values, GivenType) when
         null_count = NullCount,
         validity_bitmap = Bitmap,
         offsets = Offsets,
-        data = Array
-    };
-new(Values, {Layout, NestedType, Size} = Type) when
-    Layout =:= variable_list, Size =:= undefined;
-    Layout =:= fixed_list, is_integer(Size)
-->
-    Len = length(Values),
-    {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
-    Flattened = serde_arrow_utils:flatten(Values),
-    Array = serde_arrow_array:new(Layout, Flattened, NestedType),
-    Offsets = serde_arrow_buffer:from_erlang(nested_offsets(Values, Type), {s, 32}),
-    #array{
-        layout = variable_list,
-        type = Type,
-        len = Len,
-        element_len = undefined,
-        null_count = NullCount,
-        validity_bitmap = Bitmap,
-        offsets = Offsets,
-        data = Array
+        data = Data
     }.
 
 %%%%%%%%%%%
