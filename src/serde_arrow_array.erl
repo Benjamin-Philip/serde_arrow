@@ -109,7 +109,7 @@
 -spec new(
     Layout :: layout(),
     Value :: [serde_arrow_type:native_type()],
-    Opts :: map()
+    Opts :: map() | serde_arrow_type:arrow_type()
 ) ->
     Array :: #array{}.
 new(Layout, Value, Opts) ->
