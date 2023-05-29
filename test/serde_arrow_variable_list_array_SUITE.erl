@@ -100,16 +100,24 @@ valid_offsets_on_new(_Config) ->
     Buffer1 = serde_arrow_buffer:from_erlang([0, 2, 3, 3, 4, 4, 5], {s, 32}),
     ?assertEqual(Array1#array.offsets, Buffer1),
 
-    %% Nested Offset
+    %% Works with binaries in general
     Array2 = array(
-        [[[1, 2], [3, 4]], [[5, 6, 7], nil, [8]], [[9, 11]]], {variable_list, s8, undefined}
+        [[<<"one">>, <<"two">>, <<"three">>], [<<"quatre">>, <<"cinq">>], [<<"ആറ്">>]],
+        {bin, undefined}
     ),
-    Buffer2 = serde_arrow_buffer:from_erlang([0, 4, 8, 10], {s, 32}),
+    Buffer2 = serde_arrow_buffer:from_erlang([0, 11, 21, 24], {s, 32}), % ആറ് is 3 chars, not 2.
     ?assertEqual(Array2#array.offsets, Buffer2),
 
-    Array3 = array([[[1, 2], [3, 4]], [[5, 6], [6, 7]]], {fixed_list, s8, 4}),
-    Buffer3 = serde_arrow_buffer:from_erlang([0, 4, 8], {s, 32}),
-    ?assertEqual(Array3#array.offsets, Buffer3).
+    %% Nested Offset
+    Array3 = array(
+        [[[1, 2], [3, 4]], [[5, 6, 7], nil, [8]], [[9, 11]]], {variable_list, s8, undefined}
+    ),
+    Buffer3 = serde_arrow_buffer:from_erlang([0, 4, 8, 10], {s, 32}),
+    ?assertEqual(Array3#array.offsets, Buffer3),
+
+    Array4 = array([[[1, 2], [3, 4]], [[5, 6], [6, 7]]], {fixed_list, s8, 4}),
+    Buffer4 = serde_arrow_buffer:from_erlang([0, 4, 8], {s, 32}),
+    ?assertEqual(Array4#array.offsets, Buffer4).
 
 valid_data_on_new(_Config) ->
     %% Works without any nulls
@@ -133,7 +141,17 @@ valid_data_on_new(_Config) ->
     %% Works with undefined in deepest level of nesting
     Array5 = array([[1, 2, undefined], [nil, 3, 4, 5]], {s, 8}),
     Data5 = primitive([1, 2, undefined, nil, 3, 4, 5]),
-    ?assertEqual(Array5#array.data, Data5).
+    ?assertEqual(Array5#array.data, Data5),
+
+    %% Works with binaries in general
+    Array6 = array(
+        [[<<"one">>, <<"two">>, <<"three">>], [<<"quatre">>, <<"cinq">>], [<<"ആറ്">>]],
+        {bin, undefined}
+    ),
+    Data6 = serde_arrow_variable_binary_array:new([
+        <<"one">>, <<"two">>, <<"three">>, <<"quatre">>, <<"cinq">>, <<"ആറ്">>
+    ]),
+    ?assertEqual(Array6#array.data, Data6).
 
 valid_nested_data_on_new(_Config) ->
     %% Works without any nulls

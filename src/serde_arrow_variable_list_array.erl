@@ -44,6 +44,13 @@ new(Values, GivenType) ->
     Flattened = serde_arrow_utils:flatten(Values),
     {Data, Offsets} =
         case Type of
+            {bin, undefined} ->
+                Array = serde_arrow_variable_binary_array:new(Flattened),
+                [0 | FlatOffsets] = Array#array.offsets#buffer.data,
+                Offset = serde_arrow_buffer:from_erlang(
+                    [0 | offsets(Values, FlatOffsets, 0)], {s, 32}
+                ),
+                {Array, Offset};
             {_, _} ->
                 Array = serde_arrow_fixed_primitive_array:new(Flattened, Type),
                 [0 | FlatOffsets] = serde_arrow_offsets:new_list(Flattened, Type),
