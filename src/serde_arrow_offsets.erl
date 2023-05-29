@@ -40,7 +40,7 @@
 %% [2]: [https://arrow.apache.org/docs/format/Columnar.html#terminology]
 %% @end
 -module(serde_arrow_offsets).
--export([new/2, new_list/2]).
+-export([new/2]).
 
 -include("serde_arrow_buffer.hrl").
 
@@ -53,15 +53,6 @@
 new(Values, Type) ->
     Offsets = offsets(Values, [0], 0, Type),
     serde_arrow_buffer:from_erlang(Offsets, {s, 32}).
-
-%% @doc Returns the offsets array given some values and their type as a list.
--spec new_list(
-    Value :: [serde_arrow_type:native_type()],
-    Type :: serde_arrow_type:arrow_longhand_type()
-) ->
-    Offset :: [non_neg_integer()].
-new_list(Values, Type) ->
-    offsets(Values, [0], 0, Type).
 
 -spec offsets(
     Value :: [serde_arrow_type:native_type()],
