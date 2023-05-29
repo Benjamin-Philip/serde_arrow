@@ -105,7 +105,9 @@ valid_offsets_on_new(_Config) ->
         [[<<"one">>, <<"two">>, <<"three">>], [<<"quatre">>, <<"cinq">>], [<<"ആറ്">>]],
         {bin, undefined}
     ),
-    Buffer2 = serde_arrow_buffer:from_erlang([0, 11, 21, 24], {s, 32}), % ആറ് is 3 chars, not 2.
+    %% ആറ് is 3 characters.
+    %% The chandrakala is treated as a char even though it is just a diacritic.
+    Buffer2 = serde_arrow_buffer:from_erlang([0, 11, 21, 24], {s, 32}),
     ?assertEqual(Array2#array.offsets, Buffer2),
 
     %% Nested Offset
@@ -115,8 +117,8 @@ valid_offsets_on_new(_Config) ->
     Buffer3 = serde_arrow_buffer:from_erlang([0, 4, 8, 10], {s, 32}),
     ?assertEqual(Array3#array.offsets, Buffer3),
 
-    Array4 = array([[[1, 2], [3, 4]], [[5, 6], [6, 7]]], {fixed_list, s8, 4}),
-    Buffer4 = serde_arrow_buffer:from_erlang([0, 4, 8], {s, 32}),
+    Array4 = array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 10], [11, 12]]], {fixed_list, s8, 4}),
+    Buffer4 = serde_arrow_buffer:from_erlang([0, 2, 4, 6], {s, 32}),
     ?assertEqual(Array4#array.offsets, Buffer4).
 
 valid_data_on_new(_Config) ->
