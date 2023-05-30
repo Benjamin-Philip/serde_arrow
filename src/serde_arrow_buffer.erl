@@ -63,7 +63,7 @@ from_erlang(Data, Type) ->
 -spec from_erlang(
     Data :: [serde_arrow_type:native_type()] | binary(),
     Type :: serde_arrow_type:arrow_longhand_type(),
-    DataLen :: pos_integer()
+    DataLen :: pos_integer() | undefined
 ) ->
     Buffer :: #buffer{}.
 from_erlang(Data, Type, DataLen) ->
