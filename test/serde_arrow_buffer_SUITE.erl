@@ -30,9 +30,15 @@ valid_length_on_from_erlang(_Config) ->
     Buffer1 = serde_arrow_buffer:from_erlang([1, 2, undefined, 3, nil], {s, 8}),
     ?assertEqual(Buffer1#buffer.length, 5),
 
+    Buffer2 = serde_arrow_buffer:from_erlang([1, 2, undefined, 3, nil], {s, 8}, 5),
+    ?assertEqual(Buffer2#buffer.length, 5),
+
     %% With binaries
-    Buffer2 = serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined}),
-    ?assertEqual(Buffer2#buffer.length, 3).
+    Buffer3 = serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined}),
+    ?assertEqual(Buffer3#buffer.length, 3),
+
+    Buffer4 = serde_arrow_buffer:from_erlang(<<1, 2, 3>>, {bin, undefined}, 3),
+    ?assertEqual(Buffer4#buffer.length, 3).
 
 valid_type_on_from_erlang(_Config) ->
     Buffer1 = serde_arrow_buffer:from_erlang([1, 2, 3], {s, 32}),
