@@ -34,7 +34,7 @@
 -module(serde_arrow_fixed_primitive_array).
 -behaviour(serde_arrow_array).
 
--export([new/2]).
+-export([from_erlang/2]).
 
 -include("serde_arrow_array.hrl").
 
@@ -42,23 +42,24 @@
 %% Array Creation %%
 %%%%%%%%%%%%%%%%%%%%
 
-%% @doc Creates a new primitive array, given its value and type.
+%% @doc Creates a new primitive array, given its value and type from its erlang
+%% representation.
 %%
 %% Accepts a map with the type, or the type directly.
 %% @end
--spec new(
+-spec from_erlang(
     Value :: [serde_arrow_type:native_type()],
     Type :: map() | serde_arrow_type:arrow_primitive_type()
 ) ->
     Array :: #array{}.
-new(Value, Opts) when is_map(Opts) ->
+from_erlang(Value, Opts) when is_map(Opts) ->
     case maps:get(type, Opts, undefined) of
         undefined ->
             erlang:error(badarg);
         Type when is_tuple(Type) orelse is_atom(Type) ->
-            new(Value, Type)
+            from_erlang(Value, Type)
     end;
-new(Value, GivenType) when is_tuple(GivenType) orelse is_atom(GivenType) ->
+from_erlang(Value, GivenType) when is_tuple(GivenType) orelse is_atom(GivenType) ->
     Len = length(Value),
     Type = serde_arrow_type:normalize(GivenType),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),

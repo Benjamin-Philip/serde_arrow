@@ -32,7 +32,7 @@
 -module(serde_arrow_fixed_list_array).
 -behaviour(serde_arrow_array).
 
--export([new/2]).
+-export([from_erlang/2]).
 
 -include("serde_arrow_array.hrl").
 
@@ -40,15 +40,16 @@
 %%
 %% Accepts a map with the type, or the type directly.
 %% @end
--spec new(Values :: list(), Type :: map() | serde_arrow_type:arrow_type()) -> Array :: #array{}.
-new(Values, Opts) when is_map(Opts) ->
+-spec from_erlang(Values :: list(), Type :: map() | serde_arrow_type:arrow_type()) ->
+    Array :: #array{}.
+from_erlang(Values, Opts) when is_map(Opts) ->
     case maps:get(type, Opts, undefined) of
         undefined ->
             erlang:error(badarg);
         Type when is_tuple(Type) orelse is_atom(Type) ->
-            new(Values, Type)
+            from_erlang(Values, Type)
     end;
-new([[H | _] | _] = Values, GivenType) when
+from_erlang([[H | _] | _] = Values, GivenType) when
     (is_tuple(GivenType) andalso tuple_size(GivenType) =:= 2) orelse is_atom(GivenType),
     not is_list(H)
 ->
@@ -57,7 +58,7 @@ new([[H | _] | _] = Values, GivenType) when
     Type = serde_arrow_type:normalize(GivenType),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
     Flattened = serde_arrow_utils:flatten(Values, fun() -> [undefined] end, ElementLen),
-    Array = serde_arrow_fixed_primitive_array:new(Flattened, Type),
+    Array = serde_arrow_fixed_primitive_array:from_erlang(Flattened, Type),
     #array{
         layout = fixed_list,
         type = Type,
@@ -67,13 +68,13 @@ new([[H | _] | _] = Values, GivenType) when
         validity_bitmap = Bitmap,
         data = Array
     };
-new(Value, {fixed_list, NestedType, Size} = Type) ->
+from_erlang(Value, {fixed_list, NestedType, Size} = Type) ->
     Len = length(Value),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
     Shape = shape(Value, NestedType),
     Null = [list_from_shape(Shape)],
     Flattened = serde_arrow_utils:flatten(Value, fun() -> Null end, Size),
-    Array = serde_arrow_fixed_list_array:new(Flattened, NestedType),
+    Array = serde_arrow_fixed_list_array:from_erlang(Flattened, NestedType),
     #array{
         layout = fixed_list,
         type = Type,
@@ -83,7 +84,7 @@ new(Value, {fixed_list, NestedType, Size} = Type) ->
         validity_bitmap = Bitmap,
         data = Array
     };
-new(_Value, _Layout) ->
+from_erlang(_Value, _Layout) ->
     erlang:error(badarg).
 
 %%%%%%%%%%%

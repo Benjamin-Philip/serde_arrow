@@ -54,8 +54,8 @@
 %%
 %% == The Behaviour of an Array ==
 %%
-%% As of right now, a layout needs to implement the `c:new/2' callback. This is
-%% then used in the `new/3' function to create new arrays.
+%% As of right now, a layout needs to implement the `c:from_erlang/2' callback. This is
+%% then used in the `from_erlang/3' function to create new arrays.
 %%
 %% == Functions for working with Arrays ==
 %%
@@ -80,7 +80,7 @@
 %% @end
 -module(serde_arrow_array).
 -export([
-    new/3,
+    from_erlang/3,
     layout/1,
     type/1,
     len/1,
@@ -101,23 +101,25 @@
 %% Array Creation %%
 %%%%%%%%%%%%%%%%%%%%
 
--callback new(Value :: [serde_arrow_type:native_type()], Opts :: map()) ->
+-callback from_erlang(Value :: [serde_arrow_type:native_type()], Opts :: map()) ->
     Array :: #array{}.
-%% Creates a new array of a certain layout, given its value and options.
+%% Creates a new array of a certain layout, given its value and options from its
+%% erlang representation.
 
 %% @doc A common way to create a new array, given its layout, value, and options.
--spec new(
+%% from its erlang representation.
+-spec from_erlang(
     Layout :: layout(),
     Value :: [serde_arrow_type:native_type()],
     Opts :: map() | serde_arrow_type:arrow_type()
 ) ->
     Array :: #array{}.
-new(Layout, Value, Opts) ->
+from_erlang(Layout, Value, Opts) ->
     case Layout of
-        fixed_primitive -> serde_arrow_fixed_primitive_array:new(Value, Opts);
-        variable_binary -> serde_arrow_variable_binary_array:new(Value, Opts);
-        fixed_list -> serde_arrow_fixed_list_array:new(Value, Opts);
-        variable_list -> serde_arrow_variable_list_array:new(Value, Opts)
+        fixed_primitive -> serde_arrow_fixed_primitive_array:from_erlang(Value, Opts);
+        variable_binary -> serde_arrow_variable_binary_array:from_erlang(Value, Opts);
+        fixed_list -> serde_arrow_fixed_list_array:from_erlang(Value, Opts);
+        variable_list -> serde_arrow_variable_list_array:from_erlang(Value, Opts)
     end.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

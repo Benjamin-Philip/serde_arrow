@@ -6,19 +6,19 @@
 -module(serde_arrow_variable_binary_array).
 -behaviour(serde_arrow_array).
 
--export([new/1, new/2]).
+-export([from_erlang/1, from_erlang/2]).
 
 -include("serde_arrow_array.hrl").
 
 %% @doc Creates a Variable-Sized Binary Array given the values and options in the form of
-%% a map
--spec new(Values :: [serde_arrow_type:native_type()], Opts :: map()) -> Array :: #array{}.
-new(Values, _Opts) ->
-    new(Values).
+%% a map, from its erlang representation.
+-spec from_erlang(Values :: [serde_arrow_type:native_type()], Opts :: map()) -> Array :: #array{}.
+from_erlang(Values, _Opts) ->
+    from_erlang(Values).
 
 %% @doc Creates a Variable-Sized Binary Array given the values
--spec new(Values :: [serde_arrow_type:native_type()]) -> Array :: #array{}.
-new(Values) ->
+-spec from_erlang(Values :: [serde_arrow_type:native_type()]) -> Array :: #array{}.
+from_erlang(Values) ->
     Len = length(Values),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
     Offsets = serde_arrow_offsets:new(Values, {bin, undefined}, Len),
