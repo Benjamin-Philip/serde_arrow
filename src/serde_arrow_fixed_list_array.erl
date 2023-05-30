@@ -28,7 +28,7 @@
 %%  </li>
 %% </ol>
 %%
-%% [1]: https://arrow.apache.org/docs/format/Columnar.html#variable-size-list-layout
+%% [1]: https://arrow.apache.org/docs/format/Columnar.html#fixed-size-list-layout
 -module(serde_arrow_fixed_list_array).
 -behaviour(serde_arrow_array).
 
