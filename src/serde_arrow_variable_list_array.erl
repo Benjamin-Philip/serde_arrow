@@ -25,19 +25,20 @@
 
 -behaviour(serde_arrow_array).
 
--export([new/2]).
+-export([from_erlang/2]).
 
 -include("serde_arrow_array.hrl").
 
--spec new(Values :: list(), Type :: map() | serde_arrow_type:arrow_type()) -> Array :: #array{}.
-new(Values, Opts) when is_map(Opts) ->
+-spec from_erlang(Values :: list(), Type :: map() | serde_arrow_type:arrow_type()) ->
+    Array :: #array{}.
+from_erlang(Values, Opts) when is_map(Opts) ->
     case maps:get(type, Opts, undefined) of
         undefined ->
             erlang:error(badarg);
         Type when is_tuple(Type) orelse is_atom(Type) ->
-            new(Values, Type)
+            from_erlang(Values, Type)
     end;
-new(Values, GivenType) ->
+from_erlang(Values, GivenType) ->
     Len = length(Values),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
     Type = serde_arrow_type:normalize(GivenType),
@@ -45,11 +46,11 @@ new(Values, GivenType) ->
     Data =
         case Type of
             {bin, undefined} ->
-                serde_arrow_variable_binary_array:new(Flattened);
+                serde_arrow_variable_binary_array:from_erlang(Flattened);
             {_, _} ->
-                serde_arrow_fixed_primitive_array:new(Flattened, Type);
+                serde_arrow_fixed_primitive_array:from_erlang(Flattened, Type);
             {Layout, NestedType, _Size} ->
-                serde_arrow_array:new(Layout, Flattened, NestedType)
+                serde_arrow_array:from_erlang(Layout, Flattened, NestedType)
         end,
     FlatOffsets =
         case Data#array.offsets of

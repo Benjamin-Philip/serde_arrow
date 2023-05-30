@@ -9,26 +9,26 @@
 
 all() ->
     [
-        valid_layout_on_new,
-        valid_type_on_new,
-        valid_len_on_new,
-        valid_element_len_on_new,
-        valid_null_count_on_new,
-        valid_validity_bitmap_on_new,
-        valid_offsets_on_new,
-        valid_data_on_new,
-        valid_nested_data_on_new,
+        valid_layout_on_from_erlang,
+        valid_type_on_from_erlang,
+        valid_len_on_from_erlang,
+        valid_element_len_on_from_erlang,
+        valid_null_count_on_from_erlang,
+        valid_validity_bitmap_on_from_erlang,
+        valid_offsets_on_from_erlang,
+        valid_data_on_from_erlang,
+        valid_nested_data_on_from_erlang,
         crashes_on_invalid_data,
 
         %% Behaviour Adherence
-        new_callback
+        from_erlang_callback
     ].
 
-valid_layout_on_new(_Config) ->
+valid_layout_on_from_erlang(_Config) ->
     Array = array([[1, 2, 3]], {s, 8}),
     ?assertEqual(Array#array.layout, variable_list).
 
-valid_type_on_new(_Config) ->
+valid_type_on_from_erlang(_Config) ->
     Array1 = array([[1, 2, 3]], {s, 8}),
     ?assertEqual(Array1#array.type, {s, 8}),
 
@@ -36,15 +36,15 @@ valid_type_on_new(_Config) ->
     Array2 = array([[1, 2, 3]], s8),
     ?assertEqual(Array2#array.type, {s, 8}).
 
-valid_len_on_new(_Config) ->
+valid_len_on_from_erlang(_Config) ->
     Array = array([[1], [2], [3]], {s, 8}),
     ?assertEqual(Array#array.len, 3).
 
-valid_element_len_on_new(_Config) ->
+valid_element_len_on_from_erlang(_Config) ->
     Array = array([[1, 2], [3, 4]], {s, 8}),
     ?assertEqual(Array#array.element_len, undefined).
 
-valid_null_count_on_new(_Config) ->
+valid_null_count_on_from_erlang(_Config) ->
     Array1 = array([[1], [2], [3]], {s, 8}),
     ?assertEqual(Array1#array.null_count, 0),
 
@@ -60,7 +60,7 @@ valid_null_count_on_new(_Config) ->
     Array5 = array([[1], undefined, [nil], [2], [3]], {s, 8}),
     ?assertEqual(Array5#array.null_count, 1).
 
-valid_validity_bitmap_on_new(_Config) ->
+valid_validity_bitmap_on_from_erlang(_Config) ->
     %% Does not allocate bitmap on no nulls
     Array1 = array([[1], [2], [3]], {s, 8}),
     ?assertEqual(Array1#array.validity_bitmap, undefined),
@@ -95,7 +95,7 @@ valid_validity_bitmap_on_new(_Config) ->
         )
     ).
 
-valid_offsets_on_new(_Config) ->
+valid_offsets_on_from_erlang(_Config) ->
     Array1 = array([[1, 2], [3], undefined, [4], nil, [5]], s8),
     Buffer1 = serde_arrow_buffer:from_erlang([0, 2, 3, 3, 4, 4, 5], {s, 32}),
     ?assertEqual(Array1#array.offsets, Buffer1),
@@ -121,7 +121,7 @@ valid_offsets_on_new(_Config) ->
     Buffer4 = serde_arrow_buffer:from_erlang([0, 2, 4, 6], {s, 32}),
     ?assertEqual(Array4#array.offsets, Buffer4).
 
-valid_data_on_new(_Config) ->
+valid_data_on_from_erlang(_Config) ->
     %% Works without any nulls
     Array1 = array([[1, 2], [3, 4, 5]], {s, 8}),
     Data1 = primitive([1, 2, 3, 4, 5]),
@@ -150,12 +150,12 @@ valid_data_on_new(_Config) ->
         [[<<"one">>, <<"two">>, <<"three">>], [<<"quatre">>, <<"cinq">>], [<<"ആറ്">>]],
         {bin, undefined}
     ),
-    Data6 = serde_arrow_variable_binary_array:new([
+    Data6 = serde_arrow_variable_binary_array:from_erlang([
         <<"one">>, <<"two">>, <<"three">>, <<"quatre">>, <<"cinq">>, <<"ആറ്">>
     ]),
     ?assertEqual(Array6#array.data, Data6).
 
-valid_nested_data_on_new(_Config) ->
+valid_nested_data_on_from_erlang(_Config) ->
     %% Works without any nulls
     Array1 = array([[[1, 2], [3, 4, 5]], [[6], [7, 8, 9]]], {variable_list, s8, undefined}),
     Data1 = array([[1, 2], [3, 4, 5], [6], [7, 8, 9]], s8),
@@ -188,7 +188,7 @@ valid_nested_data_on_new(_Config) ->
 
     %% Nesting of other layouts
     Array6 = array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]], {fixed_list, s8, 2}),
-    Data6 = serde_arrow_fixed_list_array:new([[1, 2], [3, 4], [5, 6], [7, 8]], s8),
+    Data6 = serde_arrow_fixed_list_array:from_erlang([[1, 2], [3, 4], [5, 6], [7, 8]], s8),
     ?assertEqual(Array6#array.data, Data6).
 
 crashes_on_invalid_data(_Config) ->
@@ -211,7 +211,7 @@ crashes_on_invalid_data(_Config) ->
 %% Array Behaviour Adherence Tests %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-new_callback(_Config) ->
+from_erlang_callback(_Config) ->
     Array = array([[1, 2], [3, 4]], {s, 8}),
     Callback = array([[1, 2], [3, 4]], #{type => {s, 8}}),
     ?assertEqual(Callback, Array),
@@ -223,7 +223,7 @@ new_callback(_Config) ->
 %%%%%%%%%%%
 
 array(Values, Type) ->
-    serde_arrow_variable_list_array:new(Values, Type).
+    serde_arrow_variable_list_array:from_erlang(Values, Type).
 
 primitive(Values) ->
-    serde_arrow_fixed_primitive_array:new(Values, {s, 8}).
+    serde_arrow_fixed_primitive_array:from_erlang(Values, {s, 8}).
