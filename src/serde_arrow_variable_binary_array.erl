@@ -21,7 +21,7 @@ new(Values, _Opts) ->
 new(Values) ->
     Len = length(Values),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
-    Offsets = serde_arrow_offsets:new(Values, {bin, undefined}),
+    Offsets = serde_arrow_offsets:new(Values, {bin, undefined}, Len),
     Bin = <<X || X <- Values, X =/= undefined, X =/= nil>>,
     Data = serde_arrow_buffer:from_erlang(Bin, {bin, undefined}),
     #array{

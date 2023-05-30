@@ -62,7 +62,7 @@ new(Value, GivenType) when is_tuple(GivenType) orelse is_atom(GivenType) ->
     Len = length(Value),
     Type = serde_arrow_type:normalize(GivenType),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Value),
-    Data = serde_arrow_buffer:from_erlang(Value, Type),
+    Data = serde_arrow_buffer:from_erlang(Value, Type, Len),
     #array{
         layout = fixed_primitive,
         type = Type,

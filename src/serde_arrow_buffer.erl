@@ -35,7 +35,7 @@
 %% [2]: [https://arrow.apache.org/docs/format/Glossary.html#term-slot]
 %% @end
 -module(serde_arrow_buffer).
--export([from_erlang/2, to_arrow/1, to_erlang/1]).
+-export([from_erlang/2, from_erlang/3, to_arrow/1, to_erlang/1]).
 
 -include("serde_arrow_buffer.hrl").
 
@@ -50,12 +50,31 @@
 from_erlang(Data, Type) ->
     Len =
         case Type of
+            {bin, undefined} ->
+                undefined;
+            _ ->
+                length(Data)
+        end,
+    from_erlang(Data, Type, Len).
+
+%% @doc Creates a new buffer from a list of Erlang values or binaries, given its
+%% type and length
+%% @end
+-spec from_erlang(
+    Data :: [serde_arrow_type:native_type()] | binary(),
+    Type :: serde_arrow_type:arrow_longhand_type(),
+    DataLen :: pos_integer() | undefined
+) ->
+    Buffer :: #buffer{}.
+from_erlang(Data, Type, DataLen) ->
+    Len =
+        case Type of
             {bin, undefined} when is_binary(Data) ->
                 byte_size(Data);
             {bin, undefined} ->
                 erlang:error(badarg);
             _ ->
-                length(Data) * serde_arrow_type:byte_length(Type)
+                DataLen * serde_arrow_type:byte_length(Type)
         end,
     #buffer{type = Type, length = Len, data = Data}.
 

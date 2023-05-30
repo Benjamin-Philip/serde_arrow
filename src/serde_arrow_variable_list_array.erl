@@ -54,11 +54,11 @@ new(Values, GivenType) ->
     FlatOffsets =
         case Data#array.offsets of
             undefined ->
-                fixed_offsets(Type, length(Flattened));
+                fixed_offsets(Type, Data#array.len);
             Offset ->
                 Offset#buffer.data
         end,
-    Offsets = serde_arrow_buffer:from_erlang(offsets(Values, FlatOffsets, 0), {s, 32}),
+    Offsets = serde_arrow_buffer:from_erlang(offsets(Values, FlatOffsets, 0), {s, 32}, Len + 1),
     #array{
         layout = variable_list,
         type = Type,
