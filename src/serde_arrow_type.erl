@@ -146,6 +146,11 @@
     arrow_long_bin/0,
     arrow_short_bin/0,
 
+    %% Nested Type
+    arrow_nested_type/0,
+    arrow_short_nested_type/0,
+    arrow_long_nested_type/0,
+
     native_type/0
 ]).
 
@@ -165,7 +170,8 @@
     | arrow_long_int()
     | arrow_long_uint()
     | arrow_long_float()
-    | arrow_long_bin().
+    | arrow_long_bin()
+    | arrow_long_nested_type().
 %% Longhand syntax of any type.
 
 -type arrow_shorthand_type() ::
@@ -173,8 +179,9 @@
     | arrow_short_int()
     | arrow_short_uint()
     | arrow_short_float()
-    | arrow_short_bin().
-%% Shorthand syntax of any primitive type.
+    | arrow_short_bin()
+    | arrow_short_nested_type().
+%% Shorthand syntax of any type.
 
 %%%%%%%%%%%%%%
 %% Booleans %%
@@ -254,9 +261,18 @@
 %% Nested Types %%
 %%%%%%%%%%%%%%%%%%
 
--type arrow_nested_type() ::
-    {fixed_list, arrow_nested_type() | arrow_primitive_type(), pos_integer()}.
+-type arrow_nested_type() :: arrow_short_nested_type() | arrow_long_nested_type().
 %% A Nested Type.
+
+-type arrow_short_nested_type() ::
+    {fixed_list, arrow_short_nested_type() | arrow_shorthand_type(), pos_integer()}
+    | {variable_list, arrow_short_nested_type() | arrow_shorthand_type(), undefined}.
+%% A Nested Type in which the base primitive type is in shorthand.
+
+-type arrow_long_nested_type() ::
+    {fixed_list, arrow_long_nested_type() | arrow_longhand_type(), pos_integer()}
+    | {variable_list, arrow_long_nested_type() | arrow_longhand_type(), undefined}.
+%% A Nested Type in which the base primitive type is in longhand.
 
 %%%%%%%%%%%%%%%%%
 %% Native Type %%
@@ -281,7 +297,7 @@
         {Char, Size}
 ).
 
--spec normalize(Type :: arrow_longhand_type() | arrow_shorthand_type()) -> arrow_longhand_type().
+-spec normalize(Type :: arrow_type()) -> arrow_longhand_type().
 %% Booleans
 ?Normalize(bool, bool, undefined);
 %% Signed Integers
@@ -314,6 +330,8 @@ normalize({Name, undefined} = Type) when (Name =:= bool) orelse (Name =:= bin) -
     Type;
 normalize({fixed_list, Type, Length}) when is_integer(Length) ->
     {fixed_list, normalize(Type), Length};
+normalize({variable_list, Type, undefined}) ->
+    {variable_list, normalize(Type), undefined};
 normalize(_Type) ->
     erlang:error(badarg).
 

@@ -96,7 +96,7 @@ normalize_on_shorthand(_Config) ->
     ?NormErr(u128),
     ?NormErr(s128),
     ?NormErr(f8),
-    %% Nested Types
+    %% Nested Types - Fixed Lists
     ?assertEqual(serde_arrow_type:normalize({fixed_list, {s, 8}, 4}), {fixed_list, {s, 8}, 4}),
     ?assertEqual(serde_arrow_type:normalize({fixed_list, s8, 4}), {fixed_list, {s, 8}, 4}),
     ?assertEqual(
@@ -108,7 +108,28 @@ normalize_on_shorthand(_Config) ->
         {fixed_list, {fixed_list, {s, 8}, 4}, 4}
     ),
     ?assertError(badarg, serde_arrow_type:normalize({fixed_list, s8, undefined})),
-    ?assertError(badarg, serde_arrow_type:normalize({fixed_list, {fixed_list, s8, undefined}, 4})).
+    ?assertError(badarg, serde_arrow_type:normalize({fixed_list, {fixed_list, s8, undefined}, 4})),
+    %% Nested Types - Variable Lists
+    ?assertEqual(
+        serde_arrow_type:normalize({variable_list, {s, 8}, undefined}),
+        {variable_list, {s, 8}, undefined}
+    ),
+    ?assertEqual(
+        serde_arrow_type:normalize({variable_list, s8, undefined}),
+        {variable_list, {s, 8}, undefined}
+    ),
+    ?assertEqual(
+        serde_arrow_type:normalize({variable_list, {variable_list, {s, 8}, undefined}, undefined}),
+        {variable_list, {variable_list, {s, 8}, undefined}, undefined}
+    ),
+    ?assertEqual(
+        serde_arrow_type:normalize({variable_list, {variable_list, s8, undefined}, undefined}),
+        {variable_list, {variable_list, {s, 8}, undefined}, undefined}
+    ),
+    ?assertError(badarg, serde_arrow_type:normalize({variable_list, s8, foobar})),
+    ?assertError(
+        badarg, serde_arrow_type:normalize({variable_list, {variable_list, s8, snafu}, undefined})
+    ).
 
 bit_length(_Config) ->
     %% Normalizes

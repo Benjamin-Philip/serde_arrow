@@ -28,6 +28,7 @@
 -export([new/2]).
 
 -include("serde_arrow_array.hrl").
+
 -spec new(Values :: list(), Type :: map() | serde_arrow_type:arrow_type()) -> Array :: #array{}.
 new(Values, Opts) when is_map(Opts) ->
     case maps:get(type, Opts, undefined) of
@@ -36,19 +37,28 @@ new(Values, Opts) when is_map(Opts) ->
         Type when is_tuple(Type) orelse is_atom(Type) ->
             new(Values, Type)
     end;
-new(Values, GivenType) when
-    is_tuple(GivenType), tuple_size(GivenType) =:= 2;
-    is_atom(GivenType)
-->
+new(Values, GivenType) ->
     Len = length(Values),
     {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
     Type = serde_arrow_type:normalize(GivenType),
-    %% Data
     Flattened = serde_arrow_utils:flatten(Values),
-    Array = serde_arrow_fixed_primitive_array:new(Flattened, Type),
-    %% Offsets
-    [0 | FlatOffsets] = serde_arrow_offsets:new_list(Flattened, Type),
-    Offsets = serde_arrow_buffer:from_erlang([0 | offsets(Values, FlatOffsets, 0)], {s, 32}),
+    Data =
+        case Type of
+            {bin, undefined} ->
+                serde_arrow_variable_binary_array:new(Flattened);
+            {_, _} ->
+                serde_arrow_fixed_primitive_array:new(Flattened, Type);
+            {Layout, NestedType, _Size} ->
+                serde_arrow_array:new(Layout, Flattened, NestedType)
+        end,
+    FlatOffsets =
+        case Data#array.offsets of
+            undefined ->
+                fixed_offsets(Type, length(Flattened));
+            Offset ->
+                Offset#buffer.data
+        end,
+    Offsets = serde_arrow_buffer:from_erlang(offsets(Values, FlatOffsets, 0), {s, 32}),
     #array{
         layout = variable_list,
         type = Type,
@@ -57,26 +67,7 @@ new(Values, GivenType) when
         null_count = NullCount,
         validity_bitmap = Bitmap,
         offsets = Offsets,
-        data = Array
-    };
-new(Values, {Layout, NestedType, Size} = Type) when
-    Layout =:= variable_list, Size =:= undefined;
-    Layout =:= fixed_list, is_integer(Size)
-->
-    Len = length(Values),
-    {Bitmap, NullCount} = serde_arrow_bitmap:validity_bitmap(Values),
-    Flattened = serde_arrow_utils:flatten(Values),
-    Array = serde_arrow_array:new(Layout, Flattened, NestedType),
-    Offsets = serde_arrow_buffer:from_erlang(nested_offsets(Values, Type), {s, 32}),
-    #array{
-        layout = variable_list,
-        type = Type,
-        len = Len,
-        element_len = undefined,
-        null_count = NullCount,
-        validity_bitmap = Bitmap,
-        offsets = Offsets,
-        data = Array
+        data = Data
     }.
 
 %%%%%%%%%%%
@@ -87,6 +78,8 @@ new(Values, {Layout, NestedType, Size} = Type) when
     [non_neg_integer()].
 offsets([H | T], Offsets, CurOffset) when (H =:= undefined) orelse (H =:= nil) ->
     [CurOffset | offsets(T, Offsets, CurOffset)];
+offsets(Values, [0 | TOffsets], CurOffset) ->
+    [CurOffset | offsets(Values, TOffsets, CurOffset)];
 offsets([H | T], Offsets, _CurOffset) ->
     Len = length(H),
     {_HOffsets, [CurOffset | TOffsets]} = lists:split(Len - 1, Offsets),
@@ -94,15 +87,10 @@ offsets([H | T], Offsets, _CurOffset) ->
 offsets([], _Offset, _CurOffset) ->
     [].
 
-nested_offsets(List, Type) ->
-    case serde_arrow_utils:nesting(List) of
-        2 ->
-            [0 | FlatOffsets] = serde_arrow_offsets:new_list(
-                serde_arrow_utils:flatten(List), serde_arrow_type:normalize(Type)
-            ),
-            [0 | offsets(List, FlatOffsets, 0)];
-        _Nesting ->
-            Flattened = serde_arrow_utils:flatten(List),
-            [0 | FlatOffsets] = nested_offsets(Flattened, element(2, Type)),
-            [0 | offsets(List, FlatOffsets, 0)]
-    end.
+-spec fixed_offsets(Type :: serde_arrow_type:arrow_longhand_type(), Length :: pos_integer()) ->
+    [non_neg_integer()].
+fixed_offsets(Type, Length) when tuple_size(Type) =:= 2 ->
+    ByteLen = serde_arrow_type:byte_length(Type),
+    lists:seq(0, Length * ByteLen, ByteLen);
+fixed_offsets({fixed_list, Type, Size}, Length) ->
+    fixed_offsets(Type, Length * Size).
