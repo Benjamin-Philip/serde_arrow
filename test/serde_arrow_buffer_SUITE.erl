@@ -68,7 +68,7 @@ valid_regular_buffer_data_on_to_arrow(_Config) ->
     Bin1 = serde_arrow_buffer:to_arrow(serde_arrow_buffer:from_erlang([1, 2, 3], {s, 8})),
     Data1 =
         <<1/little-signed-integer, 2/little-signed-integer, 3/little-signed-integer,
-            (alternate_pad(61))/bitstring>>,
+            (pad(61))/bitstring>>,
     ?assertEqual(Bin1, Data1),
 
     %% Works with undefined and nil
@@ -77,7 +77,7 @@ valid_regular_buffer_data_on_to_arrow(_Config) ->
     ),
     Data2 =
         <<1/little-signed-integer, 2/little-signed-integer, 0, 3/little-signed-integer,
-            (alternate_pad(60))/bitstring>>,
+            (pad(60))/bitstring>>,
     ?assertEqual(Bin2, Data2),
 
     Bin3 = serde_arrow_buffer:to_arrow(serde_arrow_buffer:from_erlang([1, 2, nil, 3], {s, 8})),
@@ -89,13 +89,13 @@ valid_regular_buffer_data_on_to_arrow(_Config) ->
     ),
     Data4 =
         <<1/little-signed-integer, 2/little-signed-integer, 0, 0, 3/little-signed-integer,
-            (alternate_pad(59))/bitstring>>,
+            (pad(59))/bitstring>>,
     ?assertEqual(Bin4, Data4).
 
 valid_binary_buffer_data_on_to_arrow(_Config) ->
     Data =
         <<1/little-signed-integer, 2/little-signed-integer, 3/little-signed-integer,
-            (alternate_pad(61))/bitstring>>,
+            (pad(61))/bitstring>>,
 
     %% Works without any nulls
     Bin1 = serde_arrow_buffer:to_arrow(
@@ -138,5 +138,6 @@ to_erlang(_Config) ->
 
 %% We need to use a simpler alternate pad function to test the buffer's pad
 %% output.
-alternate_pad(ByteLen) ->
-    <<<<0>> || _X <- lists:seq(1, ByteLen)>>.
+
+pad(X) ->
+    serde_arrow_test_utils:pad(X).
