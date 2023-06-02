@@ -59,8 +59,8 @@
 %%
 %% == Functions for working with Arrays ==
 %%
-%% As of right now, only functions to access the various fields, and to create
-%% new arrays exist.
+%% As of right now, only functions to access the various fields, to create
+%% new arrays, and to serialize arrays to arrow exist.
 %%
 %% == References ==
 %%
@@ -88,7 +88,8 @@
     null_count/1,
     validity_bitmap/1,
     offsets/1,
-    data/1
+    data/1,
+    to_arrow/1
 ]).
 
 -include("serde_arrow_array.hrl").
@@ -162,6 +163,44 @@ offsets(Array) ->
     Array#array.offsets.
 
 %% @doc Returns the data of an array.
--spec data(Array :: #array{}) -> Data :: #buffer{} | undefined.
+-spec data(Array :: #array{}) -> Data :: #buffer{} | #array{} | undefined.
 data(Array) ->
     Array#array.data.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Array Serialization %%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% @doc Serializes an array into the Arrow binary form.
+%%
+%% Serializes the buffers of an Array and concatenates them in the following
+%% order:
+%%
+%% <ol>
+%%  <li>`validity'</li>
+%%  <li>`offsets'</li>
+%%  <li>`data'</li>
+%% </ol>
+%%
+%% In case an array doesn't have any of the following buffers, it is ommitted.
+%% (e.g. validity in arrays with a null count of 0, offsets in fixed primitive
+%% arrays). In the case of a nested array, `data' will be serialized form of
+%% nested array.
+%%
+%% Do note that this is just binary form that includes the buffers in an Array,
+%% and not IPC.
+-spec to_arrow(Array :: #array{}) -> Arrow :: binary().
+to_arrow(Array) ->
+    Validity = some(validity_bitmap(Array)),
+    Offsets = some(offsets(Array)),
+    Data = some(data(Array)),
+
+    <<Validity/binary, Offsets/binary, Data/binary>>.
+
+-spec some(Value :: #array{} | #buffer{} | undefined) -> Binary :: binary().
+some(undefined) ->
+    <<>>;
+some(Buffer) when is_record(Buffer, buffer) ->
+    serde_arrow_buffer:to_arrow(Buffer);
+some(Array) when is_record(Array, array) ->
+    to_arrow(Array).
