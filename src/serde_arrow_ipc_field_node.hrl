@@ -1,0 +1,1 @@
+-record(field_node, {length :: pos_integer(), null_count :: non_neg_integer()}).
