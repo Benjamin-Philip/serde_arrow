@@ -91,8 +91,7 @@ to_arrow(Buffer) when is_record(Buffer, buffer) ->
                 ElementLen = serde_arrow_type:byte_length(Type),
                 <<(slot(X, Type, ElementLen)) || X <- Buffer#buffer.data>>
         end,
-    PadLen = 64 - byte_size(Bin) rem 64,
-    pad(Bin, PadLen);
+    pad(Bin, serde_arrow_utils:pad_len(byte_size(Bin)));
 to_arrow(_Buffer) ->
     erlang:error(badarg).
 

@@ -133,5 +133,5 @@ valid_binary_on_to_arrow(_Config) ->
 %%%%%%%%%%%
 
 pad(X) ->
-    PadLen = 64 - byte_size(X) rem 64,
+    PadLen = serde_arrow_utils:pad_len(byte_size(X)),
     <<X/binary, (serde_arrow_test_utils:pad(PadLen))/binary>>.

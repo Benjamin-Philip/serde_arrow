@@ -8,7 +8,8 @@
 all() ->
     [
         nesting,
-        flatten
+        flatten,
+        pad_len
     ].
 
 nesting(_Config) ->
@@ -34,3 +35,10 @@ flatten(_Config) ->
         badarg,
         serde_arrow_utils:flatten([[1], undefined, [2], nil, [3]], fun() -> [foobar] end, 2)
     ).
+
+pad_len(_Config) ->
+    ?assertEqual(serde_arrow_utils:pad_len(10), 54),
+    ?assertEqual(serde_arrow_utils:pad_len(64), 0),
+    ?assertEqual(serde_arrow_utils:pad_len(74), 54),
+
+    ?assertEqual(serde_arrow_utils:pad_len(33, 8), 7).
