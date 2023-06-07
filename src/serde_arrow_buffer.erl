@@ -35,7 +35,7 @@
 %% [2]: [https://arrow.apache.org/docs/format/Glossary.html#term-slot]
 %% @end
 -module(serde_arrow_buffer).
--export([from_erlang/2, from_erlang/3, to_arrow/1, to_erlang/1]).
+-export([from_erlang/2, from_erlang/3, to_arrow/1, to_erlang/1, size/1]).
 
 -include("serde_arrow_buffer.hrl").
 
@@ -91,8 +91,7 @@ to_arrow(Buffer) when is_record(Buffer, buffer) ->
                 ElementLen = serde_arrow_type:byte_length(Type),
                 <<(slot(X, Type, ElementLen)) || X <- Buffer#buffer.data>>
         end,
-    PadLen = 64 - byte_size(Bin) rem 64,
-    pad(Bin, PadLen);
+    pad(Bin, serde_arrow_utils:pad_len(byte_size(Bin)));
 to_arrow(_Buffer) ->
     erlang:error(badarg).
 
@@ -103,6 +102,12 @@ to_erlang(Buffer) when is_record(Buffer, buffer) ->
     Buffer#buffer.data;
 to_erlang(_Buffer) ->
     erlang:error(badarg).
+
+%% @doc Returns the size of the buffer inclusive of padding in bytes.
+-spec size(Buffer :: #buffer{}) -> pos_integer().
+size(Buffer) ->
+    Len = Buffer#buffer.length * 8,
+    round((Len + serde_arrow_utils:pad_len(Len)) / 8).
 
 -spec slot(
     Value :: serde_arrow_type:native_type(),

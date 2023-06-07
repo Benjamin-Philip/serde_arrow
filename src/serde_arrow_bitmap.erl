@@ -86,8 +86,7 @@ bitmap(LeftOver, Acc, NullCount) ->
     Nulls = Len - lists:sum(Validities),
 
     %% Here we both pad as well as LSB number at one pass.
-    PadLen = 8 - Len rem 8,
-    Padded = lists:duplicate(PadLen, 0) ++ lists:reverse(Validities),
+    Padded = lists:duplicate(serde_arrow_utils:pad_len(Len, 8), 0) ++ lists:reverse(Validities),
 
     [B1, B2, B3, B4, B5, B6, B7, B8] = Padded,
     bitmap(

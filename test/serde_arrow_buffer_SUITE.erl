@@ -18,7 +18,9 @@ all() ->
         valid_binary_buffer_data_on_to_arrow,
         crashes_on_non_buffer_input_on_to_arrow,
 
-        to_erlang
+        to_erlang,
+
+        size
     ].
 
 %%%%%%%%%%%%%%%%%%%
@@ -131,6 +133,14 @@ to_erlang(_Config) ->
     ?assertEqual(serde_arrow_buffer:to_erlang(serde_arrow_buffer:from_erlang(Data, {s, 8})), Data),
 
     ?assertError(badarg, serde_arrow_buffer:to_erlang([1, 2, 3])).
+
+%%%%%%%%%%%%
+%% size/1 %%
+%%%%%%%%%%%%
+
+size(_Config) ->
+    Buffer = serde_arrow_buffer:from_erlang([1, 2, 3], {s, 8}),
+    ?assertEqual(serde_arrow_buffer:size(Buffer), 8).
 
 %%%%%%%%%%%
 %% Utils %%
