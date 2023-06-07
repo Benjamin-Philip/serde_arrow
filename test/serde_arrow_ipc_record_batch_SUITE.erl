@@ -15,8 +15,13 @@
     )
 ).
 -define(Age, serde_arrow_array:from_erlang(fixed_primitive, [10, 20, 30, undefined], {s, 8})).
+-define(Marks,
+    serde_arrow_array:from_erlang(
+        fixed_list, [[100, 97, 98], [100, 99, 96], [100, 98, 95], undefined], {s, 8}
+    )
+).
 
--define(Fields, [?ID, ?Name, ?Age]).
+-define(Fields, [?ID, ?Name, ?Age, ?Marks]).
 
 all() ->
     [
@@ -30,12 +35,20 @@ valid_length_on_from_erlang(_Config) ->
     ?assertEqual((from_erlang(?Fields))#record_batch.length, 4).
 
 valid_nodes_on_from_erlang(_Config) ->
-    FieldNodes = lists:duplicate(3, #{length => 4, null_count => 1}),
+    FieldNodes = lists:duplicate(4, #{length => 4, null_count => 1}),
     ?assertEqual((from_erlang(?Fields))#record_batch.nodes, FieldNodes).
 
 valid_buffers_on_from_erlang(_Config) ->
-    Buffers = [#{offset => 0, length => 1}, #{offset => 1, length => 3}],
-    erlang:display(?ID),
+    ID = [#{offset => 0, length => 1}, #{offset => 8, length => 4}],
+    Name = [
+        #{offset => 16, length => 1}, #{offset => 24, length => 20}, #{offset => 48, length => 15}
+    ],
+    Age = [#{offset => 64, length => 1}, #{offset => 72, length => 4}],
+    Marks =
+        [#{offset => 80, length => 1}] ++
+            [#{offset => 88, length => 2}, #{offset => 96, length => 10}],
+    Buffers = ID ++ Name ++ Age ++ Marks,
+
     ?assertEqual((from_erlang(?Fields))#record_batch.buffers, Buffers).
 
 valid_compression_on_from_erlang(_Config) ->
