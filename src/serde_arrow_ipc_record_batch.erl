@@ -22,6 +22,7 @@
 %%      Can either by `undefined' (i.e. no compression), `zstd' for Zstandard[2],
 %%      or `lz4_frame' for LZ4 Frame[3]. Defaults to `undefined'.
 %%  </li>
+%% </ol>
 %%
 %% Currently, compression is not supported, but it has been added for forwards
 %% comapatibility.
