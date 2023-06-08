@@ -33,7 +33,7 @@
 %% [2]: [https://arrow.apache.org/docs/format/Columnar.html#recordbatch-message]
 %% @end
 -module(serde_arrow_ipc_message).
--export([from_erlang/1]).
+-export([from_erlang/1, from_erlang/2]).
 -export_type([metadata_version/0, key_value/0]).
 
 -include("serde_arrow_ipc_message.hrl").
@@ -49,3 +49,7 @@
 -spec from_erlang(Header :: #schema{}) -> Message :: #message{}.
 from_erlang(Header) ->
     #message{header = Header, body_length = 0}.
+
+-spec from_erlang(Header :: #schema{}, Body :: binary()) -> Message :: #message{}.
+from_erlang(Header, Body) ->
+    #message{header = Header, body = Body, body_length = byte_size(Body)}.
