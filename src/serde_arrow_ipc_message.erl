@@ -71,6 +71,12 @@ to_ipc(Message) ->
     %% This is a stub value till we can serialize flatbuffers
     Metadata = <<1, 2, 3, 4, 5, 6, 7, 8>>,
     MetadataSize = <<(byte_size(Metadata)):32>>,
-    Body = Message#message.body,
+    Body =
+        case Message#message.body of
+            undefined ->
+                <<>>;
+            Bin ->
+                Bin
+        end,
 
     <<Continuation/binary, MetadataSize/binary, Metadata/binary, Body/binary>>.

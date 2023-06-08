@@ -99,10 +99,10 @@ valid_metadata_on_to_ipc(_Config) ->
     ?assertEqual(Metadata, <<1, 2, 3, 4, 5, 6, 7, 8>>).
 
 valid_body_on_to_ipc(_Config) ->
-    <<_:32, _:32, _:8, Body1>> = ?RecordBatchEMF,
+    <<_:32, _:32, _:8/binary, Body1/binary>> = ?RecordBatchEMF,
     ?assertEqual(Body1, ?Body),
 
-    <<_:32, _:32, _:8, Body2/binary>> = ?SchemaEMF,
+    <<_:32, _:32, _:8/binary, Body2/binary>> = ?SchemaEMF,
     ?assertEqual(Body2, <<>>).
 
 %%%%%%%%%%%
