@@ -33,7 +33,7 @@
 %% [2]: [https://arrow.apache.org/docs/format/Columnar.html#recordbatch-message]
 %% @end
 -module(serde_arrow_ipc_message).
--export([from_erlang/1, from_erlang/2]).
+-export([from_erlang/1, from_erlang/2, to_ipc/1]).
 -export_type([metadata_version/0, key_value/0]).
 
 -include("serde_arrow_ipc_message.hrl").
@@ -53,3 +53,14 @@ from_erlang(Header) ->
 -spec from_erlang(Header :: #schema{}, Body :: binary()) -> Message :: #message{}.
 from_erlang(Header, Body) ->
     #message{header = Header, body = Body, body_length = byte_size(Body)}.
+
+-spec to_ipc(Message :: #message{}) -> EMF :: binary().
+to_ipc(Message) ->
+    %% 0xFFFFFFFF in int32
+    Continuation = <<-1:32>>,
+    %% This is a stub value till we can serialize flatbuffers
+    Metadata = <<1, 2, 3, 4, 5, 6, 7, 8>>,
+    MetadataSize = <<(byte_size(Metadata)):32>>,
+    Body = Message#message.body,
+
+    <<Continuation/binary, MetadataSize/binary, Metadata/binary, Body/binary>>.
