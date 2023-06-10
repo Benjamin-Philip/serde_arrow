@@ -1,8 +1,9 @@
 -include("serde_arrow_ipc_schema.hrl").
+-include("serde_arrow_ipc_record_batch.hrl").
 
 -record(message, {
     version = v5 :: serde_arrow_ipc_message:metadata_version(),
-    header :: #schema{},
+    header :: #schema{} | #record_batch{},
     body_length :: non_neg_integer(),
     custom_metadata = [] :: [serde_arrow_ipc_message:key_value()],
 
