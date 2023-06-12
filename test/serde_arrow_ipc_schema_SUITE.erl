@@ -7,11 +7,7 @@
 
 -include("serde_arrow_ipc_schema.hrl").
 
--define(ID, serde_arrow_ipc_field:from_erlang({s, 8}, "id")).
--define(Name, serde_arrow_ipc_field:from_erlang({bin, undefined}, "name")).
--define(Age, serde_arrow_ipc_field:from_erlang({u, 8}, "age")).
-
--define(Fields, [?ID, ?Name, ?Age]).
+-include("serde_arrow_ipc_marks_data.hrl").
 
 all() ->
     [
@@ -22,20 +18,13 @@ all() ->
     ].
 
 valid_endianness_on_from_erlang(_Config) ->
-    ?assertEqual((from_erlang(?Fields))#schema.endianness, little).
+    ?assertEqual((?Schema)#schema.endianness, little).
 
 valid_fields_on_from_erlang(_Config) ->
-    ?assertEqual((from_erlang(?Fields))#schema.fields, ?Fields).
+    ?assertEqual((?Schema)#schema.fields, ?Fields).
 
 valid_custom_metadata_on_from_erlang(_Config) ->
-    ?assertEqual((from_erlang(?Fields))#schema.custom_metadata, []).
+    ?assertEqual((?Schema)#schema.custom_metadata, []).
 
 valid_features_on_from_erlang(_Config) ->
-    ?assertEqual((from_erlang(?Fields))#schema.features, [unused]).
-
-%%%%%%%%%%%
-%% Utils %%
-%%%%%%%%%%%
-
-from_erlang(X) ->
-    serde_arrow_ipc_schema:from_erlang(X).
+    ?assertEqual((?Schema)#schema.features, [unused]).
