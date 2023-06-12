@@ -37,3 +37,9 @@
 -define(Body, <<<<(serde_arrow_array:to_arrow(Array))/binary>> || Array <- ?Columns>>).
 -define(RecordBatchMsg, serde_arrow_ipc_message:from_erlang(?RecordBatch, ?Body)).
 -define(RecordBatchEMF, serde_arrow_ipc_message:to_ipc(?RecordBatchMsg)).
+
+%%%%%%%%%%%%%%%%
+%% IPC Stream %%
+%%%%%%%%%%%%%%%%
+
+-define(Stream, serde_arrow_ipc_message:to_stream([?SchemaMsg, ?RecordBatchMsg])).

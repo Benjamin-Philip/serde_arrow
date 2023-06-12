@@ -20,7 +20,9 @@ all() ->
         valid_continuation_on_to_ipc,
         valid_metadata_size_on_to_ipc,
         valid_metadata_on_to_ipc,
-        valid_body_on_to_ipc
+        valid_body_on_to_ipc,
+
+        valid_stream_on_to_stream
     ].
 
 %%%%%%%%%%%%%%%%%
@@ -69,3 +71,14 @@ valid_body_on_to_ipc(_Config) ->
 
     <<_:32, _:32, _:8/binary, Body2/binary>> = ?SchemaEMF,
     ?assertEqual(Body2, <<>>).
+
+%%%%%%%%%%%%%%%%%
+%% to_stream/1 %%
+%%%%%%%%%%%%%%%%%
+
+valid_stream_on_to_stream(_Config) ->
+    <<Schema:16/binary, RecordBatch:656/binary, EOS/binary>> = ?Stream,
+
+    ?assertEqual(Schema, ?SchemaEMF),
+    ?assertEqual(RecordBatch, ?RecordBatchEMF),
+    ?assertEqual(EOS, <<-1:32, 0:32>>).

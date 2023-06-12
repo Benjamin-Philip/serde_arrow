@@ -40,7 +40,7 @@
 %% [3]: [https://arrow.apache.org/docs/format/Columnar.html#encapsulated-message-format]
 %% @end
 -module(serde_arrow_ipc_message).
--export([from_erlang/1, from_erlang/2, to_ipc/1]).
+-export([from_erlang/1, from_erlang/2, to_ipc/1, to_stream/1]).
 -export_type([metadata_version/0, key_value/0]).
 
 -include("serde_arrow_ipc_message.hrl").
@@ -80,3 +80,13 @@ to_ipc(Message) ->
         end,
 
     <<Continuation/binary, MetadataSize/binary, Metadata/binary, Body/binary>>.
+
+%% @doc Serializes a list of messages into a Stream.
+-spec to_stream(Messages :: [#message{}]) -> Stream :: binary().
+to_stream(Messages) ->
+    Msgs = <<(to_ipc(Msg)) || Msg <- Messages>>,
+    %% 0xFFFFFFFF 0x00000000
+    %% This is technically an EMF with zero length metadata and body
+    EOS = <<-1:32, 0:32>>,
+
+    <<Msgs/binary, EOS/binary>>.
