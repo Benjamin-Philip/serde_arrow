@@ -1,13 +1,14 @@
 -module(arrow_format_nif).
 
--export([ add/2
-        , my_map/0
-        , my_maps/0
-        , my_tuple/0
-        , unit_enum_echo/1
-        , tagged_enum_echo/1
-        , untagged_enum_echo/1
-        ]).
+-export([
+    add/2,
+    my_map/0,
+    my_maps/0,
+    my_tuple/0,
+    unit_enum_echo/1,
+    tagged_enum_echo/1,
+    untagged_enum_echo/1
+]).
 
 -include("cargo.hrl").
 -on_load(init/0).
@@ -74,7 +75,7 @@ unit_enum_echo_test() ->
 tagged_enum_echo_test() ->
     ?assertEqual(foo, tagged_enum_echo(foo)),
     ?assertEqual({bar, <<"string">>}, tagged_enum_echo({bar, <<"string">>})),
-    ?assertEqual({baz,#{a => 1, b => 2}}, tagged_enum_echo({baz,#{a => 1, b => 2}})).
+    ?assertEqual({baz, #{a => 1, b => 2}}, tagged_enum_echo({baz, #{a => 1, b => 2}})).
 
 untagged_enum_echo_test() ->
     ?assertEqual(123, untagged_enum_echo(123)),
