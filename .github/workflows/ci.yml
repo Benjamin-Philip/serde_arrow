@@ -7,6 +7,9 @@ on:
     branches:
       - main
 
+env:
+  RUST_TOOLCHAIN_VERSION: stable-2023-06-01
+
 jobs:
   format:
     name: Check Formatting
@@ -38,6 +41,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Cache Rust crates
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: test-native-${{ runner.os }}-${{ env.RUST_TOOLCHAIN_VERSION }}-${{ hashFiles('native/**/Cargo.lock') }}
+          restore-keys: |
+            test-native-${{ runner.os }}-${{ env.RUST_TOOLCHAIN_VERSION }}
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "${{ env.RUST_TOOLCHAIN_VERSION }}"
 
       - name: Install Erlang/OTP
         uses: erlef/setup-beam@v1
