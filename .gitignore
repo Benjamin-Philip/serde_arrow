@@ -18,3 +18,6 @@ _build
 rebar3.crashdump
 *~
 doc
+
+# Shared objects build by Rust.
+*.so
