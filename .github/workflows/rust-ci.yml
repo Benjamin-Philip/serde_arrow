@@ -8,7 +8,6 @@ on:
   pull_request:
     paths:
       - "native/**"
-  workflow_dispatch:
 
 env:
   RUST_TOOLCHAIN_VERSION: nightly-2023-06-01
