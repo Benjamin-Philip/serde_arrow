@@ -1,4 +1,4 @@
-use rustler::{NifMap, NifTuple, NifUnitEnum, NifTaggedEnum, NifUntaggedEnum};
+use rustler::{NifMap, NifTaggedEnum, NifTuple, NifUnitEnum, NifUntaggedEnum};
 
 // See Derive Macros docs at https://docs.rs/rustler/0.26.0/rustler/index.html#derives
 
@@ -24,7 +24,7 @@ enum UnitEnum {
 enum TaggedEnum {
     Foo,
     Bar(String),
-    Baz{ a: i32, b: i32 },
+    Baz { a: i32, b: i32 },
 }
 
 #[derive(NifUntaggedEnum)]
@@ -49,7 +49,7 @@ fn my_map_nif() -> MyMap {
 
 #[rustler::nif]
 fn my_maps() -> Vec<MyMap> {
-    vec![ my_map(), my_map()]
+    vec![my_map(), my_map()]
 }
 
 fn my_map() -> MyMap {
@@ -76,14 +76,16 @@ fn untagged_enum_echo(untagged_enum: UntaggedEnum) -> UntaggedEnum {
     untagged_enum
 }
 
-rustler::init!("arrow_format_nif",
-    [ add_nif
-    , my_map_nif
-    , my_maps
-    , my_tuple
-    , unit_enum_echo
-    , tagged_enum_echo
-    , untagged_enum_echo
+rustler::init!(
+    "arrow_format_nif",
+    [
+        add_nif,
+        my_map_nif,
+        my_maps,
+        my_tuple,
+        unit_enum_echo,
+        tagged_enum_echo,
+        untagged_enum_echo
     ]
 );
 
