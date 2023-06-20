@@ -1,4 +1,4 @@
-name: CI
+name: Erlang CI
 on:
   push:
     branches:

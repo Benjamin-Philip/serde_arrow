@@ -1,0 +1,62 @@
+name: Rust CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  RUST_TOOLCHAIN_VERSION: nightly-2023-06-01
+
+jobs:
+  lint-rust:
+    name: Lint Rust with Clippy
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        manifest:
+          - native/arrow_format_nif/Cargo.toml
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "${{ env.RUST_TOOLCHAIN_VERSION }}"
+          components: clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          env-vars: "RUST_TOOLCHAIN_VERSION"
+          workspaces: |
+            native/arrow_format_nif
+
+      - name: Run Clippy
+        run: cargo clippy --manifest-path=${{ matrix.manifest }} -- -Dwarnings
+
+  fmt-rust:
+    name: Check Rust Formatting with rustfmt
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        manifest:
+          - native/arrow_format_nif/Cargo.toml
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "${{ env.RUST_TOOLCHAIN_VERSION }}"
+          components: rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          env-vars: "RUST_TOOLCHAIN_VERSION"
+          workspaces: |
+            native/arrow_format_nif
+
+      - name: run rustfmt
+        run: cargo fmt --manifest-path=${{ matrix.manifest }} --all -- --check
