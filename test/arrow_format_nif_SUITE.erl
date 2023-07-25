@@ -17,4 +17,8 @@ all() ->
 %%%%%%%%%%%
 
 print(_Config) ->
-    ?assertEqual(arrow_format_nif:print(?SchemaMsg), ok).
+    ?assertEqual(arrow_format_nif:print(?SchemaMsg), ok),
+
+    %% Flatbuffers doesn't need the body. So, don't provide it.
+    RecordBatchMsg = (?RecordBatchMsg)#message{body = undefined},
+    ?assertEqual(arrow_format_nif:print(RecordBatchMsg), ok).

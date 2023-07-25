@@ -1,10 +1,11 @@
+use super::record_batch::RecordBatch;
 use super::schema::Schema;
 use rustler::{Decoder, Encoder, Term};
 
 #[derive(Debug)]
 pub enum Header {
     Schema(Schema),
-    RecordBatch(i64),
+    RecordBatch(RecordBatch),
 }
 
 // TODO: Remove stub implementation
@@ -24,10 +25,11 @@ impl Encoder for Header {
 
 impl<'a> Decoder<'a> for Header {
     fn decode(term: Term<'a>) -> rustler::NifResult<Header> {
-        if term.is_number() {
-            Ok(Header::RecordBatch(term.decode()?))
-        } else {
-            Ok(Header::Schema(term.decode()?))
+        // TODO Find a way to differentiate between invalid schemas and record
+        // batches
+        match term.decode::<Schema>() {
+            Ok(schema) => Ok(Header::Schema(schema)),
+            Err(_) => Ok(Header::RecordBatch(term.decode::<RecordBatch>()?)),
         }
     }
 }

@@ -3,6 +3,7 @@ use crate::utils::CustomMetadata;
 use rustler::{Atom, NifRecord};
 
 pub mod header;
+pub mod record_batch;
 pub mod schema;
 
 use header::Header;
