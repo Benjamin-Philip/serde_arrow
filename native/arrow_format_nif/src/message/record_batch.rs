@@ -1,3 +1,4 @@
+#![allow(clippy::needless_borrow)]
 use rustler::{Atom, NifMap, NifRecord};
 
 #[derive(Debug, NifRecord)]
