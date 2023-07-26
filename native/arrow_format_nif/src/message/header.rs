@@ -8,18 +8,12 @@ pub enum Header {
     RecordBatch(RecordBatch),
 }
 
-// TODO: Remove stub implementation
 impl Encoder for Header {
     fn encode<'a>(&self, env: rustler::env::Env<'a>) -> Term<'a> {
-        let msg = match &self {
-            Header::Schema(_) => "foo",
-            Header::RecordBatch(_) => "Bar",
-        };
-
-        let mut msg_binary = rustler::NewBinary::new(env, msg.len());
-        msg_binary.as_mut_slice().clone_from_slice(msg.as_bytes());
-
-        msg_binary.into()
+        match &self {
+            Header::Schema(schema) => schema.encode(env),
+            Header::RecordBatch(record_batch) => record_batch.encode(env),
+        }
     }
 }
 

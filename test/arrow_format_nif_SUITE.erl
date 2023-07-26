@@ -32,4 +32,4 @@ test_encode(_Config) ->
 
     %% Flatbuffers can't access the body. So, the NIF won't return it.
     RecordBatchMsg = (?RecordBatchMsg)#message{body = undefined},
-    ?assertEqual(arrow_format_nif:test_decode(record_batch), RecordBatchMsg).
+    ?assertEqual(arrow_format_nif:test_encode(record_batch), RecordBatchMsg).

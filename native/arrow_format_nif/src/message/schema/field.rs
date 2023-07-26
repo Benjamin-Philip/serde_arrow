@@ -20,18 +20,12 @@ pub enum Name {
     String(String),
 }
 
-// TODO: Remove stub implementation
 impl Encoder for Name {
     fn encode<'a>(&self, env: rustler::env::Env<'a>) -> Term<'a> {
-        let msg = match &self {
-            Name::Atom(_) => "foo",
-            Name::String(_) => "Bar",
-        };
-
-        let mut msg_binary = rustler::NewBinary::new(env, msg.len());
-        msg_binary.as_mut_slice().clone_from_slice(msg.as_bytes());
-
-        msg_binary.into()
+        match &self {
+            Name::Atom(_) => crate::atoms::undefined().encode(env),
+            Name::String(name) => name.clone().into_bytes().encode(env),
+        }
     }
 }
 
