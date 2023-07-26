@@ -55,7 +55,7 @@ mod atoms {
 /// `rustler::types::Decoder` implementation(s), and has only been for testing
 /// purposes.
 #[rustler::nif]
-fn test_decode(msg: Message) -> Atom {
+fn test_decode(_msg: Message) -> Atom {
     atoms::ok()
 }
 
