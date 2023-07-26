@@ -29,10 +29,14 @@ mod atoms {
     }
 }
 
+/// Returns `:ok` on successful decodes.
+///
+/// This function tests Message's (and its components')
+/// `rustler::types::Decoder` implementation(s), and has only been for testing
+/// purposes.
 #[rustler::nif]
-fn print(msg: Message) -> Atom {
-    println!("{:?}", msg);
+fn test_decode(msg: Message) -> Atom {
     rustler::types::atom::ok()
 }
 
-rustler::init!("arrow_format_nif", [print]);
+rustler::init!("arrow_format_nif", [test_decode]);

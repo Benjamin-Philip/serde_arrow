@@ -10,15 +10,15 @@
 -include("serde_arrow_ipc_marks_data.hrl").
 
 all() ->
-    [print].
+    [test_decode].
 
-%%%%%%%%%%%
-%% print %%
-%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%
+%% test_decode %%
+%%%%%%%%%%%%%%%%%
 
-print(_Config) ->
-    ?assertEqual(arrow_format_nif:print(?SchemaMsg), ok),
+test_decode(_Config) ->
+    ?assertEqual(arrow_format_nif:test_decode(?SchemaMsg), ok),
 
     %% Flatbuffers doesn't need the body. So, don't provide it.
     RecordBatchMsg = (?RecordBatchMsg)#message{body = undefined},
-    ?assertEqual(arrow_format_nif:print(RecordBatchMsg), ok).
+    ?assertEqual(arrow_format_nif:test_decode(RecordBatchMsg), ok).

@@ -1,5 +1,5 @@
 -module(arrow_format_nif).
--export([print/1]).
+-export([test_decode/1]).
 
 -include("cargo.hrl").
 -on_load(init/0).
@@ -9,7 +9,7 @@
 %%% API
 %%%===================================================================
 
-print(_) ->
+test_decode(_) ->
     ?NOT_LOADED.
 
 %%%===================================================================
