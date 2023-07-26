@@ -4,12 +4,12 @@ use rustler::{Atom, Decoder, Encoder, NifRecord, Term};
 #[derive(Debug, NifRecord)]
 #[tag = "field"]
 pub struct Field {
-    name: Name,
-    nullable: bool,
-    r#type: Atom,
-    dictionary: Atom,
-    children: Vec<Field>,
-    custom_metadata: CustomMetadata,
+    pub name: Name,
+    pub nullable: bool,
+    pub r#type: Atom,
+    pub dictionary: Atom,
+    pub children: Vec<Field>,
+    pub custom_metadata: CustomMetadata,
 }
 
 // TODO: Update Option<T>'s Encoder and Decoder implementations to treat

@@ -8,8 +8,8 @@ use field::Field;
 #[derive(Debug, NifRecord)]
 #[tag = "schema"]
 pub struct Schema {
-    endianness: Atom, // TODO limit this to little and big
-    fields: Vec<Field>,
-    custom_metadata: CustomMetadata,
-    features: Vec<Atom>,
+    pub endianness: Atom, // TODO limit this to little and big
+    pub fields: Vec<Field>,
+    pub custom_metadata: CustomMetadata,
+    pub features: Vec<Atom>,
 }

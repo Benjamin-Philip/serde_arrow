@@ -10,9 +10,9 @@ use header::Header;
 #[derive(Debug, NifRecord)]
 #[tag = "message"]
 pub struct Message {
-    version: Atom, // TODO Limit this to just v1..v5.
-    header: Header,
-    body_length: i32,
-    custom_metadata: CustomMetadata,
-    body: Atom,
+    pub version: Atom, // TODO Limit this to just v1..v5.
+    pub header: Header,
+    pub body_length: i32,
+    pub custom_metadata: CustomMetadata,
+    pub body: Atom,
 }
