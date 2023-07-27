@@ -4,10 +4,10 @@ mod message;
 mod utils;
 
 use message::header::Header;
-use message::record_batch::{Buffer, FieldNode, RecordBatch};
+use message::record_batch::{Buffer, Compression, FieldNode, RecordBatch};
 use message::schema::field::{Field, Name};
-use message::schema::Schema;
-use message::Message;
+use message::schema::{Endianness, Feature, Schema};
+use message::{Message, Version};
 
 mod atoms {
     rustler::atoms! {
@@ -68,9 +68,9 @@ fn test_decode(_msg: Message) -> Atom {
 fn test_encode(msg_type: Atom) -> Message {
     if msg_type == atoms::schema() {
         Message {
-            version: atoms::v5(),
+            version: Version::V5,
             header: Header::Schema(Schema {
-                endianness: atoms::little(),
+                endianness: Endianness::Little,
                 fields: vec![
                     Field {
                         name: Name::String("id".to_string()),
@@ -113,7 +113,7 @@ fn test_encode(msg_type: Atom) -> Message {
                     },
                 ],
                 custom_metadata: vec![],
-                features: vec![atoms::unused()],
+                features: vec![Feature::Unused],
             }),
             body_length: 0,
             custom_metadata: vec![],
@@ -121,7 +121,7 @@ fn test_encode(msg_type: Atom) -> Message {
         }
     } else {
         Message {
-            version: atoms::v5(),
+            version: Version::V5,
             header: Header::RecordBatch(RecordBatch {
                 length: 4,
                 nodes: vec![
@@ -184,7 +184,7 @@ fn test_encode(msg_type: Atom) -> Message {
                         length: 10,
                     },
                 ],
-                compression: atoms::undefined(),
+                compression: Compression::Undefined,
             }),
             body_length: 640,
             custom_metadata: vec![],
