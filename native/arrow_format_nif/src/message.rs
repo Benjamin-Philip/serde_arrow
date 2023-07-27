@@ -1,11 +1,11 @@
 use crate::utils::CustomMetadata;
-use rustler::{Atom, NifRecord, NifUnitEnum};
+use rustler::{Atom, NifRecord, NifUnitEnum, NifUntaggedEnum};
 
-pub mod header;
 pub mod record_batch;
 pub mod schema;
 
-use header::Header;
+use record_batch::RecordBatch;
+use schema::Schema;
 
 #[derive(Debug, NifRecord)]
 #[tag = "message"]
@@ -24,4 +24,10 @@ pub enum Version {
     V3,
     V4,
     V5,
+}
+
+#[derive(Debug, NifUntaggedEnum)]
+pub enum Header {
+    Schema(Schema),
+    RecordBatch(RecordBatch),
 }

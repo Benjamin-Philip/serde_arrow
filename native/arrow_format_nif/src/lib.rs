@@ -3,11 +3,10 @@ use rustler::Atom;
 mod message;
 mod utils;
 
-use message::header::Header;
 use message::record_batch::{Buffer, Compression, FieldNode, RecordBatch};
 use message::schema::field::{Field, Name};
 use message::schema::{Endianness, Feature, Schema};
-use message::{Message, Version};
+use message::{Header, Message, Version};
 
 mod atoms {
     rustler::atoms! {
