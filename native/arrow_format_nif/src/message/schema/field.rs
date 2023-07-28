@@ -12,8 +12,6 @@ pub struct Field {
     pub custom_metadata: CustomMetadata,
 }
 
-// TODO: Update Option<T>'s Encoder and Decoder implementations to treat
-// undefined as None in rustler main.
 #[derive(Debug)]
 pub enum Name {
     Atom(Atom),
