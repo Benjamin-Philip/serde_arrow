@@ -20,7 +20,7 @@ mod atoms {
         v4,
         v5,
 
-        // Endiannes
+        // Endianness
 
         little,
         big,
