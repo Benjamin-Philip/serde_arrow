@@ -38,3 +38,9 @@ impl<'a> Decoder<'a> for Name {
         }
     }
 }
+
+impl From<&str> for Name {
+    fn from(value: &str) -> Self {
+        Name::String(value.to_string())
+    }
+}

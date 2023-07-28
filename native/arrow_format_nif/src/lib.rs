@@ -72,7 +72,7 @@ fn test_encode(msg_type: Atom) -> Message {
                 endianness: Endianness::Little,
                 fields: vec![
                     Field {
-                        name: Name::String("id".to_string()),
+                        name: Name::from("id"),
                         nullable: true,
                         r#type: atoms::fixed_primitive(),
                         dictionary: atoms::undefined(),
@@ -80,7 +80,7 @@ fn test_encode(msg_type: Atom) -> Message {
                         custom_metadata: vec![],
                     },
                     Field {
-                        name: Name::String("name".to_string()),
+                        name: Name::from("name"),
                         nullable: true,
                         r#type: atoms::variable_binary(),
                         dictionary: atoms::undefined(),
@@ -88,7 +88,7 @@ fn test_encode(msg_type: Atom) -> Message {
                         custom_metadata: vec![],
                     },
                     Field {
-                        name: Name::String("age".to_string()),
+                        name: Name::from("age"),
                         nullable: true,
                         r#type: atoms::fixed_primitive(),
                         dictionary: atoms::undefined(),
@@ -96,7 +96,7 @@ fn test_encode(msg_type: Atom) -> Message {
                         custom_metadata: vec![],
                     },
                     Field {
-                        name: Name::String("annual_marks".to_string()),
+                        name: Name::from("annual_marks"),
                         nullable: true,
                         r#type: atoms::fixed_list(),
                         dictionary: atoms::undefined(),
