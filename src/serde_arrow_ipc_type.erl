@@ -72,7 +72,7 @@
 %% from_erlang/1 %%
 %%%%%%%%%%%%%%%%%%%
 
-%% @doc Returns the IPC Type for an `#array{}`.
+%% @doc Returns the IPC Type for an `#array{}'.
 -spec from_erlang(Array :: serde_arrow_array:array()) -> Type :: ipc_type().
 from_erlang(Array) ->
     case Array#array.layout of
