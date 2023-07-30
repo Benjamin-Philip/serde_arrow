@@ -5,11 +5,21 @@
 %% Schema Encapsulated Message %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
--define(IDField, serde_arrow_ipc_field:from_erlang({s, 8}, "id")).
--define(NameField, serde_arrow_ipc_field:from_erlang({bin, undefined}, "name")).
--define(AgeField, serde_arrow_ipc_field:from_erlang({u, 8}, "age")).
+-define(IDField,
+    serde_arrow_ipc_field:from_erlang({int, #{bit_width => 8, is_signed => true}}, "id")
+).
+-define(NameField, serde_arrow_ipc_field:from_erlang({variable_binary, undefined}, "name")).
+-define(AgeField,
+    serde_arrow_ipc_field:from_erlang({int, #{bit_width => 8, is_signed => false}}, "age")
+).
 -define(AnnualMarksField,
-    serde_arrow_ipc_field:from_erlang({fixed_list, {u, 8}, 3}, "annual_marks")
+    serde_arrow_ipc_field:from_erlang(
+        {fixed_size_list, #{list_size => pos_integer()}}, "annual_marks", [
+            serde_arrow_ipc_field:from_erlang(
+                {int, #{bit_width => 8, is_signed => false}}
+            )
+        ]
+    )
 ).
 -define(Fields, [?IDField, ?NameField, ?AgeField, ?AnnualMarksField]).
 -define(Schema, serde_arrow_ipc_schema:from_erlang(?Fields)).
