@@ -14,7 +14,7 @@
 ).
 -define(AnnualMarksField,
     serde_arrow_ipc_field:from_erlang(
-        {fixed_size_list, #{list_size => pos_integer()}}, "annual_marks", [
+        {fixed_size_list, #{list_size => 3}}, "annual_marks", [
             serde_arrow_ipc_field:from_erlang(
                 {int, #{bit_width => 8, is_signed => false}}
             )
