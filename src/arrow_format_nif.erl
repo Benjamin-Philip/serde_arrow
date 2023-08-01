@@ -1,7 +1,5 @@
 -module(arrow_format_nif).
-
-%% FIXME: Remove once we add some functions
--dialyzer(no_unused).
+-export([test_decode/1, test_encode/1]).
 
 -include("cargo.hrl").
 -on_load(init/0).
@@ -10,6 +8,12 @@
 %%%===================================================================
 %%% API
 %%%===================================================================
+
+test_decode(_) ->
+    ?NOT_LOADED.
+
+test_encode(_) ->
+    ?NOT_LOADED.
 
 %%%===================================================================
 %%% NIF
