@@ -8,7 +8,7 @@
 -define(IDField,
     serde_arrow_ipc_field:from_erlang({int, #{bit_width => 8, is_signed => true}}, "id")
 ).
--define(NameField, serde_arrow_ipc_field:from_erlang({variable_binary, undefined}, "name")).
+-define(NameField, serde_arrow_ipc_field:from_erlang(large_binary, "name")).
 -define(AgeField,
     serde_arrow_ipc_field:from_erlang({int, #{bit_width => 8, is_signed => false}}, "age")
 ).
