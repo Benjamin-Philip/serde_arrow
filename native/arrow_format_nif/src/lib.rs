@@ -5,6 +5,7 @@ mod utils;
 
 use message::record_batch::{Buffer, Compression, FieldNode, RecordBatch};
 use message::schema::field::{Field, Name};
+use message::schema::types::{FixedSizeList, Int, Type};
 use message::schema::{Endianness, Feature, Schema};
 use message::{Header, Message, Version};
 
@@ -74,7 +75,10 @@ fn test_encode(msg_type: Atom) -> Message {
                     Field {
                         name: Name::from("id"),
                         nullable: true,
-                        r#type: atoms::fixed_primitive(),
+                        r#type: Type::Int(Int {
+                            bit_width: 8,
+                            is_signed: true,
+                        }),
                         dictionary: atoms::undefined(),
                         children: vec![],
                         custom_metadata: vec![],
@@ -82,7 +86,7 @@ fn test_encode(msg_type: Atom) -> Message {
                     Field {
                         name: Name::from("name"),
                         nullable: true,
-                        r#type: atoms::variable_binary(),
+                        r#type: Type::LargeBinary,
                         dictionary: atoms::undefined(),
                         children: vec![],
                         custom_metadata: vec![],
@@ -90,7 +94,10 @@ fn test_encode(msg_type: Atom) -> Message {
                     Field {
                         name: Name::from("age"),
                         nullable: true,
-                        r#type: atoms::fixed_primitive(),
+                        r#type: Type::Int(Int {
+                            bit_width: 8,
+                            is_signed: false,
+                        }),
                         dictionary: atoms::undefined(),
                         children: vec![],
                         custom_metadata: vec![],
@@ -98,12 +105,15 @@ fn test_encode(msg_type: Atom) -> Message {
                     Field {
                         name: Name::from("annual_marks"),
                         nullable: true,
-                        r#type: atoms::fixed_list(),
+                        r#type: Type::FixedSizeList(FixedSizeList { list_size: 3 }),
                         dictionary: atoms::undefined(),
                         children: vec![Field {
                             name: Name::Atom(atoms::undefined()),
                             nullable: true,
-                            r#type: atoms::fixed_primitive(),
+                            r#type: Type::Int(Int {
+                                bit_width: 8,
+                                is_signed: false,
+                            }),
                             dictionary: atoms::undefined(),
                             children: vec![],
                             custom_metadata: vec![],

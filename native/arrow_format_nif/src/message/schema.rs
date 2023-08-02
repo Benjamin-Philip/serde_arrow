@@ -2,6 +2,7 @@ use crate::utils::CustomMetadata;
 use rustler::{NifRecord, NifUnitEnum};
 
 pub mod field;
+pub mod types;
 
 use field::Field;
 

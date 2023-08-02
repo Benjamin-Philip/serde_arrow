@@ -1,12 +1,14 @@
 use crate::utils::CustomMetadata;
 use rustler::{Atom, Decoder, Encoder, NifRecord, Term};
 
+use super::types::Type;
+
 #[derive(Debug, NifRecord)]
 #[tag = "field"]
 pub struct Field {
     pub name: Name,
     pub nullable: bool,
-    pub r#type: Atom,
+    pub r#type: Type,
     pub dictionary: Atom,
     pub children: Vec<Field>,
     pub custom_metadata: CustomMetadata,
