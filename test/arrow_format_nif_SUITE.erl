@@ -20,21 +20,41 @@ test_decode(_Config) ->
     %% Type testing
 
     %% Signed Integers
-    ?assertEqual(arrow_format_nif:test_decode(schema({int, #{bit_width => 8, is_signed => true}})), ok),
-    ?assertEqual(arrow_format_nif:test_decode(schema({int, #{bit_width => 16, is_signed => true}})), ok),
-    ?assertEqual(arrow_format_nif:test_decode(schema({int, #{bit_width => 32, is_signed => true}})), ok),
-    ?assertEqual(arrow_format_nif:test_decode(schema({int, #{bit_width => 64, is_signed => true}})), ok),
+    ?assertEqual(
+        arrow_format_nif:test_decode(schema({int, #{bit_width => 8, is_signed => true}})), ok
+    ),
+    ?assertEqual(
+        arrow_format_nif:test_decode(schema({int, #{bit_width => 16, is_signed => true}})), ok
+    ),
+    ?assertEqual(
+        arrow_format_nif:test_decode(schema({int, #{bit_width => 32, is_signed => true}})), ok
+    ),
+    ?assertEqual(
+        arrow_format_nif:test_decode(schema({int, #{bit_width => 64, is_signed => true}})), ok
+    ),
 
     %% Unsigned Integers
-    ?assertEqual(arrow_format_nif:test_decode(schema({int, #{bit_width => 8, is_signed => false}})), ok),
-    ?assertEqual(arrow_format_nif:test_decode(schema({int, #{bit_width => 16, is_signed => false}})), ok),
-    ?assertEqual(arrow_format_nif:test_decode(schema({int, #{bit_width => 32, is_signed => false}})), ok),
-    ?assertEqual(arrow_format_nif:test_decode(schema({int, #{bit_width => 64, is_signed => false}})), ok),
+    ?assertEqual(
+        arrow_format_nif:test_decode(schema({int, #{bit_width => 8, is_signed => false}})), ok
+    ),
+    ?assertEqual(
+        arrow_format_nif:test_decode(schema({int, #{bit_width => 16, is_signed => false}})), ok
+    ),
+    ?assertEqual(
+        arrow_format_nif:test_decode(schema({int, #{bit_width => 32, is_signed => false}})), ok
+    ),
+    ?assertEqual(
+        arrow_format_nif:test_decode(schema({int, #{bit_width => 64, is_signed => false}})), ok
+    ),
 
     %% Floating Point
     ?assertEqual(arrow_format_nif:test_decode(schema({floating_point, #{precision => half}})), ok),
-    ?assertEqual(arrow_format_nif:test_decode(schema({floating_point, #{precision => single}})), ok),
-    ?assertEqual(arrow_format_nif:test_decode(schema({floating_point, #{precision => double}})), ok),
+    ?assertEqual(
+        arrow_format_nif:test_decode(schema({floating_point, #{precision => single}})), ok
+    ),
+    ?assertEqual(
+        arrow_format_nif:test_decode(schema({floating_point, #{precision => double}})), ok
+    ),
 
     %% Fixed-Size List
     ?assertEqual(arrow_format_nif:test_decode(schema({fixed_size_list, #{list_size => 3}})), ok),
@@ -68,4 +88,6 @@ test_encode(_Config) ->
 %%%%%%%%%%%
 
 schema(Type) ->
-    serde_arrow_ipc_message:from_erlang(serde_arrow_ipc_schema:from_erlang([serde_arrow_ipc_field:from_erlang(Type)])).
+    serde_arrow_ipc_message:from_erlang(
+        serde_arrow_ipc_schema:from_erlang([serde_arrow_ipc_field:from_erlang(Type)])
+    ).
