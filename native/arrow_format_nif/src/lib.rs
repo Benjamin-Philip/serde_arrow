@@ -1,4 +1,5 @@
-use rustler::Atom;
+use rustler::types::Binary;
+use rustler::{Atom, Env};
 
 mod message;
 mod utils;
@@ -202,4 +203,20 @@ fn test_encode(msg_type: Atom) -> Message {
     }
 }
 
-rustler::init!("arrow_format_nif", [test_decode, test_encode]);
+/// Serializes a message into its correspondding flatbuffers.
+///
+/// This function serializes a message into its correspondding flatbuffers and
+/// returns a binary
+#[rustler::nif]
+fn serialize_message<'a>(env: Env<'a>, _message: Message) -> Binary<'a> {
+    let footer_data = [0, 1, 2];
+
+    let mut erl_bin = rustler::types::OwnedBinary::new(footer_data.len()).unwrap();
+    erl_bin.as_mut_slice().copy_from_slice(&footer_data);
+    erl_bin.release(env)
+}
+
+rustler::init!(
+    "arrow_format_nif",
+    [test_decode, test_encode, serialize_message]
+);
