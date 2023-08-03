@@ -208,11 +208,11 @@ fn test_encode(msg_type: Atom) -> Message {
 /// This function serializes a message into its correspondding flatbuffers and
 /// returns a binary
 #[rustler::nif]
-fn serialize_message<'a>(env: Env<'a>, _message: Message) -> Binary<'a> {
-    let footer_data = [0, 1, 2];
+fn serialize_message(env: Env, _message: Message) -> Binary {
+    let flatbuffers = [0, 1, 2];
 
-    let mut erl_bin = rustler::types::OwnedBinary::new(footer_data.len()).unwrap();
-    erl_bin.as_mut_slice().copy_from_slice(&footer_data);
+    let mut erl_bin = rustler::types::OwnedBinary::new(flatbuffers.len()).unwrap();
+    erl_bin.as_mut_slice().copy_from_slice(&flatbuffers);
     erl_bin.release(env)
 }
 
