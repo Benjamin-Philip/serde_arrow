@@ -3,8 +3,9 @@
 %% This module provides functions and types to produce the types in IPC Schema
 %% definitions[1]. These types are generated according to these[2] definitions.
 %% The types have been represented in the form `{TypeName, Metadata}', where
-%% TypeName is the name of the type and is an atom, and Metadata is a map of all
-%% the metadata associated with it.
+%% `TypeName' is the name of the type and is an atom, and `Metadata' is a map of
+%% all the metadata associated with it. In case a type has no metadata
+%% associated with it, it is represented as just `TypeName'
 %%
 %% [1]:https://github.com/apache/arrow/blob/main/format/Schema.fbs
 %%
@@ -62,10 +63,10 @@
 -type fixed_size_list() :: {fixed_size_list, #{list_size => pos_integer()}}.
 %% Represents a Fixed-Size List Layout Array.
 
--type large_binary() :: {large_binary, undefined}.
+-type large_binary() :: large_binary.
 %% Represents a Variable-Size Binary Layout Array with 64 bit offsets.
 
--type large_list() :: {large_list, undefined}.
+-type large_list() :: large_list.
 %% Represents a Variable-Size List Layout Array with 64 bit offsets.
 
 %%%%%%%%%%%%%%%%%%%
@@ -77,9 +78,9 @@
 from_erlang(Array) ->
     case Array#array.layout of
         fixed_primitive -> primitive_type(Array#array.type);
-        variable_binary -> {large_binary, undefined};
+        variable_binary -> large_binary;
         fixed_list -> {fixed_size_list, #{list_size => Array#array.element_len}};
-        variable_list -> {large_list, undefined}
+        variable_list -> large_list
     end.
 
 -spec primitive_type(Type :: serde_arrow_type:arrow_longhand_type()) ->

@@ -39,7 +39,7 @@ valid_children_on_from_erlang(_Config) ->
     Field1 = from_erlang(?S8),
     ?assertEqual(Field1#field.children, []),
 
-    Field2 = from_erlang({large_list, undefined}, undefined, [Field1]),
+    Field2 = from_erlang(large_list, undefined, [Field1]),
     ?assertEqual(Field2#field.children, [Field1]).
 
 valid_custom_metadata_on_from_erlang(_Config) ->
