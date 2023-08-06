@@ -144,8 +144,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-hex-
 
-      - name: Compile
-        run: rebar3 as docs compile
-
       - name: Generate Docs
         run: rebar3 ex_doc
