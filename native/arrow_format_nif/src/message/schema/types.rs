@@ -35,7 +35,7 @@ pub struct FixedSizeList {
 }
 
 impl Type {
-    fn serialize(&self) -> ipc::Type {
+    pub fn serialize(&self) -> ipc::Type {
         match &self {
             Type::Int(int) => ipc::Type::Int(Box::new(ipc::Int {
                 bit_width: int.bit_width,

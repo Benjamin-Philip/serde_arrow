@@ -5,7 +5,7 @@ mod message;
 mod utils;
 
 use message::record_batch::{Buffer, Compression, FieldNode, RecordBatch};
-use message::schema::field::{Field, Name};
+use message::schema::field::{Dictionary, Field, Name};
 use message::schema::types::{FixedSizeList, Int, Type};
 use message::schema::{Endianness, Feature, Schema};
 use message::{Header, Message, Version};
@@ -80,7 +80,7 @@ fn test_encode(msg_type: Atom) -> Message {
                             bit_width: 8,
                             is_signed: true,
                         }),
-                        dictionary: atoms::undefined(),
+                        dictionary: Dictionary::Undefined,
                         children: vec![],
                         custom_metadata: vec![],
                     },
@@ -88,7 +88,7 @@ fn test_encode(msg_type: Atom) -> Message {
                         name: Name::from("name"),
                         nullable: true,
                         r#type: Type::LargeBinary,
-                        dictionary: atoms::undefined(),
+                        dictionary: Dictionary::Undefined,
                         children: vec![],
                         custom_metadata: vec![],
                     },
@@ -99,7 +99,7 @@ fn test_encode(msg_type: Atom) -> Message {
                             bit_width: 8,
                             is_signed: false,
                         }),
-                        dictionary: atoms::undefined(),
+                        dictionary: Dictionary::Undefined,
                         children: vec![],
                         custom_metadata: vec![],
                     },
@@ -107,15 +107,15 @@ fn test_encode(msg_type: Atom) -> Message {
                         name: Name::from("annual_marks"),
                         nullable: true,
                         r#type: Type::FixedSizeList(FixedSizeList { list_size: 3 }),
-                        dictionary: atoms::undefined(),
+                        dictionary: Dictionary::Undefined,
                         children: vec![Field {
-                            name: Name::Atom(atoms::undefined()),
+                            name: Name::Undefined,
                             nullable: true,
                             r#type: Type::Int(Int {
                                 bit_width: 8,
                                 is_signed: false,
                             }),
-                            dictionary: atoms::undefined(),
+                            dictionary: Dictionary::Undefined,
                             children: vec![],
                             custom_metadata: vec![],
                         }],
@@ -208,7 +208,8 @@ fn test_encode(msg_type: Atom) -> Message {
 /// This function serializes a message into its correspondding flatbuffers and
 /// returns a binary
 #[rustler::nif]
-fn serialize_message(env: Env, _message: Message) -> Binary {
+fn serialize_message(env: Env, message: Message) -> Binary {
+    // let flatbuffers = message.serialize();
     let flatbuffers = [0, 1, 2];
 
     let mut erl_bin = rustler::types::OwnedBinary::new(flatbuffers.len()).unwrap();
