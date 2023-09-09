@@ -54,7 +54,7 @@ impl From<&str> for Name {
 }
 
 impl Field {
-    fn serialize(&self) -> arrow_format::ipc::Field {
+    pub fn serialize(&self) -> arrow_format::ipc::Field {
         let name = self.name.serialize();
         let r#type = Some(self.r#type.serialize());
         let children = if self.children.is_empty() {
