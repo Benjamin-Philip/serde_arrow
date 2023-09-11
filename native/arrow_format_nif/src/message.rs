@@ -39,7 +39,30 @@ pub enum Body {
     Undefined,
 }
 
- impl Header {
+impl Message {
+    pub fn serialize(&self) -> ipc::Message {
+        ipc::Message {
+            version: self.version.serialize(),
+            header: Some(self.header.serialize()),
+            body_length: 0i64,
+            custom_metadata: None,
+        }
+    }
+}
+
+impl Version {
+    pub fn serialize(&self) -> ipc::MetadataVersion {
+        match self {
+            Version::V1 => ipc::MetadataVersion::V1,
+            Version::V2 => ipc::MetadataVersion::V2,
+            Version::V3 => ipc::MetadataVersion::V3,
+            Version::V4 => ipc::MetadataVersion::V4,
+            Version::V5 => ipc::MetadataVersion::V5,
+        }
+    }
+}
+
+impl Header {
     pub fn serialize(&self) -> ipc::MessageHeader {
         match self {
             Header::Schema(schema) => ipc::MessageHeader::Schema(Box::new(schema.serialize())),
@@ -54,6 +77,24 @@ pub enum Body {
 mod test {
     use super::*;
     use crate::utils;
+
+    #[test]
+    fn test_message_serialize() {
+        assert_eq!(utils::schema().serialize(), utils::arrow_schema());
+        assert_eq!(
+            utils::record_batch().serialize(),
+            utils::arrow_record_batch()
+        );
+    }
+
+    #[test]
+    fn test_version_serialize() {
+        assert_eq!(Version::V1.serialize(), ipc::MetadataVersion::V1);
+        assert_eq!(Version::V2.serialize(), ipc::MetadataVersion::V2);
+        assert_eq!(Version::V3.serialize(), ipc::MetadataVersion::V3);
+        assert_eq!(Version::V4.serialize(), ipc::MetadataVersion::V4);
+        assert_eq!(Version::V5.serialize(), ipc::MetadataVersion::V5);
+    }
 
     #[test]
     fn test_header_serialize() {
