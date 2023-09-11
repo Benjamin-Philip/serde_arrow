@@ -93,12 +93,20 @@ mod test {
 
     #[test]
     fn test_record_batch_serialize() {
-        let crate::message::Header::RecordBatch(record_batch) = utils::record_batch().header else {panic!("This is a pointless panic")};
+        // Test with a non-null compression
+        let crate::message::Header::RecordBatch(mut record_batch) = utils::record_batch().header else {panic!("This is a pointless panic")};
+        record_batch.compression = Compression::Zstd;
 
-        let arrow_format_record_batch = match utils::arrow_record_batch().header.unwrap() {
+        let mut arrow_format_record_batch = match utils::arrow_record_batch().header.unwrap() {
             arrow_format::ipc::MessageHeader::RecordBatch(boxed_rb) => *boxed_rb,
             _ => panic!("This is a pointless panic"),
         };
+
+        arrow_format_record_batch.compression =
+            Some(Box::new(arrow_format::ipc::BodyCompression {
+                codec: arrow_format::ipc::CompressionType::Zstd,
+                method: arrow_format::ipc::BodyCompressionMethod::Buffer,
+            }));
 
         assert_eq!(record_batch.serialize(), arrow_format_record_batch);
     }
