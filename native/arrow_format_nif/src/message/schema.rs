@@ -31,7 +31,7 @@ pub enum Feature {
 }
 
 impl Schema {
-    fn serialize(&self) -> arrow_format::ipc::Schema {
+    pub fn serialize(&self) -> arrow_format::ipc::Schema {
         arrow_format::ipc::Schema {
             endianness: self.endianness.serialize(),
             fields: Some(self.fields.iter().map(|field| field.serialize()).collect()),

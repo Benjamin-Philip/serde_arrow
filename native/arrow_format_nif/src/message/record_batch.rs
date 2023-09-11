@@ -32,7 +32,7 @@ pub enum Compression {
 }
 
 impl RecordBatch {
-    fn serialize(&self) -> arrow_format::ipc::RecordBatch {
+    pub fn serialize(&self) -> arrow_format::ipc::RecordBatch {
         arrow_format::ipc::RecordBatch {
             length: self.length,
             nodes: Some(
