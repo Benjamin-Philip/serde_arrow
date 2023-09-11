@@ -89,157 +89,18 @@ impl Compression {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::utils;
 
     #[test]
     fn test_record_batch_serialize() {
-        // Our format data
+        let crate::message::Header::RecordBatch(record_batch) = utils::record_batch().header else {panic!("This is a pointless panic")};
 
-        let record_batch = RecordBatch {
-            length: 4,
-            nodes: vec![
-                FieldNode {
-                    length: 4,
-                    null_count: 1,
-                },
-                FieldNode {
-                    length: 4,
-                    null_count: 1,
-                },
-                FieldNode {
-                    length: 4,
-                    null_count: 1,
-                },
-                FieldNode {
-                    length: 4,
-                    null_count: 1,
-                },
-            ],
-            buffers: vec![
-                Buffer {
-                    offset: 0,
-                    length: 1,
-                },
-                Buffer {
-                    offset: 8,
-                    length: 4,
-                },
-                Buffer {
-                    offset: 16,
-                    length: 1,
-                },
-                Buffer {
-                    offset: 24,
-                    length: 20,
-                },
-                Buffer {
-                    offset: 48,
-                    length: 15,
-                },
-                Buffer {
-                    offset: 64,
-                    length: 1,
-                },
-                Buffer {
-                    offset: 72,
-                    length: 4,
-                },
-                Buffer {
-                    offset: 80,
-                    length: 1,
-                },
-                Buffer {
-                    offset: 88,
-                    length: 2,
-                },
-                Buffer {
-                    offset: 96,
-                    length: 10,
-                },
-            ],
-            compression: Compression::Zstd,
-        }
-        .serialize();
-
-        // Arrow Format Data
-
-        let length = 4;
-        let nodes = Some(vec![
-            arrow_format::ipc::FieldNode {
-                length: 4,
-                null_count: 1,
-            },
-            arrow_format::ipc::FieldNode {
-                length: 4,
-                null_count: 1,
-            },
-            arrow_format::ipc::FieldNode {
-                length: 4,
-                null_count: 1,
-            },
-            arrow_format::ipc::FieldNode {
-                length: 4,
-                null_count: 1,
-            },
-        ]);
-        let buffers = Some(vec![
-            arrow_format::ipc::Buffer {
-                offset: 0,
-                length: 1,
-            },
-            arrow_format::ipc::Buffer {
-                offset: 8,
-                length: 4,
-            },
-            arrow_format::ipc::Buffer {
-                offset: 16,
-                length: 1,
-            },
-            arrow_format::ipc::Buffer {
-                offset: 24,
-                length: 20,
-            },
-            arrow_format::ipc::Buffer {
-                offset: 48,
-                length: 15,
-            },
-            arrow_format::ipc::Buffer {
-                offset: 64,
-                length: 1,
-            },
-            arrow_format::ipc::Buffer {
-                offset: 72,
-                length: 4,
-            },
-            arrow_format::ipc::Buffer {
-                offset: 80,
-                length: 1,
-            },
-            arrow_format::ipc::Buffer {
-                offset: 88,
-                length: 2,
-            },
-            arrow_format::ipc::Buffer {
-                offset: 96,
-                length: 10,
-            },
-        ]);
-        let compression = Some(Box::new(arrow_format::ipc::BodyCompression {
-            codec: arrow_format::ipc::CompressionType::Zstd,
-            method: arrow_format::ipc::BodyCompressionMethod::Buffer,
-        }));
-        let arrow_format_record_batch = arrow_format::ipc::RecordBatch {
-            length: 4,
-            nodes: nodes,
-            buffers: buffers,
-            compression: compression,
+        let arrow_format_record_batch = match utils::arrow_record_batch().header.unwrap() {
+            arrow_format::ipc::MessageHeader::RecordBatch(boxed_rb) => *boxed_rb,
+            _ => panic!("This is a pointless panic"),
         };
 
-        // Actual Test Cases
-
-        // TODO Specifically compare nodes, buffers and compression before a
-        // full comparison.
-        assert_eq!(record_batch.length, length);
-        assert_eq!(record_batch, arrow_format_record_batch);
+        assert_eq!(record_batch.serialize(), arrow_format_record_batch);
     }
 
     #[test]

@@ -1,5 +1,6 @@
 use crate::utils::CustomMetadata;
-use rustler::{Atom, NifRecord, NifUnitEnum, NifUntaggedEnum};
+
+use rustler::{NifRecord, NifUnitEnum, NifUntaggedEnum};
 
 pub mod record_batch;
 pub mod schema;
@@ -14,7 +15,7 @@ pub struct Message {
     pub header: Header,
     pub body_length: i32,
     pub custom_metadata: CustomMetadata,
-    pub body: Atom,
+    pub body: Body,
 }
 
 #[derive(Debug, NifUnitEnum)]
@@ -31,3 +32,9 @@ pub enum Header {
     Schema(Schema),
     RecordBatch(RecordBatch),
 }
+
+#[derive(Debug, NifUnitEnum)]
+pub enum Body {
+    Undefined,
+}
+ 
