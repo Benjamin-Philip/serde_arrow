@@ -1,4 +1,3 @@
-use arrow_format::ipc;
 use std::collections::HashMap;
 
 use crate::message::record_batch::{Buffer, Compression, FieldNode, RecordBatch};
@@ -6,6 +5,9 @@ use crate::message::schema::field::{Dictionary, Field, Name};
 use crate::message::schema::types::{FixedSizeList, Int, Type};
 use crate::message::schema::{Endianness, Feature, Schema};
 use crate::message::{Body, Header, Message, Version};
+
+#[cfg(test)]
+use arrow_format::ipc;
 
 pub type CustomMetadata = Vec<HashMap<String, String>>;
 
@@ -148,6 +150,7 @@ pub fn record_batch() -> Message {
     }
 }
 
+#[cfg(test)]
 pub fn arrow_schema() -> ipc::Message {
     ipc::Message {
         version: ipc::MetadataVersion::V5,
@@ -213,6 +216,7 @@ pub fn arrow_schema() -> ipc::Message {
     }
 }
 
+#[cfg(test)]
 pub fn arrow_record_batch() -> ipc::Message {
     ipc::Message {
         version: ipc::MetadataVersion::V5,
