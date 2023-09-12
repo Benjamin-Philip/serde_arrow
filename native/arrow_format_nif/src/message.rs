@@ -1,6 +1,7 @@
 use crate::utils::CustomMetadata;
 
 use arrow_format::ipc;
+use arrow_format::ipc::planus::Builder;
 use rustler::{NifRecord, NifUnitEnum, NifUntaggedEnum};
 
 pub mod record_batch;
@@ -40,6 +41,23 @@ pub enum Body {
 }
 
 impl Message {
+    // A Word on Terminology:
+    //
+    // The function `serialize_to_ipc` is what actually serializes a function to
+    // its final binary/flatbuffer form.
+    //
+    // The function `serialize` just "serializes" (in this case converts) our
+    // message struct to `arrow_format`'s message struct. A similar "naming
+    // convention" was followed in all the other traits which implement
+    // `serialize`
+
+    pub fn serialize_to_ipc(&self) -> Vec<u8> {
+        let message = self.serialize();
+
+        let mut builder = Builder::new();
+        builder.finish(message, None).to_vec()
+    }
+
     pub fn serialize(&self) -> ipc::Message {
         ipc::Message {
             version: self.version.serialize(),

@@ -76,8 +76,7 @@ fn test_encode(msg_type: Atom) -> Message {
 /// returns a binary
 #[rustler::nif]
 fn serialize_message(env: Env, message: Message) -> Binary {
-    // let flatbuffers = message.serialize();
-    let flatbuffers = [0, 1, 2];
+    let flatbuffers = message.serialize_to_ipc();
 
     let mut erl_bin = rustler::types::OwnedBinary::new(flatbuffers.len()).unwrap();
     erl_bin.as_mut_slice().copy_from_slice(&flatbuffers);
