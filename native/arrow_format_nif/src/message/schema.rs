@@ -68,8 +68,8 @@ mod test {
     use super::*;
 
     use crate::message::Header;
-    use crate::utils;
     use crate::test::fixtures;
+    use crate::utils;
 
     use arrow_format::ipc;
 

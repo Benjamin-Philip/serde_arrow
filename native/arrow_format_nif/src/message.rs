@@ -94,8 +94,8 @@ impl Header {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::utils;
     use crate::test::fixtures;
+    use crate::utils;
 
     #[test]
     fn test_message_serialize() {

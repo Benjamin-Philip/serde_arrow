@@ -87,8 +87,8 @@ impl Compression {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::utils;
     use crate::test::fixtures;
+    use crate::utils;
 
     #[test]
     fn test_record_batch_serialize() {
