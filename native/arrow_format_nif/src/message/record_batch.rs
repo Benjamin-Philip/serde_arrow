@@ -90,14 +90,18 @@ impl Compression {
 mod test {
     use super::*;
     use crate::utils;
+    use crate::test::fixtures;
 
     #[test]
     fn test_record_batch_serialize() {
         // Test with a non-null compression
-        let crate::message::Header::RecordBatch(mut record_batch) = utils::record_batch().header else {panic!("This is a pointless panic")};
+        let crate::message::Header::RecordBatch(mut record_batch) = utils::record_batch().header
+        else {
+            panic!("This is a pointless panic")
+        };
         record_batch.compression = Compression::Zstd;
 
-        let mut arrow_format_record_batch = match utils::arrow_record_batch().header.unwrap() {
+        let mut arrow_format_record_batch = match fixtures::arrow_record_batch().header.unwrap() {
             arrow_format::ipc::MessageHeader::RecordBatch(boxed_rb) => *boxed_rb,
             _ => panic!("This is a pointless panic"),
         };

@@ -95,13 +95,14 @@ impl Header {
 mod test {
     use super::*;
     use crate::utils;
+    use crate::test::fixtures;
 
     #[test]
     fn test_message_serialize() {
-        assert_eq!(utils::schema().serialize(), utils::arrow_schema());
+        assert_eq!(utils::schema().serialize(), fixtures::arrow_schema());
         assert_eq!(
             utils::record_batch().serialize(),
-            utils::arrow_record_batch()
+            fixtures::arrow_record_batch()
         );
     }
 
@@ -119,14 +120,14 @@ mod test {
         // Schema
 
         let schema = utils::schema().header;
-        let arrow_schema = utils::arrow_schema().header.unwrap();
+        let arrow_schema = fixtures::arrow_schema().header.unwrap();
 
         assert_eq!(schema.serialize(), arrow_schema);
 
         // RecordBatch
 
         let record_batch = utils::record_batch().header;
-        let arrow_record_batch = utils::arrow_record_batch().header.unwrap();
+        let arrow_record_batch = fixtures::arrow_record_batch().header.unwrap();
 
         assert_eq!(record_batch.serialize(), arrow_record_batch);
     }

@@ -71,13 +71,19 @@ mod test {
 
     use crate::message::Header;
     use crate::utils;
+    use crate::test::fixtures;
 
     use arrow_format::ipc;
 
     #[test]
     fn test_schema_serialize() {
-        let Header::Schema(schema) = utils::schema().header else {panic!("This is a pointless panic!")};
-        let ipc::MessageHeader::Schema(arrow_schema) = utils::arrow_schema().header.unwrap() else {panic!("This is a pointless panic!")};
+        let Header::Schema(schema) = utils::schema().header else {
+            panic!("This is a pointless panic!")
+        };
+        let ipc::MessageHeader::Schema(arrow_schema) = fixtures::arrow_schema().header.unwrap()
+        else {
+            panic!("This is a pointless panic!")
+        };
 
         assert_eq!(schema.serialize(), *arrow_schema);
     }

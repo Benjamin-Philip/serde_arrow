@@ -46,6 +46,152 @@ mod atoms {
     }
 }
 
+#[cfg(test)]
+pub mod test {
+    pub mod fixtures {
+        use arrow_format::ipc;
+
+        pub fn arrow_schema() -> ipc::Message {
+            ipc::Message {
+                version: ipc::MetadataVersion::V5,
+                header: Some(ipc::MessageHeader::Schema(Box::new(ipc::Schema {
+                    endianness: ipc::Endianness::Little,
+                    fields: Some(vec![
+                        ipc::Field {
+                            name: Some("id".to_string()),
+                            nullable: true,
+                            type_: Some(ipc::Type::Int(Box::new(ipc::Int {
+                                bit_width: 8,
+                                is_signed: true,
+                            }))),
+                            dictionary: None,
+                            children: None,
+                            custom_metadata: None,
+                        },
+                        ipc::Field {
+                            name: Some("name".to_string()),
+                            nullable: true,
+                            type_: Some(ipc::Type::LargeBinary(Box::new(ipc::LargeBinary {}))),
+                            dictionary: None,
+                            children: None,
+                            custom_metadata: None,
+                        },
+                        ipc::Field {
+                            name: Some("age".to_string()),
+                            nullable: true,
+                            type_: Some(ipc::Type::Int(Box::new(ipc::Int {
+                                bit_width: 8,
+                                is_signed: false,
+                            }))),
+                            dictionary: None,
+                            children: None,
+                            custom_metadata: None,
+                        },
+                        ipc::Field {
+                            name: Some("annual_marks".to_string()),
+                            nullable: true,
+                            type_: Some(ipc::Type::FixedSizeList(Box::new(ipc::FixedSizeList {
+                                list_size: 3,
+                            }))),
+                            dictionary: None,
+                            children: Some(vec![ipc::Field {
+                                name: None,
+                                nullable: true,
+                                type_: Some(ipc::Type::Int(Box::new(ipc::Int {
+                                    bit_width: 8,
+                                    is_signed: false,
+                                }))),
+                                dictionary: None,
+                                children: None,
+                                custom_metadata: None,
+                            }]),
+                            custom_metadata: None,
+                        },
+                    ]),
+                    custom_metadata: None,
+                    features: Some(vec![ipc::Feature::Unused]),
+                }))),
+                body_length: 0i64,
+                custom_metadata: None,
+            }
+        }
+
+        pub fn arrow_record_batch() -> ipc::Message {
+            ipc::Message {
+                version: ipc::MetadataVersion::V5,
+                header: Some(ipc::MessageHeader::RecordBatch(Box::new(
+                    ipc::RecordBatch {
+                        length: 4,
+                        nodes: Some(vec![
+                            ipc::FieldNode {
+                                length: 4,
+                                null_count: 1,
+                            },
+                            ipc::FieldNode {
+                                length: 4,
+                                null_count: 1,
+                            },
+                            ipc::FieldNode {
+                                length: 4,
+                                null_count: 1,
+                            },
+                            ipc::FieldNode {
+                                length: 4,
+                                null_count: 1,
+                            },
+                        ]),
+                        buffers: Some(vec![
+                            ipc::Buffer {
+                                offset: 0,
+                                length: 1,
+                            },
+                            ipc::Buffer {
+                                offset: 8,
+                                length: 4,
+                            },
+                            ipc::Buffer {
+                                offset: 16,
+                                length: 1,
+                            },
+                            ipc::Buffer {
+                                offset: 24,
+                                length: 20,
+                            },
+                            ipc::Buffer {
+                                offset: 48,
+                                length: 15,
+                            },
+                            ipc::Buffer {
+                                offset: 64,
+                                length: 1,
+                            },
+                            ipc::Buffer {
+                                offset: 72,
+                                length: 4,
+                            },
+                            ipc::Buffer {
+                                offset: 80,
+                                length: 1,
+                            },
+                            ipc::Buffer {
+                                offset: 88,
+                                length: 2,
+                            },
+                            ipc::Buffer {
+                                offset: 96,
+                                length: 10,
+                            },
+                        ]),
+                        compression: None,
+                    },
+                ))),
+                body_length: 0i64,
+                custom_metadata: None,
+            }
+        }
+    }
+}
+
 /// Returns `:ok` on successful decodes.
 ///
 /// This function tests Message's (and its components')
