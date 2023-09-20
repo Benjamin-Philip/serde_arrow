@@ -1,5 +1,3 @@
-// FIXME: Remove once this is used in Header.
-#![allow(dead_code)]
 use crate::utils::CustomMetadata;
 use rustler::{NifRecord, NifUnitEnum};
 

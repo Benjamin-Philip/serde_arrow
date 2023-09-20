@@ -1,6 +1,4 @@
 #![allow(clippy::needless_borrow)]
-// FIXME: Remove once this is used in Header.
-#![allow(dead_code)]
 use rustler::{NifMap, NifRecord, NifUnitEnum};
 
 #[derive(Debug, NifRecord)]
