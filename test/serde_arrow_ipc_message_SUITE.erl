@@ -59,17 +59,18 @@ valid_continuation_on_to_ipc(_Config) ->
 
 valid_metadata_size_on_to_ipc(_Config) ->
     <<_:32, MetadataSize:32, _Rest/binary>> = ?RecordBatchEMF,
-    ?assertEqual(MetadataSize, 8).
+    ?assertEqual(MetadataSize, 300).
 
 valid_metadata_on_to_ipc(_Config) ->
-    <<_:32, _:32, Metadata:8/binary, _Rest/binary>> = ?RecordBatchEMF,
-    ?assertEqual(Metadata, <<1, 2, 3, 4, 5, 6, 7, 8>>).
+    <<_:32, _:32, MsgMetadata:300/binary, _Rest/binary>> = ?RecordBatchEMF,
+    PlainMetadata = arrow_format_nif:serialize_message((?RecordBatchMsg)#message{body = undefined}),
+    ?assertEqual(MsgMetadata, PlainMetadata).
 
 valid_body_on_to_ipc(_Config) ->
-    <<_:32, _:32, _:8/binary, Body1/binary>> = ?RecordBatchEMF,
+    <<_:32, _:32, _:300/binary, Body1/binary>> = ?RecordBatchEMF,
     ?assertEqual(Body1, ?Body),
 
-    <<_:32, _:32, _:8/binary, Body2/binary>> = ?SchemaEMF,
+    <<_:32, _:32, _:363/binary, Body2/binary>> = ?SchemaEMF,
     ?assertEqual(Body2, <<>>).
 
 %%%%%%%%%%%%%%%%%
@@ -77,7 +78,7 @@ valid_body_on_to_ipc(_Config) ->
 %%%%%%%%%%%%%%%%%
 
 valid_stream_on_to_stream(_Config) ->
-    <<Schema:16/binary, RecordBatch:656/binary, EOS/binary>> = ?Stream,
+    <<Schema:371/binary, RecordBatch:948/binary, EOS/binary>> = ?Stream,
 
     ?assertEqual(Schema, ?SchemaEMF),
     ?assertEqual(RecordBatch, ?RecordBatchEMF),
