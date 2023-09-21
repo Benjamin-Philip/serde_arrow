@@ -69,7 +69,7 @@ to_ipc(Message) ->
     %% 0xFFFFFFFF in int32
     Continuation = <<-1:32>>,
     %% This is a stub value till we can serialize flatbuffers
-    Metadata = <<1, 2, 3, 4, 5, 6, 7, 8>>,
+    Metadata = arrow_format_nif:serialize_message(Message#message{body = undefined}),
     MetadataSize = <<(byte_size(Metadata)):32>>,
     Body =
         case Message#message.body of
