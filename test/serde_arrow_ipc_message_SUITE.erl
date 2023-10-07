@@ -22,7 +22,9 @@ all() ->
         valid_metadata_on_to_ipc,
         valid_body_on_to_ipc,
 
-        valid_stream_on_to_stream
+        valid_stream_on_to_stream,
+
+        metadata_len
     ].
 
 %%%%%%%%%%%%%%%%%
@@ -85,3 +87,10 @@ valid_stream_on_to_stream(_Config) ->
     ?assertEqual(EOS, <<-1:32, 0:32>>),
 
     ?assertEqual(serde_arrow_ipc_message:to_stream([?SchemaEMF, ?RecordBatchEMF]), ?Stream).
+
+%%%%%%%%%%%%%%%%%%
+%% metadata_len %%
+%%%%%%%%%%%%%%%%%%
+
+metadata_len(_Config) ->
+    ?assertEqual(serde_arrow_ipc_message:metadata_len(?RecordBatchEMF), 300).

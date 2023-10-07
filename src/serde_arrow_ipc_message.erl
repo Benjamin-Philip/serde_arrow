@@ -40,7 +40,7 @@
 %% [3]: [https://arrow.apache.org/docs/format/Columnar.html#encapsulated-message-format]
 %% @end
 -module(serde_arrow_ipc_message).
--export([from_erlang/1, from_erlang/2, to_ipc/1, to_stream/1]).
+-export([from_erlang/1, from_erlang/2, to_ipc/1, to_stream/1, metadata_len/1]).
 -export_type([metadata_version/0, key_value/0]).
 
 -include("serde_arrow_ipc_message.hrl").
@@ -95,3 +95,13 @@ to_stream([H | _] = Messages) ->
     EOS = <<-1:32, 0:32>>,
 
     <<Msgs/binary, EOS/binary>>.
+
+%%%%%%%%%%%%%%%%%%%%
+%% metadata_len/1 %%
+%%%%%%%%%%%%%%%%%%%%
+
+%% @doc Returns the Metadata Length of an EMF.
+-spec metadata_len(EMF :: binary()) -> MetadataLen :: non_neg_integer().
+metadata_len(EMF) ->
+    <<_:32, MetadataLen:32, _Rest/binary>> = EMF,
+    MetadataLen.
