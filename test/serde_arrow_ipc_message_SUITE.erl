@@ -82,4 +82,6 @@ valid_stream_on_to_stream(_Config) ->
 
     ?assertEqual(Schema, ?SchemaEMF),
     ?assertEqual(RecordBatch, ?RecordBatchEMF),
-    ?assertEqual(EOS, <<-1:32, 0:32>>).
+    ?assertEqual(EOS, <<-1:32, 0:32>>),
+
+    ?assertEqual(serde_arrow_ipc_message:to_stream([?SchemaEMF, ?RecordBatchEMF]), ?Stream).

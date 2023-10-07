@@ -81,10 +81,15 @@ to_ipc(Message) ->
 
     <<Continuation/binary, MetadataSize/binary, Metadata/binary, Body/binary>>.
 
-%% @doc Serializes a list of messages into a Stream.
--spec to_stream(Messages :: [#message{}]) -> Stream :: binary().
-to_stream(Messages) ->
-    Msgs = <<(to_ipc(Msg)) || Msg <- Messages>>,
+%% @doc Serializes a list of messages or EMFs into a Stream.
+-spec to_stream(Messages :: [#message{}] | [binary()]) -> Stream :: binary().
+to_stream([H | _] = Messages) ->
+    Msgs =
+        if
+            is_tuple(H) -> <<(to_ipc(Msg)) || Msg <- Messages>>;
+            is_binary(H) -> <<Msg || Msg <- Messages>>
+        end,
+
     %% 0xFFFFFFFF 0x00000000
     %% This is technically an EMF with zero length metadata and body
     EOS = <<-1:32, 0:32>>,
