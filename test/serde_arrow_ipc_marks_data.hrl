@@ -53,3 +53,9 @@
 %%%%%%%%%%%%%%%%
 
 -define(Stream, serde_arrow_ipc_message:to_stream([?SchemaMsg, ?RecordBatchMsg])).
+
+%%%%%%%%%%%%%%
+%% IPC File %%
+%%%%%%%%%%%%%%
+
+-define(File, serde_arrow_ipc_file:from_erlang(?SchemaMsg, [?RecordBatchMsg])).
