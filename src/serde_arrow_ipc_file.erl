@@ -1,4 +1,12 @@
 %% @doc Provides records and functions to deal with the IPC File.
+%%
+%% The IPC File[1] is an extension of the IPC Stream[2] that supports random
+%% access with the help of a footer which contains the offsets of all the
+%% messages.
+%%
+%% [1]: https://arrow.apache.org/docs/format/Columnar.html#ipc-file-format
+%% [2]: https://arrow.apache.org/docs/format/Columnar.html#ipc-streaming-format
+%% @end
 -module(serde_arrow_ipc_file).
 -export([from_erlang/2, to_ipc/1]).
 
