@@ -59,3 +59,4 @@
 %%%%%%%%%%%%%%
 
 -define(File, serde_arrow_ipc_file:from_erlang(?SchemaMsg, [?RecordBatchMsg])).
+-define(SerializedFile, serde_arrow_ipc_file:to_ipc(?File)).
