@@ -43,7 +43,7 @@ pub enum Body {
 impl Message {
     // A Word on Terminology:
     //
-    // The function `serialize_to_ipc` is what actually serializes a function to
+    // The function `serialize_to_ipc` is what actually serializes a message to
     // its final binary/flatbuffer form.
     //
     // The function `serialize` just "serializes" (in this case converts) our

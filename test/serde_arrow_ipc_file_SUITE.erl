@@ -16,6 +16,7 @@ all() ->
         valid_schema_on_from_erlang,
         valid_dictionaries_on_from_erlang,
         valid_record_batches_on_from_erlang,
+        valid_custom_metadata_on_from_erlang,
         valid_body_on_from_erlang,
 
         valid_magic_string_on_to_ipc,
@@ -43,6 +44,9 @@ valid_record_batches_on_from_erlang(_Config) ->
         body_length = (?RecordBatchMsg)#message.body_length
     },
     ?assertEqual((?File)#file.footer#footer.record_batches, [RecordBatchBlock]).
+
+valid_custom_metadata_on_from_erlang(_Config) ->
+    ?assertEqual((?File)#file.footer#footer.custom_metadata, []).
 
 valid_body_on_from_erlang(_Config) ->
     ?assertEqual((?File)#file.body, ?Stream).

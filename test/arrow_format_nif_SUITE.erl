@@ -6,6 +6,7 @@
 -include_lib("stdlib/include/assert.hrl").
 
 -include("serde_arrow_ipc_message.hrl").
+-include("serde_arrow_ipc_file.hrl").
 
 -include("serde_arrow_ipc_marks_data.hrl").
 
@@ -28,7 +29,7 @@
 -define(LargeList, schema(large_list)).
 
 all() ->
-    [test_decode, test_encode, serialize_message].
+    [test_decode, test_encode, serialize_message, serialize_footer].
 
 %%%%%%%%%%%%%%%%%
 %% test_decode %%
@@ -120,6 +121,13 @@ serialize_message(_Config) ->
     %% Flatbuffers doesn't need the body. So, don't provide it.
     RecordBatchMsg = (?RecordBatchMsg)#message{body = undefined},
     ?assert(is_binary(arrow_format_nif:serialize_message(RecordBatchMsg))).
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%% serialize_footer %%
+%%%%%%%%%%%%%%%%%%%%%%%
+
+serialize_footer(_Config) ->
+    ?assert(is_binary(arrow_format_nif:serialize_footer((?File)#file.footer))).
 
 %%%%%%%%%%%
 %% Utils %%

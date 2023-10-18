@@ -1,9 +1,11 @@
 use rustler::types::Binary;
 use rustler::{Atom, Env};
 
+mod file;
 mod message;
 mod utils;
 
+use file::Footer;
 use message::Message;
 
 mod atoms {
@@ -49,6 +51,9 @@ mod atoms {
 #[cfg(test)]
 pub mod test {
     pub mod fixtures {
+        use crate::file::{Block, Footer};
+        use crate::message::{Header, Version};
+        use crate::utils;
         use arrow_format::ipc;
 
         pub fn arrow_schema() -> ipc::Message {
@@ -189,6 +194,40 @@ pub mod test {
                 custom_metadata: None,
             }
         }
+
+        pub fn footer() -> Footer {
+            let Header::Schema(schema) = utils::schema().header else {
+                panic!("Record Batch!")
+            };
+            Footer {
+                version: Version::V5,
+                schema: schema,
+                dictionaries: vec![],
+                record_batches: vec![Block {
+                    offset: 128,
+                    metadata_length: 32,
+                    body_length: 512,
+                }],
+                custom_metadata: vec![],
+            }
+        }
+
+        pub fn arrow_footer() -> ipc::Footer {
+            let ipc::MessageHeader::Schema(schema) = arrow_schema().header.unwrap() else {
+                panic!("This is not gonna panic!")
+            };
+            ipc::Footer {
+                version: ipc::MetadataVersion::V5,
+                schema: Some(schema),
+                dictionaries: vec![].into(),
+                record_batches: Some(vec![ipc::Block {
+                    offset: 128,
+                    meta_data_length: 32,
+                    body_length: 512,
+                }]),
+                custom_metadata: None,
+            }
+        }
     }
 }
 
@@ -229,7 +268,25 @@ fn serialize_message(env: Env, message: Message) -> Binary {
     erl_bin.release(env)
 }
 
+/// Serializes a footer into its correspondding flatbuffers.
+///
+/// This function serializes a footer into its correspondding flatbuffers and
+/// returns a binary
+#[rustler::nif]
+fn serialize_footer(env: Env, footer: Footer) -> Binary {
+    let flatbuffers = footer.serialize_to_ipc();
+
+    let mut erl_bin = rustler::types::OwnedBinary::new(flatbuffers.len()).unwrap();
+    erl_bin.as_mut_slice().copy_from_slice(&flatbuffers);
+    erl_bin.release(env)
+}
+
 rustler::init!(
     "arrow_format_nif",
-    [test_decode, test_encode, serialize_message]
+    [
+        test_decode,
+        test_encode,
+        serialize_message,
+        serialize_footer
+    ]
 );
