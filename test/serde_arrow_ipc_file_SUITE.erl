@@ -69,7 +69,7 @@ valid_footer_on_to_ipc(_Config) ->
     FooterSz = byte_size(?SerializedFile) * 8 - (64 + StreamSz + 32 + 48),
     <<_ARROW_MAGIC:64/bitstring, _Stream:StreamSz/bitstring, Footer:FooterSz/bitstring,
         _FooterSz:32/signed-little-integer, "ARROW1">> = ?SerializedFile,
-    ?assertEqual(Footer, <<"Footer!">>).
+    ?assertEqual(Footer, arrow_format_nif:serialize_footer((?File)#file.footer)).
 
 valid_stream_on_to_ipc(_Config) ->
     Sz = byte_size(?Stream) * 8,
