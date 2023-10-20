@@ -54,7 +54,7 @@ blocks(Offset, [H | T], Blocks, EMFs) ->
 %% @doc Serializes a file into the IPC File Format
 -spec to_ipc(File :: #file{}) -> SerializedFile :: binary().
 to_ipc(File) ->
-    Footer = <<"Footer!">>,
+    Footer = arrow_format_nif:serialize_footer(File#file.footer),
     Sz = byte_size(Footer),
     <<"ARROW1", "00", (File#file.body)/binary, Footer/bitstring, Sz:4/little-signed-integer-unit:8,
         "ARROW1">>.

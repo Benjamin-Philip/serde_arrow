@@ -1,5 +1,5 @@
 -module(arrow_format_nif).
--export([test_decode/1, test_encode/1, serialize_message/1]).
+-export([test_decode/1, test_encode/1, serialize_message/1, serialize_footer/1]).
 
 -include("cargo.hrl").
 -on_load(init/0).
@@ -16,6 +16,9 @@ test_encode(_) ->
     ?NOT_LOADED.
 
 serialize_message(_) ->
+    ?NOT_LOADED.
+
+serialize_footer(_) ->
     ?NOT_LOADED.
 
 %%%===================================================================

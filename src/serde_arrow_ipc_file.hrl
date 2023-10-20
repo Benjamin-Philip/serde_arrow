@@ -8,7 +8,8 @@
     version = v5 :: serde_arrow_ipc_message:metadata_version(),
     schema :: #schema{},
     dictionaries = [] :: [#block{}],
-    record_batches :: [#block{}]
+    record_batches :: [#block{}],
+    custom_metadata = [] :: [serde_arrow_ipc_message:key_value()]
 }).
 
 -record(file, {footer :: #footer{}, body :: binary()}).

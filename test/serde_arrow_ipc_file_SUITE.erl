@@ -16,6 +16,7 @@ all() ->
         valid_schema_on_from_erlang,
         valid_dictionaries_on_from_erlang,
         valid_record_batches_on_from_erlang,
+        valid_custom_metadata_on_from_erlang,
         valid_body_on_from_erlang,
 
         valid_magic_string_on_to_ipc,
@@ -44,6 +45,9 @@ valid_record_batches_on_from_erlang(_Config) ->
     },
     ?assertEqual((?File)#file.footer#footer.record_batches, [RecordBatchBlock]).
 
+valid_custom_metadata_on_from_erlang(_Config) ->
+    ?assertEqual((?File)#file.footer#footer.custom_metadata, []).
+
 valid_body_on_from_erlang(_Config) ->
     ?assertEqual((?File)#file.body, ?Stream).
 
@@ -65,7 +69,7 @@ valid_footer_on_to_ipc(_Config) ->
     FooterSz = byte_size(?SerializedFile) * 8 - (64 + StreamSz + 32 + 48),
     <<_ARROW_MAGIC:64/bitstring, _Stream:StreamSz/bitstring, Footer:FooterSz/bitstring,
         _FooterSz:32/signed-little-integer, "ARROW1">> = ?SerializedFile,
-    ?assertEqual(Footer, <<"Footer!">>).
+    ?assertEqual(Footer, arrow_format_nif:serialize_footer((?File)#file.footer)).
 
 valid_stream_on_to_ipc(_Config) ->
     Sz = byte_size(?Stream) * 8,
