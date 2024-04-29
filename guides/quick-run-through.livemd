@@ -144,9 +144,9 @@ Class3RecordBatch = serde_arrow_ipc_record_batch:from_erlang(Class3Columns).
 Each of these RecordBatches need a body:
 
 ```erlang
-Class1Body = <<<<(serde_arrow_array:to_arrow(Array))/binary>> || Array <- Class1Columns>>,
-Class2Body = <<<<(serde_arrow_array:to_arrow(Array))/binary>> || Array <- Class2Columns>>,
-Class3Body = <<<<(serde_arrow_array:to_arrow(Array))/binary>> || Array <- Class3Columns>>.
+Class1Msg = serde_arrow_ipc_message:body_from_erlang(Class1Columns),
+Class2Msg = serde_arrow_ipc_message:body_from_erlang(Class2Columns),
+Class3Msg = serde_arrow_ipc_message:body_from_erlang(Class3Columns).
 ```
 
 Which can then be combined into a message:
