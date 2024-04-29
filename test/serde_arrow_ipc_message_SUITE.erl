@@ -24,7 +24,9 @@ all() ->
 
         valid_stream_on_to_stream,
 
-        metadata_len
+        metadata_len,
+
+        body_from_erlang
     ].
 
 %%%%%%%%%%%%%%%%%
@@ -88,9 +90,16 @@ valid_stream_on_to_stream(_Config) ->
 
     ?assertEqual(serde_arrow_ipc_message:to_stream([?SchemaEMF, ?RecordBatchEMF]), ?Stream).
 
-%%%%%%%%%%%%%%%%%%
-%% metadata_len %%
-%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
+%% metadata_len/1 %%
+%%%%%%%%%%%%%%%%%%%%
 
 metadata_len(_Config) ->
     ?assertEqual(serde_arrow_ipc_message:metadata_len(?RecordBatchEMF), 300).
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% body_from_erlang/1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+body_from_erlang(_Config) ->
+    ?assertEqual(serde_arrow_ipc_message:body_from_erlang(?Columns), ?Body).

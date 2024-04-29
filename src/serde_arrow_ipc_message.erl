@@ -40,7 +40,7 @@
 %% [3]: [https://arrow.apache.org/docs/format/Columnar.html#encapsulated-message-format]
 %% @end
 -module(serde_arrow_ipc_message).
--export([from_erlang/1, from_erlang/2, to_ipc/1, to_stream/1, metadata_len/1]).
+-export([from_erlang/1, from_erlang/2, to_ipc/1, to_stream/1, metadata_len/1, body_from_erlang/1]).
 -export_type([metadata_version/0, key_value/0]).
 
 -include("serde_arrow_ipc_message.hrl").
@@ -105,3 +105,18 @@ to_stream([H | _] = Messages) ->
 metadata_len(EMF) ->
     <<_:32, MetadataLen:32, _Rest/binary>> = EMF,
     MetadataLen.
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% body_from_erlang/1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% @doc Returns the body of message from a list of arrays.
+%%
+%% Shorthand for:
+%% ```
+%% <<<<(serde_arrow_array:to_arrow(Array))/binary>> || Array <- Columns>>
+%% '''
+%% @end
+-spec body_from_erlang(Columns :: [#array{}]) -> Body :: binary().
+body_from_erlang(Columns) ->
+    <<<<(serde_arrow_array:to_arrow(Array))/binary>> || Array <- Columns>>.
