@@ -1,5 +1,6 @@
 -include("serde_arrow_ipc_schema.hrl").
 -include("serde_arrow_ipc_record_batch.hrl").
+-include("serde_arrow_array.hrl").
 
 -record(message, {
     version = v5 :: serde_arrow_ipc_message:metadata_version(),
