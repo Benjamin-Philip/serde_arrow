@@ -281,12 +281,4 @@ fn serialize_footer(env: Env, footer: Footer) -> Binary {
     erl_bin.release(env)
 }
 
-rustler::init!(
-    "arrow_format_nif",
-    [
-        test_decode,
-        test_encode,
-        serialize_message,
-        serialize_footer
-    ]
-);
+rustler::init!("arrow_format_nif");
