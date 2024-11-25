@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  RUST_TOOLCHAIN_VERSION: stable-2024-04-29
+  RUST_TOOLCHAIN_VERSION: stable
 
 jobs:
   deploy:
