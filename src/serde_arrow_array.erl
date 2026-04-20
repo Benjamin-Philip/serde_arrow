@@ -94,7 +94,11 @@
 
 -include("serde_arrow_array.hrl").
 
--export_type([layout/0]).
+-export_type([array/0, layout/0]).
+
+-type array() :: #array{}.
+%% Represents an Array.
+
 -type layout() :: fixed_primitive | variable_binary | fixed_list | variable_list.
 %% Represents the Layout of an Array.
 

@@ -79,7 +79,7 @@ offsets([], Acc, _Offset, _Type) ->
     lists:reverse(Acc).
 
 -spec len(
-    Value :: serde_arrow_type:type() | undefined | nil,
+    Value :: serde_arrow_type:native_type() | undefined | nil,
     Type :: serde_arrow_type:arrow_longhand_type()
 ) -> non_neg_integer().
 len(Value, bin) ->

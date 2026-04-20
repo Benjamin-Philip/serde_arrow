@@ -118,6 +118,7 @@
 -export([normalize/1, bit_length/1, byte_length/1, serialize/2]).
 -export_type([
     arrow_type/0,
+    arrow_primitive_type/0,
     arrow_longhand_type/0,
     arrow_shorthand_type/0,
 
