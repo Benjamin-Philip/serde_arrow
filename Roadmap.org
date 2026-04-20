@@ -1,8 +1,8 @@
-#+title: ~serde_arrow~ Roadmap
+#+title: ~arrow-erlang~ Roadmap
 #+author: Benjamin Philip <benjamin.philip495@gmail.com>
 
 The following is a Roadmap (with notes of implementation details) of the
-~serde_arrow~ project.
+~arrow-erlang~ project.
 
 * ~v0.1.0~ [0/4]
 

@@ -1,6 +1,6 @@
 -cargo_header_version(1).
 -ifndef(CARGO_LOAD_APP).
--define(CARGO_LOAD_APP, serde_arrow).
+-define(CARGO_LOAD_APP, arrow).
 -endif.
 -ifndef(CARGO_HRL).
 -define(CARGO_HRL, 1).

@@ -5,10 +5,10 @@
 -include_lib("common_test/include/ct.hrl").
 -include_lib("stdlib/include/assert.hrl").
 
--include("serde_arrow_ipc_message.hrl").
--include("serde_arrow_ipc_file.hrl").
+-include("arrow_ipc_message.hrl").
+-include("arrow_ipc_file.hrl").
 
--include("serde_arrow_ipc_marks_data.hrl").
+-include("arrow_ipc_marks_data.hrl").
 
 -define(S8, schema({int, #{bit_width => 8, is_signed => true}})).
 -define(S16, schema({int, #{bit_width => 16, is_signed => true}})).
@@ -134,6 +134,6 @@ serialize_footer(_Config) ->
 %%%%%%%%%%%
 
 schema(Type) ->
-    serde_arrow_ipc_message:from_erlang(
-        serde_arrow_ipc_schema:from_erlang([serde_arrow_ipc_field:from_erlang(Type)])
+    arrow_ipc_message:from_erlang(
+        arrow_ipc_schema:from_erlang([arrow_ipc_field:from_erlang(Type)])
     ).

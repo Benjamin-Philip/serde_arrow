@@ -4,7 +4,7 @@
 
 ```elixir
 Mix.install([
-  {:serde_arrow, git: "https://github.com/Benjamin-Philip/serde_arrow.git"}
+  {:arrow, git: "https://github.com/Benjamin-Philip/arrow.git"}
 ])
 ```
 
@@ -50,13 +50,13 @@ administration is stupid or something.
 First, we must declare a field for each column:
 
 ```erlang
-IdField = serde_arrow_ipc_field:from_erlang({int, #{bit_width => 8, is_signed => true}}, "id"),
-NameField = serde_arrow_ipc_field:from_erlang(large_binary, "name"),
-AgeField = serde_arrow_ipc_field:from_erlang({int, #{bit_width => 8, is_signed => false}}, "age"),
+IdField = arrow_ipc_field:from_erlang({int, #{bit_width => 8, is_signed => true}}, "id"),
+NameField = arrow_ipc_field:from_erlang(large_binary, "name"),
+AgeField = arrow_ipc_field:from_erlang({int, #{bit_width => 8, is_signed => false}}, "age"),
 AnnualMarksField = 
-    serde_arrow_ipc_field:from_erlang(
+    arrow_ipc_field:from_erlang(
         {fixed_size_list, #{list_size => 3}}, "annual_marks", [
-            serde_arrow_ipc_field:from_erlang(
+            arrow_ipc_field:from_erlang(
                 {int, #{bit_width => 8, is_signed => false}}
             )
         ]
@@ -71,13 +71,13 @@ list of the fields that are nested.
 We then must take those fields and combine them into a schema:
 
 ```erlang
-Schema = serde_arrow_ipc_schema:from_erlang([IdField, NameField, AgeField, AnnualMarksField]).
+Schema = arrow_ipc_schema:from_erlang([IdField, NameField, AgeField, AnnualMarksField]).
 ```
 
 And that schema into a message:
 
 ```erlang
-SchemaMsg = serde_arrow_ipc_message:from_erlang(Schema).
+SchemaMsg = arrow_ipc_message:from_erlang(Schema).
 ```
 
 ## Creating Arrow Arrays
@@ -89,12 +89,12 @@ create the data for each class separately:
 Here's Class1:
 
 ```erlang
-Class1Id = serde_arrow_array:from_erlang(fixed_primitive, [0, 1, 2, undefined], {s, 8}),
-Class1Name = serde_arrow_array:from_erlang(
+Class1Id = arrow_array:from_erlang(fixed_primitive, [0, 1, 2, undefined], {s, 8}),
+Class1Name = arrow_array:from_erlang(
         variable_binary, [<<"alice">>, <<"bob">>, <<"charlie">>, undefined], {bin, undefined}
     ),
-Class1Age = serde_arrow_array:from_erlang(fixed_primitive, [10, 20, 30, undefined], {s, 8}),
-Class1AnnualMarks = serde_arrow_array:from_erlang(
+Class1Age = arrow_array:from_erlang(fixed_primitive, [10, 20, 30, undefined], {s, 8}),
+Class1AnnualMarks = arrow_array:from_erlang(
         fixed_list, [[100, 97, 98], [100, 99, 96], [100, 98, 95], undefined], {s, 8}
     ),
 Class1Columns = [Class1Id, Class1Name, Class1Age, Class1AnnualMarks].
@@ -103,12 +103,12 @@ Class1Columns = [Class1Id, Class1Name, Class1Age, Class1AnnualMarks].
 Class2:
 
 ```erlang
-Class2Id = serde_arrow_array:from_erlang(fixed_primitive, [3, 4, 5], {s, 8}),
-Class2Name = serde_arrow_array:from_erlang(
+Class2Id = arrow_array:from_erlang(fixed_primitive, [3, 4, 5], {s, 8}),
+Class2Name = arrow_array:from_erlang(
         variable_binary, [<<"anne"/utf8-little>>, <<"benoît"/utf8-little>>, <<"clément"/utf8-little>>], {bin, undefined}
     ),
-Class2Age = serde_arrow_array:from_erlang(fixed_primitive, [10, 20, 30], {s, 8}),
-Class2AnnualMarks = serde_arrow_array:from_erlang(
+Class2Age = arrow_array:from_erlang(fixed_primitive, [10, 20, 30], {s, 8}),
+Class2AnnualMarks = arrow_array:from_erlang(
         fixed_list, [[90, 87, 75], [85, 99, 96], [75, 88, 60]], {s, 8}
     ),
 Class2Columns = [Class2Id, Class2Name, Class2Age, Class2AnnualMarks].
@@ -117,12 +117,12 @@ Class2Columns = [Class2Id, Class2Name, Class2Age, Class2AnnualMarks].
 Class3:
 
 ```erlang
-Class3Id = serde_arrow_array:from_erlang(fixed_primitive, [6, 7, 8], {s, 8}),
-Class3Name = serde_arrow_array:from_erlang(
+Class3Id = arrow_array:from_erlang(fixed_primitive, [6, 7, 8], {s, 8}),
+Class3Name = arrow_array:from_erlang(
         variable_binary, [<<"anjali">>, <<"biju">>, <<"chandra">>], {bin, undefined}
     ),
-Class3Age = serde_arrow_array:from_erlang(fixed_primitive, [10, 20, 30], {s, 8}),
-Class3AnnualMarks = serde_arrow_array:from_erlang(
+Class3Age = arrow_array:from_erlang(fixed_primitive, [10, 20, 30], {s, 8}),
+Class3AnnualMarks = arrow_array:from_erlang(
         fixed_list, [[100, 100, 98], [100, 100, 100], [99, 98, 97]], {s, 8}
     ),
 Class3Columns = [Class3Id, Class3Name, Class3Age, Class3AnnualMarks].
@@ -136,33 +136,33 @@ throughout different years. The columns that make up such a table can be
 combined like so:
 
 ```erlang
-Class1RecordBatch = serde_arrow_ipc_record_batch:from_erlang(Class1Columns),
-Class2RecordBatch = serde_arrow_ipc_record_batch:from_erlang(Class2Columns),
-Class3RecordBatch = serde_arrow_ipc_record_batch:from_erlang(Class3Columns).
+Class1RecordBatch = arrow_ipc_record_batch:from_erlang(Class1Columns),
+Class2RecordBatch = arrow_ipc_record_batch:from_erlang(Class2Columns),
+Class3RecordBatch = arrow_ipc_record_batch:from_erlang(Class3Columns).
 ```
 
 Each of these RecordBatches need a body:
 
 ```erlang
-Class1Msg = serde_arrow_ipc_message:body_from_erlang(Class1Columns),
-Class2Msg = serde_arrow_ipc_message:body_from_erlang(Class2Columns),
-Class3Msg = serde_arrow_ipc_message:body_from_erlang(Class3Columns).
+Class1Msg = arrow_ipc_message:body_from_erlang(Class1Columns),
+Class2Msg = arrow_ipc_message:body_from_erlang(Class2Columns),
+Class3Msg = arrow_ipc_message:body_from_erlang(Class3Columns).
 ```
 
 Which can then be combined into a message:
 
 ```erlang
-Class1Msg = serde_arrow_ipc_message:from_erlang(Class1RecordBatch, Class1Body),
-Class2Msg = serde_arrow_ipc_message:from_erlang(Class2RecordBatch, Class3Body),
-Class3Msg = serde_arrow_ipc_message:from_erlang(Class3RecordBatch, Class3Body).
+Class1Msg = arrow_ipc_message:from_erlang(Class1RecordBatch, Class1Body),
+Class2Msg = arrow_ipc_message:from_erlang(Class2RecordBatch, Class3Body),
+Class3Msg = arrow_ipc_message:from_erlang(Class3RecordBatch, Class3Body).
 ```
 
 If we wanted to, we could serialize these messages into an [Encapsulated message](https://arrow.apache.org/docs/format/Columnar.html#encapsulated-message-format):
 
 ```erlang
-Class1EMF = serde_arrow_ipc_message:to_ipc(Class1Msg),
-Class2EMF = serde_arrow_ipc_message:to_ipc(Class2Msg),
-Class3EMF = serde_arrow_ipc_message:to_ipc(Class3Msg).
+Class1EMF = arrow_ipc_message:to_ipc(Class1Msg),
+Class2EMF = arrow_ipc_message:to_ipc(Class2Msg),
+Class3EMF = arrow_ipc_message:to_ipc(Class3Msg).
 ```
 
 Typically, you wouldn't directly use an encapsulated message but a stream or a file instead.
@@ -179,14 +179,14 @@ to a file.
 We can create a stream like this:
 
 ```erlang
-serde_arrow_ipc_message:to_stream([SchemaMsg, Class1Msg, Class2Msg, Class3Msg]).
+arrow_ipc_message:to_stream([SchemaMsg, Class1Msg, Class2Msg, Class3Msg]).
 ```
 
 Or a file like this:
 
 ```erlang
-ErlFile = serde_arrow_ipc_file:from_erlang(SchemaMsg, [Class1Msg, Class2Msg, Class3Msg]),
-File = serde_arrow_ipc_file:to_ipc(ErlFile).
+ErlFile = arrow_ipc_file:from_erlang(SchemaMsg, [Class1Msg, Class2Msg, Class3Msg]),
+File = arrow_ipc_file:to_ipc(ErlFile).
 ```
 
 We could then save that binary into a file:

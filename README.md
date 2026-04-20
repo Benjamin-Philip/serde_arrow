@@ -1,9 +1,9 @@
-# serde_arrow
+# arrow-erlang
 
 Erlang implementation of the [Apache Arrow](https://arrow.apache.org/) in-memory
 columnar format.
 
-As of right now, `serde_arrow` only provides serialization (write) of Erlang
+As of right now, `arrow-erlang` only provides serialization (write) of Erlang
 data structures into to Arrow. Support for deserialization (read) will be added
 soon.
 
@@ -23,7 +23,7 @@ In addition to an Erlang installation, you will need a Rust installation with
 `cargo`. You can then add the following to your rebar.config:
 
 ``` erlang
-{serde_arrow, {git, "https://github.com/Benjamin-Philip/serde_arrow.git"}}
+{arrow, {git, "https://github.com/Benjamin-Philip/arrow.git"}}
 ```
 
 And compile!
